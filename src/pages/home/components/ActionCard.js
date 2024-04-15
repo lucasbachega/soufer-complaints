@@ -1,9 +1,11 @@
 import { Card, CardContent, Typography } from "@mui/joy";
 import React from "react";
 
-const ActionCard = ({ title, Icon, description }) => {
+const ActionCard = ({ title, Icon, description, onClick }) => {
   return (
     <Card
+      component={"div"}
+      onClick={onClick}
       variant="outlined"
       sx={{
         cursor: "pointer",

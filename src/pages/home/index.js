@@ -1,10 +1,17 @@
-import { AdminPanelSettingsOutlined, AssignmentOutlined } from "@mui/icons-material";
+import {
+  AdminPanelSettingsOutlined,
+  AssignmentOutlined,
+} from "@mui/icons-material";
 import { Box, Container, Divider, Typography } from "@mui/joy";
 import Capa from "../../assets/background/soufer-capa.jpeg";
 import Logo from "../../assets/logo/soufer-logo.png";
 import ActionCard from "./components/ActionCard";
 
+import { useNavigate } from "react-router-dom";
+
 export default () => {
+  const navigate = useNavigate();
+
   return (
     <Box flex={1} flexBasis={0} display={"flex"} alignItems={"flex-start"}>
       <Box flex={1} display={"flex"} flexDirection={"column"} height={"100%"}>
@@ -46,11 +53,13 @@ export default () => {
                 Icon={AssignmentOutlined}
                 title={"Nova ocorrência"}
                 description={"Preencha o formulário de reclamação"}
+                onClick={() => navigate("/new-occurrence")}
               />
               <ActionCard
                 Icon={AdminPanelSettingsOutlined}
                 title={"Painel do administrador"}
                 description={"Configure e acompanhe as ocorrências"}
+                onClick={() => navigate("#")}
               />
             </Box>
           </Container>
