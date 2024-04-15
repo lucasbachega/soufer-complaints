@@ -1,10 +1,14 @@
 import { Box, Stack, Typography } from "@mui/joy";
 import React from "react";
-import SelectInput from "../../../components/SelectInput";
-import TextInput from "../../../components/TextInput";
-import TextArea from "../../../components/TextInputArea";
+import SelectInput from "../../../components/inputs/SelectInput";
+import TextInput from "../../../components/inputs/TextInput";
+import TextArea from "../../../components/inputs/TextInputArea";
+import { occurrenceInitialState } from "../../../utils/state_models";
 
-const OccurrenceForm = () => {
+const OccurrenceForm = ({
+  data = occurrenceInitialState,
+  onChangeValue = (prop = "", value = "") => {},
+}) => {
   return (
     <Box
       border={1}
@@ -22,6 +26,8 @@ const OccurrenceForm = () => {
       </Typography>
       <Stack mt={3} spacing={2}>
         <SelectInput
+          value={data?.unit}
+          onChange={(v) => onChangeValue("unit", v)}
           required
           label={"Unidade"}
           placeholder={"Selecione uma unidade"}
@@ -30,13 +36,45 @@ const OccurrenceForm = () => {
             { label: "São João BV", value: "2" },
           ]}
         />
-        <TextInput label={"Cliente"} required />
-        <TextInput label={"Representante"} required />
-        <TextInput label={"Ordem de venda / Renomeio"} required />
-        <TextInput label={"Setor"} required />
-        <TextInput label={"Produto"} required />
-        <TextInput label={"Categoria da ocorrência"} required />
+        <TextInput
+          value={data?.customer}
+          onChange={(v) => onChangeValue("customer", v)}
+          label={"Cliente"}
+          required
+        />
+        <TextInput
+          value={data?.representative}
+          onChange={(v) => onChangeValue("representative", v)}
+          label={"Representante"}
+          required
+        />
+        <TextInput
+          value={data?.salesOrder}
+          onChange={(v) => onChangeValue("salesOrder", v)}
+          label={"Ordem de venda / Renomeio"}
+          required
+        />
+        <TextInput
+          value={data?.sector}
+          onChange={(v) => onChangeValue("sector", v)}
+          label={"Setor"}
+          required
+        />
+        <TextInput
+          value={data?.product}
+          onChange={(v) => onChangeValue("product", v)}
+          label={"Produto"}
+          required
+        />
+        <TextInput
+          value={data?.category}
+          onChange={(v) => onChangeValue("category", v)}
+          label={"Categoria da ocorrência"}
+          required
+        />
         <TextArea
+          value={data?.reason}
+          onChange={(v) => onChangeValue("reason", v)}
           label={"Motivo"}
           placeholder={"Descreva o motivo da ocorrência"}
           required

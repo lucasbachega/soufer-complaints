@@ -1,10 +1,10 @@
 import { InfoOutlined } from "@mui/icons-material";
 import {
-    FormControl,
-    FormHelperText,
-    FormLabel,
-    Option,
-    Select,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Option,
+  Select,
 } from "@mui/joy";
 import React from "react";
 
@@ -35,7 +35,7 @@ const SelectInput = ({
         startDecorator={startDecorator}
         endDecorator={endDecorator}
         defaultValue={defaultValue}
-        onChange={onChange}
+        onChange={(e, value) => Boolean(value) && onChange(value)}
       >
         {options?.map((option) => (
           <Option key={option?.value} value={option?.value}>
