@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import "./App.css";
 import Routes from "./routes";
 import { theme } from "./theme";
+import 'react-medium-image-zoom/dist/styles.css'
 
 function App() {
   return (

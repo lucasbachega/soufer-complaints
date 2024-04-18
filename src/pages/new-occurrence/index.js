@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import DiscartModal from "../../components/modals/DiscartModal";
 import { occurrenceInitialState } from "../../utils/state_models";
 import Appbar from "./components/Appbar";
-import AttachBox from "./components/AttachBox";
+import AttachBox from "./components/attach/AttachBox";
 import OccurrenceForm from "./components/OccurrenceForm";
 
 export default (props) => {
@@ -33,7 +33,14 @@ export default (props) => {
   return (
     <Box flex={1} display={"flex"} flexDirection={"column"}>
       <Appbar onCancel={onCancel} isOk={isOk} />
-      <Box flex={1} flexBasis={0} overflow={"auto"} p={4} pt={"30px"}>
+      <Box
+        flex={1}
+        flexBasis={0}
+        overflow={"auto"}
+        p={4}
+        pb={"100px"}
+        pt={"30px"}
+      >
         <Container
           maxWidth="lg"
           sx={{ display: "flex", alignItems: "flex-start", gap: 4 }}

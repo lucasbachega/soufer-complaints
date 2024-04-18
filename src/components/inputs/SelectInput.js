@@ -3,8 +3,10 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
+  ModalClose,
   Option,
   Select,
+  Typography,
 } from "@mui/joy";
 import React from "react";
 
@@ -37,6 +39,11 @@ const SelectInput = ({
         defaultValue={defaultValue}
         onChange={(e, value) => Boolean(value) && onChange(value)}
       >
+        {!options?.length && (
+          <Typography textAlign={"center"} m={3} level="body-md">
+            Nada encontrado
+          </Typography>
+        )}
         {options?.map((option) => (
           <Option key={option?.value} value={option?.value}>
             {option?.label}

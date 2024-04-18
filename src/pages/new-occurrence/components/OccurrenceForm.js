@@ -4,6 +4,10 @@ import SelectInput from "../../../components/inputs/SelectInput";
 import TextInput from "../../../components/inputs/TextInput";
 import TextArea from "../../../components/inputs/TextInputArea";
 import { occurrenceInitialState } from "../../../utils/state_models";
+import UnitsSelector from "../../../components/inputs/selectors/UnitsSelector";
+import SectorsSelector from "../../../components/inputs/selectors/SectorsSelector";
+import ProductsSelector from "../../../components/inputs/selectors/ProductsSelector";
+import CategoriesSelector from "../../../components/inputs/selectors/CategoriesSelector";
 
 const OccurrenceForm = ({
   data = occurrenceInitialState,
@@ -25,16 +29,9 @@ const OccurrenceForm = ({
         * Campos obrigatórios
       </Typography>
       <Stack mt={3} spacing={2}>
-        <SelectInput
+        <UnitsSelector
           value={data?.unit}
           onChange={(v) => onChangeValue("unit", v)}
-          required
-          label={"Unidade"}
-          placeholder={"Selecione uma unidade"}
-          options={[
-            { label: "Cambuí", value: "1" },
-            { label: "São João BV", value: "2" },
-          ]}
         />
         <TextInput
           value={data?.customer}
@@ -54,23 +51,17 @@ const OccurrenceForm = ({
           label={"Ordem de venda / Renomeio"}
           required
         />
-        <TextInput
+        <SectorsSelector
           value={data?.sector}
           onChange={(v) => onChangeValue("sector", v)}
-          label={"Setor"}
-          required
         />
-        <TextInput
+        <ProductsSelector
           value={data?.product}
           onChange={(v) => onChangeValue("product", v)}
-          label={"Produto"}
-          required
         />
-        <TextInput
+        <CategoriesSelector
           value={data?.category}
           onChange={(v) => onChangeValue("category", v)}
-          label={"Categoria da ocorrência"}
-          required
         />
         <TextArea
           value={data?.reason}
