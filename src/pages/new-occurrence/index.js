@@ -4,14 +4,15 @@ import { useNavigate } from "react-router-dom";
 import DiscartModal from "../../components/modals/DiscartModal";
 import { occurrenceInitialState } from "../../utils/state_models";
 import Appbar from "./components/Appbar";
-import AttachBox from "./components/attach/AttachBox";
 import OccurrenceForm from "./components/OccurrenceForm";
+import AttachBox from "./components/attach/AttachBox";
 
 export default (props) => {
   const navigate = useNavigate();
 
   const [changed, setChanged] = useState(false);
   const [data, setData] = useState(occurrenceInitialState);
+  const [files, setFiles] = useState([]);
 
   const onCancel = useCallback(() => {
     if (changed) {
@@ -30,23 +31,45 @@ export default (props) => {
     return Object.values(data)?.every(Boolean);
   }, [data]);
 
+  const handleAddFiles = useCallback((newFiles = []) => {
+    setFiles((prev) => {
+      return [...newFiles, ...prev];
+    });
+  }, []);
+
+  const handleRemoveFile = useCallback((fileId = "") => {
+    setFiles((prev) => {
+      return [...prev?.filter((file) => file.id !== fileId)];
+    });
+  }, []);
+
   return (
     <Box flex={1} display={"flex"} flexDirection={"column"}>
       <Appbar onCancel={onCancel} isOk={isOk} />
       <Box
         flex={1}
         flexBasis={0}
+        height={"100%"}
         overflow={"auto"}
-        p={4}
-        pb={"100px"}
-        pt={"30px"}
+        p={{ xs: 0, md: 4 }}
+        pt={{ xs: "20px", md: "30px" }}
       >
         <Container
           maxWidth="lg"
-          sx={{ display: "flex", alignItems: "flex-start", gap: 4 }}
+          sx={{
+            pb: 7,
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: "flex-start",
+            gap: { xs: 2, md: 4 },
+          }}
         >
           <OccurrenceForm data={data} onChangeValue={handleChangeValue} />
-          <AttachBox />
+          <AttachBox
+            files={files}
+            addFiles={handleAddFiles}
+            onRemoveFile={handleRemoveFile}
+          />
         </Container>
       </Box>
       <DiscartModal />

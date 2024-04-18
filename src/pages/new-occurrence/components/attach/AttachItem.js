@@ -1,27 +1,17 @@
-import {
-  Close,
-  DeleteOutlineOutlined,
-  RemoveOutlined,
-} from "@mui/icons-material";
-import { IconButton, Box, Tooltip } from "@mui/joy";
+import { DeleteOutlineOutlined } from "@mui/icons-material";
+import { IconButton, Tooltip } from "@mui/joy";
+import { ImageListItem } from "@mui/material";
 import Zoom from "react-medium-image-zoom";
 
-function AttachItem({ preview, filename }) {
+function AttachItem({ preview, filename, onRemove = () => {}, id }) {
   return (
-    <Box
-      border={1}
-      width={200}
-      height={"auto"}
-      borderColor={"divider"}
-      borderRadius={"md"}
-      overflow={"hidden"}
-      position={"relative"}
-      boxShadow={"sm"}
-      component={"div"}
+    <ImageListItem
+      sx={{ position: "relative", borderRadius: 4, overflow: "hidden" }}
       title={filename}
     >
       <Tooltip title="Remover">
         <IconButton
+          onClick={() => onRemove(id)}
           variant="solid"
           sx={{ position: "absolute", zIndex: 10, top: 5, right: 5 }}
         >
@@ -31,7 +21,7 @@ function AttachItem({ preview, filename }) {
       <Zoom>
         <img src={preview} width={"100%"} />
       </Zoom>
-    </Box>
+    </ImageListItem>
   );
 }
 

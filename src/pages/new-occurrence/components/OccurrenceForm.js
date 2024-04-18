@@ -1,13 +1,12 @@
 import { Box, Stack, Typography } from "@mui/joy";
 import React from "react";
-import SelectInput from "../../../components/inputs/SelectInput";
 import TextInput from "../../../components/inputs/TextInput";
 import TextArea from "../../../components/inputs/TextInputArea";
-import { occurrenceInitialState } from "../../../utils/state_models";
-import UnitsSelector from "../../../components/inputs/selectors/UnitsSelector";
-import SectorsSelector from "../../../components/inputs/selectors/SectorsSelector";
-import ProductsSelector from "../../../components/inputs/selectors/ProductsSelector";
 import CategoriesSelector from "../../../components/inputs/selectors/CategoriesSelector";
+import ProductsSelector from "../../../components/inputs/selectors/ProductsSelector";
+import SectorsSelector from "../../../components/inputs/selectors/SectorsSelector";
+import UnitsSelector from "../../../components/inputs/selectors/UnitsSelector";
+import { occurrenceInitialState } from "../../../utils/state_models";
 
 const OccurrenceForm = ({
   data = occurrenceInitialState,
@@ -20,7 +19,8 @@ const OccurrenceForm = ({
       p={2}
       borderRadius={"sm"}
       bgcolor={"#FFF"}
-      flex={1}
+      flex={{ xs: undefined, md: 1 }}
+      width={"100%"}
     >
       <Typography gutterBottom level={"h3"}>
         Preencha os campos

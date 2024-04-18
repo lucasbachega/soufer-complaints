@@ -1,24 +1,29 @@
+import { AttachmentOutlined } from "@mui/icons-material";
 import { Box, Button, Stack, Typography } from "@mui/joy";
-import React, { useEffect, useState } from "react";
+import { ImageList } from "@mui/material";
+import { nanoid } from "@reduxjs/toolkit";
+import React, { memo, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import AttachItem from "./AttachItem";
-import { AttachmentOutlined } from "@mui/icons-material";
 
-const AttachBox = () => {
-  const [files, setFiles] = useState([]);
+const AttachBox = ({
+  files = [],
+  onRemoveFile = (id = "") => {},
+  addFiles = (files = []) => {},
+}) => {
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
     },
     onDrop: (acceptedFiles) => {
-      setFiles((prev) => [
-        ...acceptedFiles.map((file) =>
+      addFiles(
+        acceptedFiles.map((file) =>
           Object.assign(file, {
+            id: nanoid(),
             preview: URL.createObjectURL(file),
           })
-        ),
-        ...prev,
-      ]);
+        )
+      );
     },
   });
 
@@ -28,7 +33,13 @@ const AttachBox = () => {
   }, []);
 
   const thumbs = files.map((file) => (
-    <AttachItem filename={file.name} key={file.name} preview={file.preview} />
+    <AttachItem
+      id={file.id}
+      filename={file.name}
+      key={file.id}
+      preview={file.preview}
+      onRemove={onRemoveFile}
+    />
   ));
 
   return (
@@ -37,8 +48,9 @@ const AttachBox = () => {
       borderColor={"divider"}
       borderRadius={"sm"}
       bgcolor={"#FFF"}
-      flex={1}
+      flex={{ xs: undefined, md: 1 }}
       p={2}
+      width={"100%"}
     >
       <Stack mb={0.7} direction={"row"} alignItems={"center"} gap={2}>
         <AttachmentOutlined />
@@ -48,15 +60,9 @@ const AttachBox = () => {
         Carregue arquivos dos tipos, PNG, JPEG ou WEBAPP
       </Typography>
       {Boolean(thumbs?.length) && (
-        <Box
-          mt={2}
-          display={"flex"}
-          alignItems={"flex-start"}
-          gap={2}
-          flexWrap={"wrap"}
-        >
+        <ImageList sx={{ mt: 2 }} variant="masonry" cols={3} gap={8}>
           {thumbs}
-        </Box>
+        </ImageList>
       )}
       <Box
         component={"div"}
@@ -80,4 +86,4 @@ const AttachBox = () => {
   );
 };
 
-export default AttachBox;
+export default memo(AttachBox);

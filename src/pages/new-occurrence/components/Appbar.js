@@ -7,26 +7,37 @@ const Appbar = ({ onCancel = () => {}, isOk }) => {
     <Box
       zIndex={100}
       boxShadow={"sm"}
-      p={2}
+      px={{ xs: 1, md: 2 }}
+      py={1}
       bgcolor={"#FFF"}
       display={"flex"}
       alignItems={"center"}
       gap={1}
     >
-      <IconButton sx={{ mr: 1 }} size="lg" onClick={onCancel}>
+      <IconButton size="md" onClick={onCancel}>
         <Close />
       </IconButton>
-      <Avatar color="primary" variant="soft" size="md">
+      <Avatar
+        sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+        color="primary"
+        variant="soft"
+        size="md"
+      >
         <AssignmentOutlined />
       </Avatar>
-      <Typography ml={2} level="h3">
+      <Typography sx={{ fontSize: { xs: "15px", md: "20px" } }} level={"h3"}>
         Nova ocorrência
       </Typography>
       <Box flex={1} />
-      <Button onClick={onCancel} variant="outlined" size="lg">
+      <Button
+        sx={{ display: { xs: "none", md: "flex" } }}
+        onClick={onCancel}
+        variant="outlined"
+        size="md"
+      >
         Cancelar
       </Button>
-      <Button disabled={!isOk} size="lg">
+      <Button disabled={!isOk} size="md">
         Enviar ocorrência
       </Button>
     </Box>
