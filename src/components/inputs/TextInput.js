@@ -14,6 +14,7 @@ const TextInput = ({
   endDecorator,
   error,
   required,
+  type,
 }) => {
   return (
     <FormControl required={required} error={error}>
@@ -25,6 +26,7 @@ const TextInput = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         size={size}
+        type={type}
         variant={variant}
       />
       {Boolean(helperText) && (
