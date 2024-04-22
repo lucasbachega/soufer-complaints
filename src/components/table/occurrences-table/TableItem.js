@@ -1,16 +1,20 @@
 import {
-  MoreHorizRounded
+  AutorenewRounded,
+  CheckRounded,
+  MoreHorizRounded,
 } from "@mui/icons-material";
 import {
+  Chip,
   Divider,
   Dropdown,
   IconButton,
   Menu,
   MenuButton,
   MenuItem,
-  Typography
+  Typography,
 } from "@mui/joy";
 import React, { memo } from "react";
+import { formatDate } from "../../../utils/date_functions";
 
 function RowMenu() {
   return (
@@ -40,56 +44,69 @@ const TableItem = ({ row = {}, onClick }) => {
       style={{ height: 50, cursor: "pointer" }}
     >
       <td>
-        <Typography ml={"6px"} level="body-xs">
-          --
+        <Typography ml={"6px"} level="body-xs" sx={{ wordBreak: "break-word" }}>
+          {formatDate(row.date)}
         </Typography>
       </td>
       <td>
-        <Typography level="body-xs">--</Typography>
-      </td>
-      <td>
-        --
-        {/* <Chip
+        <Chip
           variant="soft"
           size="sm"
           startDecorator={
             {
-              Paid: <CheckRounded />,
-              Refunded: <AutorenewRounded />,
-              Cancelled: <Block />,
+              opened: <AutorenewRounded />,
+              completed: <CheckRounded />,
             }[row.status]
           }
           color={
             {
-              Paid: "success",
-              Refunded: "neutral",
-              Cancelled: "danger",
+              opened: "neutral",
+              completed: "success",
             }[row.status]
           }
         >
           {row.status}
-        </Chip> */}
+        </Chip>
       </td>
       <td>
-        <Typography level="body-xs">--</Typography>
+        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
+          {row.unit}
+        </Typography>
       </td>
       <td>
-        <Typography level="body-xs">--</Typography>
+        <Typography sx={{ wordBreak: "break-word" }} level="body-xs">
+          {row.customer}
+        </Typography>
       </td>
       <td>
-        <Typography level="body-xs">--</Typography>
+        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
+          {row.representative}
+        </Typography>
       </td>
       <td>
-        <Typography level="body-xs">--</Typography>
+        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
+          {row.salesOrder}
+        </Typography>
       </td>
       <td>
-        <Typography level="body-xs">--</Typography>
+        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
+          {row.sector}
+        </Typography>
       </td>
       <td>
-        <Typography level="body-xs">--</Typography>
+        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
+          {row.product}
+        </Typography>
       </td>
       <td>
-        <Typography level="body-xs">--</Typography>
+        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
+          {row.category}
+        </Typography>
+      </td>
+      <td>
+        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
+          {row.files.length}
+        </Typography>
       </td>
     </tr>
   );

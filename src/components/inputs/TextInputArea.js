@@ -14,6 +14,7 @@ const TextArea = ({
   endDecorator,
   error,
   required,
+  minRows = 2,
 }) => {
   return (
     <FormControl required={required} error={error}>
@@ -22,7 +23,7 @@ const TextArea = ({
         placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        minRows={2}
+        minRows={minRows}
         maxRows={4}
         size={size}
         startDecorator={startDecorator}
