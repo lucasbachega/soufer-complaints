@@ -12,14 +12,16 @@ import {
   Typography,
 } from "@mui/joy";
 import React from "react";
-import { formatMoment } from "../../utils/date_functions";
-import TextArea from "../inputs/TextInputArea";
+import { formatMoment } from "../../../utils/date_functions";
+import TextArea from "../../inputs/TextInputArea";
+import ToggleStatus from "./components/ToggleStatus";
+import SaveInput from "../../inputs/SaveInput";
 
 const ModalOccurrenceView = ({ open, data, onClose }) => {
   return (
     <Modal open={open} onClose={onClose}>
-      <ModalOverflow>
-        <ModalDialog minWidth={"sm"} maxWidth={"sm"} layout={"center"}>
+      <ModalOverflow sx={{ overflow: "scroll" }}>
+        <ModalDialog maxWidth={"sm"} layout={"center"}>
           <ModalClose />
           <Typography lineHeight={1} level="title-sm" color="neutral">
             Ocorrência: {data?.id}
@@ -31,40 +33,19 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
             Atraso na entrega
           </Typography>
           <Divider sx={{ my: 1 }} />
-          <Chip
-            variant="outlined"
-            sx={{ position: "absolute", right: 50, top: 12 }}
-            startDecorator={<EditOutlined />}
-            onClick={() => {}}
-          >
-            Em aberto
-          </Chip>
+          <ToggleStatus />
           <Stack direction={"column"} gap={2}>
-            <TextArea
-              minRows={1}
-              label={"Análise de causa"}
-              endDecorator={
-                <Stack width={"100%"} direction={"row"} gap={1}>
-                  <Box flex={1} />
-                  <Button size="sm" variant="plain">
-                    Cancelar
-                  </Button>
-                  <Button size="sm">Salvar</Button>
-                </Stack>
-              }
+            <SaveInput
+              inputProps={{
+                label: "Análise de causa",
+                placeholder: "Adicione notas sobre a causa...",
+              }}
             />
-            <TextArea
-              minRows={1}
-              label={"Ação de correção"}
-              endDecorator={
-                <Stack width={"100%"} direction={"row"} gap={1}>
-                  <Box flex={1} />
-                  <Button size="sm" variant="plain">
-                    Cancelar
-                  </Button>
-                  <Button size="sm">Salvar</Button>
-                </Stack>
-              }
+            <SaveInput
+              inputProps={{
+                label: "Ação de correção",
+                placeholder: "Adicione notas sobre a correção...",
+              }}
             />
           </Stack>
           <Stack pb={5} mt={2} direction={"column"} gap={2}>

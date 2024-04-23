@@ -5,7 +5,7 @@ import Table from "@mui/joy/Table";
 import * as React from "react";
 
 import { nanoid } from "@reduxjs/toolkit";
-import ModalOccurrenceView from "../../modals/ModalOccurrenceView";
+import ModalOccurrenceView from "../../modals/occurrence-view/ModalOccurrenceView";
 import Filterbar from "./Filterbar";
 import TableHeader from "./TableHeader";
 import TableItem from "./TableItem";

@@ -11,43 +11,30 @@ import {
   Menu,
   MenuButton,
   MenuItem,
+  Tooltip,
   Typography,
 } from "@mui/joy";
 import React, { memo } from "react";
 import { formatDate } from "../../../utils/date_functions";
 
-function RowMenu() {
+const DefaultCell = memo(({ children, textProps, cellProps }) => {
   return (
-    <Dropdown>
-      <MenuButton
-        slots={{ root: IconButton }}
-        slotProps={{ root: { variant: "plain", color: "neutral", size: "sm" } }}
-      >
-        <MoreHorizRounded />
-      </MenuButton>
-      <Menu size="sm" sx={{ minWidth: 140 }}>
-        <MenuItem>Edit</MenuItem>
-        <MenuItem>Rename</MenuItem>
-        <MenuItem>Move</MenuItem>
-        <Divider />
-        <MenuItem color="danger">Delete</MenuItem>
-      </Menu>
-    </Dropdown>
+    <td {...cellProps}>
+      <Tooltip title={children} size="sm" variant="outlined" arrow>
+        <Typography {...textProps} noWrap level="body-xs">
+          {children}
+        </Typography>
+      </Tooltip>
+    </td>
   );
-}
+});
 
 const TableItem = ({ row = {}, onClick }) => {
   return (
-    <tr
-      key={row.id}
-      onClick={() => onClick(row)}
-      style={{ height: 50, cursor: "pointer" }}
-    >
-      <td>
-        <Typography ml={"6px"} level="body-xs" sx={{ wordBreak: "break-word" }}>
-          {formatDate(row.date)}
-        </Typography>
-      </td>
+    <tr key={row.id} onClick={() => onClick(row)} style={{ cursor: "pointer" }}>
+      <DefaultCell textProps={{ ml: "6px" }}>
+        {formatDate(row.date)}
+      </DefaultCell>
       <td>
         <Chip
           variant="soft"
@@ -68,46 +55,22 @@ const TableItem = ({ row = {}, onClick }) => {
           {row.status}
         </Chip>
       </td>
-      <td>
-        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
-          {row.unit}
-        </Typography>
-      </td>
-      <td>
-        <Typography sx={{ wordBreak: "break-word" }} level="body-xs">
-          {row.customer}
-        </Typography>
-      </td>
-      <td>
-        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
-          {row.representative}
-        </Typography>
-      </td>
-      <td>
-        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
-          {row.salesOrder}
-        </Typography>
-      </td>
-      <td>
-        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
-          {row.sector}
-        </Typography>
-      </td>
-      <td>
-        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
-          {row.product}
-        </Typography>
-      </td>
-      <td>
-        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
-          {row.category}
-        </Typography>
-      </td>
-      <td>
-        <Typography level="body-xs" sx={{ wordBreak: "break-word" }}>
-          {row.files.length}
-        </Typography>
-      </td>
+
+      <DefaultCell>{row.unit}</DefaultCell>
+
+      <DefaultCell>{row.customer}</DefaultCell>
+
+      <DefaultCell>{row.representative}</DefaultCell>
+
+      <DefaultCell>{row.salesOrder}</DefaultCell>
+
+      <DefaultCell>{row.sector}</DefaultCell>
+
+      <DefaultCell>{row.product}</DefaultCell>
+
+      <DefaultCell>{row.category}</DefaultCell>
+
+      <DefaultCell>{row.files?.length}</DefaultCell>
     </tr>
   );
 };
