@@ -1,6 +1,6 @@
 const express = require("express");
 const Database = require("../db");
-const { InvalidUserAccess } = require("./errors/auth");
+const { InvalidUserAccess } = require("./errors");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const SECRET = process.env.API_SECRET_KEY || "InsecureSecret";
