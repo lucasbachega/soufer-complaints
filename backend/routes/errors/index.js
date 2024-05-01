@@ -38,10 +38,19 @@ class CategoriaNotFound extends Error {
   }
 }
 
+class RequiredFieldError extends Error {
+  constructor(fieldname) {
+    super(`O preenchimento do campo "${fieldname}" é obrigatório`);
+    this.name = "RequiredFieldError";
+    this.status = 400;
+  }
+}
+
 module.exports = {
   InvalidUserAccess,
   UnidadeNotFound,
   SetorNotFound,
   ProdutoNotFound,
   CategoriaNotFound,
+  RequiredFieldError,
 };

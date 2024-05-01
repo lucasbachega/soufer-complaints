@@ -198,4 +198,27 @@ router.delete("/categorias/:id", async (req, res) => {
   });
 });
 
+/**
+ * CONTROLE DE OCORRÊNCIAS
+ */
+
+// Listar ocorrências com base em filtros selecionados
+//TODO: Incluir filtros básicos ....
+router.get("/complaints", async (req, res) => {
+  const { status } = req.query;
+
+  const filters = {};
+  if (status) filters.status = status;
+
+  const resultado = await Database.collection("ocorrencias")
+    .find({
+      ...filters,
+    })
+    .sort({ created_at: -1 })
+    .toArray();
+
+  return res.send(resultado);
+});
+
+//TODO: Atualizar dados de uma ocorrência....
 module.exports = router;
