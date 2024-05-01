@@ -39,7 +39,7 @@ function startServer() {
 
   // backend routes;
   app.use("/api", bodyParser.json({ limit: "15mb" }));
-  app.use("/api/admin", middlewares.auth);
+  app.use("/api/admin", middlewares.auth, routes.admin);
   app.use("/api/auth", routes.auth);
   app.use(cookieParser());
 
@@ -57,6 +57,7 @@ function startServer() {
       code: err.name,
       message: err.message,
       details: err.toString(),
+      timestamp: new Date(),
     });
   });
 
