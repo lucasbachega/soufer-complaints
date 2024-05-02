@@ -101,6 +101,215 @@ class HttpClient {
   static async listUnidades() {
     return this.get("/complaints/unidades");
   }
+
+  /**
+   * Listar setores ativos disponíveis para seleção
+   */
+  static async listSetores() {
+    return this.get("/complaints/setor");
+  }
+
+  /**
+   * Listar produtos ativos disponíveis para seleção
+   */
+  static async listProdutos() {
+    return this.get("/complaints/produtos");
+  }
+
+  /**
+   * Listar categorias ativas disponíveis para seleção
+   */
+  static async listCategorias() {
+    return this.get("/complaints/categorias");
+  }
+
+  /**
+   * Registrar uma nova ocorrência
+   */
+  static async registrarOcorrencia({
+    unidade,
+    setor,
+    produto,
+    categoria,
+    cliente,
+    representante,
+    ordem_venda,
+    motivo,
+  }) {
+    return this.post("/complaints/register", {
+      unidade_id: unidade,
+      setor_id: setor,
+      produto_id: produto,
+      categoria_id: categoria,
+      cliente,
+      representante,
+      ordem_venda,
+      motivo,
+    });
+  }
+
+  /**
+   * Controle de administrador
+   * Área restrita - Login necessário
+   */
+  static admin = {
+    /**
+     * Listar ocorrências p/ admin de acordo com filtros
+     */
+    async listarOcorrencias({ period, unidade, categoria, produto, setor } = {}) {
+      return HttpClient.get("/admin/complaints", {
+        params: {
+          unidade_id: unidade,
+          categoria_id: categoria,
+          produto_id: produto,
+          setor_id: setor,
+          period,
+        },
+      });
+    },
+    /**
+     * Atualizar uma ocorrência
+     * (alterar status e dados de análise)
+     */
+    async updateOcorrencia(id, { causa, correcao } = {}) {
+      return HttpClient.put(`/admin/complaints/${id}`, {
+        causa,
+        correcao,
+      });
+    },
+    /**
+     * Criar uma unidade
+     */
+    async createUnidade({ text }) {
+      return HttpClient.post("/admin/unidades", { text });
+    },
+    /**
+     * Listar todas as unidades cadastradas
+     */
+    async listarUnidades() {
+      return HttpClient.get("/admin/unidades");
+    },
+    /**
+     * Atualizar uma unidade
+     */
+    async updateUnidade(id, { text }) {
+      return HttpClient.put(`/admin/unidades/${id}`, { text });
+    },
+    /**
+     * Ativar/Desativar Unidade
+     */
+    async setActiveUnidade(id, active) {
+      return HttpClient.put(`/admin/unidades/${id}`, { active: !!active });
+    },
+    /**
+     * Remover uma unidade
+     */
+    async deleteUnidade(id) {
+      return HttpClient.delete(`/admin/unidades/${id}`);
+    },
+
+    // SETOR
+    // **********************************************************************
+    /**
+     * Criar um setor
+     */
+    async createSetor({ text }) {
+      return HttpClient.post("/admin/setor", { text });
+    },
+    /**
+     * Listar todas as Setores cadastradas
+     */
+    async listarSetores() {
+      return HttpClient.get("/admin/setor");
+    },
+    /**
+     * Atualizar um Setor
+     */
+    async updateSetor(id, { text }) {
+      return HttpClient.put(`/admin/setor/${id}`, { text });
+    },
+    /**
+     * Ativar/Desativar Setor
+     */
+    async setActiveSetor(id, active) {
+      return HttpClient.put(`/admin/setor/${id}`, { active: !!active });
+    },
+    /**
+     * Remover um Setor
+     */
+    async deleteSetor(id) {
+      return HttpClient.delete(`/admin/setor/${id}`);
+    },
+    // **********************************************************************
+
+    // PRODUTOS
+    // **********************************************************************
+    /**
+     * Criar um Produto
+     */
+    async createProduto({ text }) {
+      return HttpClient.post("/admin/produtos", { text });
+    },
+    /**
+     * Listar todas os Produtos cadastradas
+     */
+    async listarProdutos() {
+      return HttpClient.get("/admin/produtos");
+    },
+    /**
+     * Atualizar um Produto
+     */
+    async updateProduto(id, { text }) {
+      return HttpClient.put(`/admin/produtos/${id}`, { text });
+    },
+    /**
+     * Ativar/Desativar Produto
+     */
+    async setActiveProduto(id, active) {
+      return HttpClient.put(`/admin/produtos/${id}`, { active: !!active });
+    },
+    /**
+     * Remover um Produto
+     */
+    async deleteProduto(id) {
+      return HttpClient.delete(`/admin/produtos/${id}`);
+    },
+    // **********************************************************************
+
+    // CATEGORIAS
+    // **********************************************************************
+    /**
+     * Criar uma Categoria
+     */
+    async createCategoria({ text }) {
+      return HttpClient.post("/admin/categorias", { text });
+    },
+    /**
+     * Listar todas as Categorias cadastradas
+     */
+    async listarCategorias() {
+      return HttpClient.get("/admin/categorias");
+    },
+    /**
+     * Atualizar uma Categoria
+     */
+    async updateCategoria(id, { text }) {
+      return HttpClient.put(`/admin/categorias/${id}`, { text });
+    },
+    /**
+     * Ativar/Desativar Categoria
+     */
+    async setActiveCategoria(id, active) {
+      return HttpClient.put(`/admin/categorias/${id}`, { active: !!active });
+    },
+    /**
+     * Remover uma Categoria
+     */
+    async deleteCategoria(id) {
+      return HttpClient.delete(`/admin/categorias/${id}`);
+    },
+    // **********************************************************************
+  };
 }
 
 export { HttpClient };
