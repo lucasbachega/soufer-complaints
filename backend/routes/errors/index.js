@@ -46,6 +46,14 @@ class RequiredFieldError extends Error {
   }
 }
 
+class OcorrenciaNotFound extends Error {
+  constructor() {
+    super(`Ocorrência não encontrada`);
+    this.name = "OcorrenciaNotFound";
+    this.status = 400;
+  }
+}
+
 module.exports = {
   InvalidUserAccess,
   UnidadeNotFound,
@@ -53,4 +61,5 @@ module.exports = {
   ProdutoNotFound,
   CategoriaNotFound,
   RequiredFieldError,
+  OcorrenciaNotFound,
 };
