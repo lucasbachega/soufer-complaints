@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import SelectInput from "../SelectInput";
 
-function UnitsSelector({ value = "", onChange = () => {} }) {
+function UnitsSelector({ value = "", onChange = () => {}, disabled }) {
   const data = useSelector((state) => state.units.data);
 
   return (
@@ -10,6 +10,7 @@ function UnitsSelector({ value = "", onChange = () => {} }) {
       onChange={onChange}
       required
       label={"Unidade"}
+      disabled={disabled}
       placeholder={"Selecione uma unidade"}
       options={data?.map((unit) => ({ label: unit?.label, value: unit?.id }))}
     />

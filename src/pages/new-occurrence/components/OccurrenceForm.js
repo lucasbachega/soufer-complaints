@@ -11,6 +11,7 @@ import { occurrenceInitialState } from "../../../utils/state_models";
 const OccurrenceForm = ({
   data = occurrenceInitialState,
   onChangeValue = (prop = "", value = "") => {},
+  loading,
 }) => {
   return (
     <Box
@@ -30,40 +31,48 @@ const OccurrenceForm = ({
       </Typography>
       <Stack mt={3} spacing={2}>
         <UnitsSelector
+          disabled={loading}
           value={data?.unit}
           onChange={(v) => onChangeValue("unit", v)}
         />
         <TextInput
+          disabled={loading}
           value={data?.customer}
           onChange={(v) => onChangeValue("customer", v)}
           label={"Cliente"}
           required
         />
         <TextInput
+          disabled={loading}
           value={data?.representative}
           onChange={(v) => onChangeValue("representative", v)}
           label={"Representante"}
           required
         />
         <TextInput
+          disabled={loading}
           value={data?.salesOrder}
           onChange={(v) => onChangeValue("salesOrder", v)}
           label={"Ordem de venda / Renomeio"}
           required
         />
         <SectorsSelector
+          disabled={loading}
           value={data?.sector}
           onChange={(v) => onChangeValue("sector", v)}
         />
         <ProductsSelector
+          disabled={loading}
           value={data?.product}
           onChange={(v) => onChangeValue("product", v)}
         />
         <CategoriesSelector
+          disabled={loading}
           value={data?.category}
           onChange={(v) => onChangeValue("category", v)}
         />
         <TextArea
+          disabled={loading}
           value={data?.reason}
           onChange={(v) => onChangeValue("reason", v)}
           label={"Motivo"}

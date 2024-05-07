@@ -2,7 +2,7 @@ import { AssignmentOutlined, Close } from "@mui/icons-material";
 import { Avatar, Box, Button, IconButton, Typography } from "@mui/joy";
 import React, { memo } from "react";
 
-const Appbar = ({ onCancel = () => {}, isOk }) => {
+const Appbar = ({ onCancel = () => {}, isOk, onCreate, loading }) => {
   return (
     <Box
       zIndex={100}
@@ -37,8 +37,8 @@ const Appbar = ({ onCancel = () => {}, isOk }) => {
       >
         Cancelar
       </Button>
-      <Button disabled={!isOk} size="md">
-        Enviar ocorrência
+      <Button disabled={!isOk || loading} onClick={onCreate} size="md">
+        {loading ? "Enviando" : "Enviar"}
       </Button>
     </Box>
   );

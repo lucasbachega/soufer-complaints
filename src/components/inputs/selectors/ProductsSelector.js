@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import SelectInput from "../SelectInput";
 
-function ProductsSelector({ value = "", onChange = () => {} }) {
+function ProductsSelector({ value = "", onChange = () => {}, disabled }) {
   const data = useSelector((state) => state.products.data);
 
   return (
@@ -10,6 +10,7 @@ function ProductsSelector({ value = "", onChange = () => {} }) {
       onChange={onChange}
       required
       label={"Produto"}
+      disabled={disabled}
       placeholder={"Selecione um produto"}
       options={data?.map((prod) => ({
         label: prod?.label,

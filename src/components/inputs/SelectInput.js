@@ -8,7 +8,7 @@ import {
   Select,
   Typography,
 } from "@mui/joy";
-import React from "react";
+import React, { useState } from "react";
 
 const SelectInput = ({
   value,
@@ -21,7 +21,7 @@ const SelectInput = ({
   startDecorator,
   endDecorator,
   error,
-  defaultValue,
+  defaultValue = "",
   options = [],
   required,
   disabled,
@@ -31,7 +31,7 @@ const SelectInput = ({
       {Boolean(label) && <FormLabel>{label}</FormLabel>}
       <Select
         required={required}
-        value={value}
+        value={value || ""}
         variant={variant}
         size={size}
         placeholder={placeholder}
@@ -40,12 +40,20 @@ const SelectInput = ({
         defaultValue={defaultValue}
         disabled={disabled}
         onChange={(e, value) => Boolean(value) && onChange(value)}
+        renderValue={(option) => (
+          <Typography sx={{ opacity: option.value === "" ? 0.7 : 1 }}>
+            {option.label}
+          </Typography>
+        )}
       >
         {!options?.length && (
           <Typography textAlign={"center"} m={3} level="body-md">
             Nada encontrado
           </Typography>
         )}
+        <Option sx={{ fontStyle: "italic" }} color="neutral" value={""}>
+          {placeholder}
+        </Option>
         {options?.map((option) => (
           <Option key={option?.value} value={option?.value}>
             {option?.label}

@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import SelectInput from "../SelectInput";
 
-function SectorsSelector({ value = "", onChange = () => {} }) {
+function SectorsSelector({ value = "", onChange = () => {}, disabled }) {
   const data = useSelector((state) => state.sectors.data);
 
   return (
@@ -10,6 +10,7 @@ function SectorsSelector({ value = "", onChange = () => {} }) {
       onChange={onChange}
       required
       label={"Setor"}
+      disabled={disabled}
       placeholder={"Selecione um setor"}
       options={data?.map((sector) => ({
         label: sector?.label,

@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import SelectInput from "../SelectInput";
 
-function CategoriesSelector({ value = "", onChange = () => {} }) {
+function CategoriesSelector({ value = "", onChange = () => {}, disabled }) {
   const data = useSelector((state) => state.categories.data);
 
   return (
@@ -9,6 +9,7 @@ function CategoriesSelector({ value = "", onChange = () => {} }) {
       value={value}
       onChange={onChange}
       required
+      disabled={disabled}
       label={"Categoria"}
       placeholder={"Selecione uma categoria"}
       options={data?.map((category) => ({
