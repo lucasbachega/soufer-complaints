@@ -4,16 +4,16 @@ import * as React from "react";
 
 import { List, Typography } from "@mui/joy";
 import LoadingScreen from "../../loading/LoadingScreen";
-import UnitItem from "./UnitItem";
+import CategoryItem from "./CategoryItem";
 
-export default function Unitstable({
+export default function CategoriesTable({
   data = [],
   onRemoveRow = () => {},
   loading,
 }) {
   const renderRows = React.useCallback(
     (row) => {
-      return <UnitItem key={row.id} row={row} onRemove={onRemoveRow} />;
+      return <CategoryItem key={row.id} row={row} onRemove={onRemoveRow} />;
     },
     [onRemoveRow]
   );
@@ -45,7 +45,7 @@ export default function Unitstable({
               height={400}
             >
               <Typography textAlign={"center"} level="title-lg" color="neutral">
-                Nenhuma unidade encontrada
+                Nenhuma categoria encontrada
               </Typography>
             </Box>
           )}

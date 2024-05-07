@@ -18,11 +18,13 @@ const TextArea = ({
   onFocus,
   onBlur,
   disabled,
+  autoFocus,
 }) => {
   return (
     <FormControl required={required} error={error}>
       {Boolean(label) && <FormLabel>{label}</FormLabel>}
       <Textarea
+        autoFocus={autoFocus}
         placeholder={placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}

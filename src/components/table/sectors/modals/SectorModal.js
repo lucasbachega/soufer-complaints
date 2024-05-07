@@ -10,10 +10,10 @@ import {
 import { useEffect, useState } from "react";
 import TextArea from "../../../inputs/TextInputArea";
 
-function UnitModal({
+function SectorModal({
   open,
   onClose,
-  unitId,
+  sectorId,
   defaultText,
   editMode,
   onConfirm = async () => {},
@@ -24,7 +24,7 @@ function UnitModal({
   const handleConfirm = async (event) => {
     event.preventDefault();
     setLoading(true);
-    await onConfirm(value, unitId);
+    await onConfirm(value, sectorId);
     setLoading(false);
     onClose();
   };
@@ -36,7 +36,7 @@ function UnitModal({
       <ModalDialog minWidth={350}>
         <ModalClose />
         <DialogTitle>
-          {editMode ? "Editar unidade" : "Criar nova unidade"}
+          {editMode ? "Editar setor" : "Criar novo setor"}
         </DialogTitle>
         <DialogContent></DialogContent>
         <form onSubmit={handleConfirm}>
@@ -60,4 +60,4 @@ function UnitModal({
   );
 }
 
-export default UnitModal;
+export default SectorModal;

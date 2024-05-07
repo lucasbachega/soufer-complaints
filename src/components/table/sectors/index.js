@@ -4,16 +4,16 @@ import * as React from "react";
 
 import { List, Typography } from "@mui/joy";
 import LoadingScreen from "../../loading/LoadingScreen";
-import UnitItem from "./UnitItem";
+import SectorItem from "./SectorItem";
 
-export default function Unitstable({
+export default function SectorsTable({
   data = [],
   onRemoveRow = () => {},
   loading,
 }) {
   const renderRows = React.useCallback(
     (row) => {
-      return <UnitItem key={row.id} row={row} onRemove={onRemoveRow} />;
+      return <SectorItem key={row.id} row={row} onRemove={onRemoveRow} />;
     },
     [onRemoveRow]
   );
@@ -45,7 +45,7 @@ export default function Unitstable({
               height={400}
             >
               <Typography textAlign={"center"} level="title-lg" color="neutral">
-                Nenhuma unidade encontrada
+                Nenhum setor encontrado
               </Typography>
             </Box>
           )}
