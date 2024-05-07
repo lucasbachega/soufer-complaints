@@ -15,12 +15,14 @@ const TextInput = ({
   error,
   required,
   disabled,
+  autoFocus,
   type,
 }) => {
   return (
     <FormControl required={required} error={error}>
       {Boolean(label) && <FormLabel>{label}</FormLabel>}
       <Input
+        autoFocus={autoFocus}
         startDecorator={startDecorator}
         endDecorator={endDecorator}
         value={value}
