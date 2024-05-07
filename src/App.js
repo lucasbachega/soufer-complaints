@@ -11,6 +11,8 @@ import { fetchUnits } from "./store/reducers/unitsSlice";
 import { fetchSectors } from "./store/reducers/sectorsSlice";
 import { fetchProducts } from "./store/reducers/productsSlice";
 import { fetchCategories } from "./store/reducers/occurrenceCategoriesSlice";
+import SnackbarBase from "./components/snackbar/SnackbarBase";
+import ModalErrorBase from "./components/modals/ModalErrorBase";
 
 function App() {
   const dispatch = useDispatch();
@@ -35,6 +37,8 @@ function App() {
           <Routes />
         </BrowserRouter>
       </CssVarsProvider>
+      <SnackbarBase />
+      <ModalErrorBase />
     </div>
   );
 }

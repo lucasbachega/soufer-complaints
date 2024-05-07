@@ -24,13 +24,14 @@ const TableHeader = ({}) => {
     <thead>
       <tr>
         <ColumnCell
+          width={130}
           thStyle={{
             padding: "12px 12px",
           }}
         >
           Data
         </ColumnCell>
-        <ColumnCell width={150}>Status</ColumnCell>
+        <ColumnCell width={120}>Status</ColumnCell>
         <ColumnCell>Unidade</ColumnCell>
         <ColumnCell>Cliente</ColumnCell>
         <ColumnCell>Representante</ColumnCell>

@@ -29,7 +29,7 @@ const Login = () => {
     });
     if (res?.ok) {
       localStorage.setItem("username", username);
-      dispatch(login({}));
+      dispatch(login(res?.user));
       navigate("/admin");
     } else {
       setError(res?.error?.message);

@@ -11,41 +11,86 @@ import {
   Stack,
   Typography,
 } from "@mui/joy";
-import React from "react";
+import React, { memo } from "react";
 import { formatMoment } from "../../../utils/date_functions";
 import TextArea from "../../inputs/TextInputArea";
 import ToggleStatus from "./components/ToggleStatus";
 import SaveInput from "../../inputs/SaveInput";
+import { HttpClient } from "../../../api/httpClient";
 
-const ModalOccurrenceView = ({ open, data, onClose }) => {
+const ModalOccurrenceView = ({
+  open,
+  data = {},
+  onClose,
+  updateData = () => {},
+}) => {
   return (
-    <Modal open={open} onClose={onClose}>
-      <ModalOverflow sx={{ overflow: "scroll" }}>
-        <ModalDialog maxWidth={"sm"} layout={"center"}>
-          <ModalClose />
+    <Modal open={open}>
+      <ModalOverflow sx={{ overflowY: "scroll", overflowX: "hidden" }}>
+        <ModalDialog minWidth={"sm"} layout={"center"}>
+          <ModalClose onClick={onClose} />
           <Typography lineHeight={1} level="title-sm" color="neutral">
             Ocorrência: {data?.id}
           </Typography>
-          <Typography lineHeight={1} level="h3" color="neutral">
-            {formatMoment(data?.date)}
+          <Typography lineHeight={1} level="h4" color="neutral">
+            {formatMoment(data?.created_at)}
           </Typography>
           <Typography lineHeight={1} level="h2">
-            Atraso na entrega
+            {data?.categoria?.text}
           </Typography>
           <Divider sx={{ my: 1 }} />
-          <ToggleStatus />
+          <ToggleStatus
+            initialStatus={data?.status}
+            occurrenceId={data?.id}
+            onUpdate={(newValue) =>
+              updateData({
+                id: data?.id,
+                changes: {
+                  status: newValue,
+                },
+              })
+            }
+          />
           <Stack direction={"column"} gap={2}>
             <SaveInput
               inputProps={{
                 label: "Análise de causa",
                 placeholder: "Adicione notas sobre a causa...",
               }}
+              initialValue={data?.causa}
+              onSave={async (value) =>
+                await HttpClient.admin.updateOcorrencia(data?.id, {
+                  causa: value,
+                })
+              }
+              onSuccess={(newValue) =>
+                updateData({
+                  id: data?.id,
+                  changes: {
+                    causa: newValue,
+                  },
+                })
+              }
             />
             <SaveInput
               inputProps={{
                 label: "Ação de correção",
                 placeholder: "Adicione notas sobre a correção...",
               }}
+              initialValue={data?.correcao}
+              onSave={async (value) =>
+                await HttpClient.admin.updateOcorrencia(data?.id, {
+                  correcao: value,
+                })
+              }
+              onSuccess={(newValue) =>
+                updateData({
+                  id: data?.id,
+                  changes: {
+                    correcao: newValue,
+                  },
+                })
+              }
             />
           </Stack>
           <Stack pb={5} mt={2} direction={"column"} gap={2}>
@@ -54,7 +99,7 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
                 Unidade
               </Typography>
               <Typography flex={1} level="title-sm">
-                1103 - Cambuí
+                {data?.unidade?.text || "--"}
               </Typography>
             </Stack>
             <Stack direction="row" gap={2}>
@@ -62,7 +107,7 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
                 Cliente
               </Typography>
               <Typography flex={1} level="title-sm">
-                Str participações
+                {data?.cliente || "--"}
               </Typography>
             </Stack>
             <Stack direction="row" gap={2}>
@@ -70,7 +115,7 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
                 Representante
               </Typography>
               <Typography flex={1} level="title-sm">
-                Matheus
+                {data?.representante || "--"}
               </Typography>
             </Stack>
             <Stack direction="row" gap={2}>
@@ -78,7 +123,7 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
                 Ordem de venda
               </Typography>
               <Typography flex={1} level="title-sm">
-                442520 / 458423
+                {data?.order_venda || "--"}
               </Typography>
             </Stack>
             <Stack direction="row" gap={2}>
@@ -86,7 +131,7 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
                 Setor
               </Typography>
               <Typography flex={1} level="title-sm">
-                --
+                {data?.setor?.text || "--"}
               </Typography>
             </Stack>
             <Stack direction="row" gap={2}>
@@ -94,7 +139,7 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
                 Produto
               </Typography>
               <Typography flex={1} level="title-sm">
-                Telha
+                {data?.produto?.text || "--"}
               </Typography>
             </Stack>
             <Stack direction="row" gap={2}>
@@ -102,7 +147,7 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
                 Categoria
               </Typography>
               <Typography flex={1} level="title-sm">
-                Atraso na entrega
+                {data?.categoria?.text || "--"}
               </Typography>
             </Stack>
             <Stack direction="row" gap={2}>
@@ -110,8 +155,7 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
                 Motivo
               </Typography>
               <Typography flex={1} level="title-sm">
-                Material não foi entregue no prazo combinado com o cliente,
-                material ainda consta em carregamento.{" "}
+                {data?.reason || "--"}
               </Typography>
             </Stack>
           </Stack>
@@ -121,4 +165,4 @@ const ModalOccurrenceView = ({ open, data, onClose }) => {
   );
 };
 
-export default ModalOccurrenceView;
+export default memo(ModalOccurrenceView);

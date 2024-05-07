@@ -16,6 +16,7 @@ import {
 } from "@mui/joy";
 import React, { memo } from "react";
 import { formatDate } from "../../../utils/date_functions";
+import { occurrenceStatus } from "../../../utils/occurrences";
 
 const DefaultCell = memo(({ children, textProps, cellProps }) => {
   return (
@@ -30,47 +31,39 @@ const DefaultCell = memo(({ children, textProps, cellProps }) => {
 });
 
 const TableItem = ({ row = {}, onClick }) => {
+  console.log("render: ", row.id);
+
   return (
     <tr key={row.id} onClick={() => onClick(row)} style={{ cursor: "pointer" }}>
       <DefaultCell textProps={{ ml: "6px" }}>
-        {formatDate(row.date)}
+        {formatDate(row.created_at)}
       </DefaultCell>
       <td>
         <Chip
           variant="soft"
           size="sm"
-          startDecorator={
-            {
-              opened: <AutorenewRounded />,
-              completed: <CheckRounded />,
-            }[row.status]
-          }
-          color={
-            {
-              opened: "neutral",
-              completed: "success",
-            }[row.status]
-          }
+          startDecorator={occurrenceStatus[row.status]?.icon}
+          color={occurrenceStatus[row.status]?.color}
         >
-          {row.status}
+          {occurrenceStatus[row.status]?.text}
         </Chip>
       </td>
 
-      <DefaultCell>{row.unit}</DefaultCell>
+      <DefaultCell>{row.unidade?.text}</DefaultCell>
 
-      <DefaultCell>{row.customer}</DefaultCell>
+      <DefaultCell>{row.cliente}</DefaultCell>
 
-      <DefaultCell>{row.representative}</DefaultCell>
+      <DefaultCell>{row.representante}</DefaultCell>
 
-      <DefaultCell>{row.salesOrder}</DefaultCell>
+      <DefaultCell>{row.ordem_venda}</DefaultCell>
 
-      <DefaultCell>{row.sector}</DefaultCell>
+      <DefaultCell>{row.setor?.text}</DefaultCell>
 
-      <DefaultCell>{row.product}</DefaultCell>
+      <DefaultCell>{row.produto?.text}</DefaultCell>
 
-      <DefaultCell>{row.category}</DefaultCell>
+      <DefaultCell>{row.categoria?.text}</DefaultCell>
 
-      <DefaultCell>{row.files?.length}</DefaultCell>
+      <DefaultCell>{row.anexos}</DefaultCell>
     </tr>
   );
 };

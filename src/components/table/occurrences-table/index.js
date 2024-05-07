@@ -9,53 +9,14 @@ import ModalOccurrenceView from "../../modals/occurrence-view/ModalOccurrenceVie
 import Filterbar from "./Filterbar";
 import TableHeader from "./TableHeader";
 import TableItem from "./TableItem";
+import LoadingScreen from "../../loading/LoadingScreen";
 
-const rows = [
-  {
-    id: nanoid(),
-    date: new Date().toISOString(),
-    status: "opened",
-    unit: "1",
-    customer: `Cliente ${nanoid()}`,
-    representative: "Matheus",
-    salesOrder: "442520/458423",
-    sector: "",
-    product: "1",
-    category: "1",
-    reason: "dsadsa dsa dsadsad as dasdas",
-    files: [],
-  },
-  {
-    id: nanoid(),
-    date: new Date().toISOString(),
-    status: "completed",
-    unit: "1",
-    customer: `Cliente ${nanoid()}`,
-    representative: "Matheus",
-    salesOrder: "442520/458423",
-    sector: "",
-    product: "1",
-    category: "1",
-    reason: "dsadsa dsa dsadsad as dasdas",
-    files: [],
-  },
-  {
-    id: nanoid(),
-    date: new Date().toISOString(),
-    status: "completed",
-    unit: "1",
-    customer: `Cliente ${nanoid()}`,
-    representative: "Matheus",
-    salesOrder: "442520/458423",
-    sector: "",
-    product: "1",
-    category: "1",
-    reason: "dsadsa dsa dsadsad as dasdas",
-    files: [],
-  },
-];
-
-export default function OccurrencesTable() {
+export default function OccurrencesTable({
+  data = [],
+  getData = () => {},
+  onUpdateOccurrence = ({ id = "", changes = {} }) => {},
+  loading,
+}) {
   const [modalView, setModalView] = React.useState(null);
 
   const handleClickRow = React.useCallback((row) => setModalView(row), []);
@@ -82,31 +43,36 @@ export default function OccurrencesTable() {
             minHeight: 0,
           }}
         >
-          <Table
-            aria-labelledby="tableTitle"
-            stickyHeader
-            hoverRow
-            sx={{
-              position: "sticky",
-              top: 0,
-              left: 0,
-              "--TableCell-headBackground":
-                "var(--joy-palette-background-level1)",
-              "--Table-headerUnderlineThickness": "1px",
-              "--TableRow-hoverBackground":
-                "var(--joy-palette-background-level1)",
-              "--TableCell-paddingY": "15px",
-            }}
-          >
-            <TableHeader />
-            <tbody>{rows.map(renderRows)}</tbody>
-          </Table>
+          {loading ? (
+            <LoadingScreen />
+          ) : (
+            <Table
+              aria-labelledby="tableTitle"
+              stickyHeader
+              hoverRow
+              sx={{
+                position: "sticky",
+                top: 0,
+                left: 0,
+                "--TableCell-headBackground":
+                  "var(--joy-palette-background-level1)",
+                "--Table-headerUnderlineThickness": "1px",
+                "--TableRow-hoverBackground":
+                  "var(--joy-palette-background-level1)",
+                "--TableCell-paddingY": "15px",
+              }}
+            >
+              <TableHeader />
+              <tbody>{data.map(renderRows)}</tbody>
+            </Table>
+          )}
         </Sheet>
       </Box>
       <ModalOccurrenceView
         data={modalView}
         open={Boolean(modalView)}
         onClose={() => setModalView(null)}
+        updateData={onUpdateOccurrence}
       />
     </React.Fragment>
   );

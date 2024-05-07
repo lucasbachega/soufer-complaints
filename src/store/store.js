@@ -4,6 +4,8 @@ import sectorsSlice from "./reducers/sectorsSlice";
 import productsSlice from "./reducers/productsSlice";
 import occurrenceCategoriesSlice from "./reducers/occurrenceCategoriesSlice";
 import userInfoSlice from "./reducers/userInfoSlice";
+import errorBaseSlice from "./reducers/errorBaseSlice";
+import snackbarBaseSlice from "./reducers/snackbarBaseSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +14,8 @@ export const store = configureStore({
     sectors: sectorsSlice,
     products: productsSlice,
     categories: occurrenceCategoriesSlice,
+
+    errorBase: errorBaseSlice,
+    snackbarBase: snackbarBaseSlice,
   },
 });

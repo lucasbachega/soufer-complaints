@@ -90,7 +90,7 @@ class HttpClient {
   static async login({ username, password }) {
     const r = await this.post("/auth/login", { username, password });
     if (r.ok) {
-      this._client.defaults.headers["api-access-token"] = r.accessToken;
+      this._client.defaults.headers["api-access-token"] = r.acessToken;
     }
     return r;
   }
@@ -156,7 +156,13 @@ class HttpClient {
     /**
      * Listar ocorrências p/ admin de acordo com filtros
      */
-    async listarOcorrencias({ period, unidade, categoria, produto, setor } = {}) {
+    async listarOcorrencias({
+      period,
+      unidade,
+      categoria,
+      produto,
+      setor,
+    } = {}) {
       return HttpClient.get("/admin/complaints", {
         params: {
           unidade_id: unidade,
@@ -313,4 +319,3 @@ class HttpClient {
 }
 
 export { HttpClient };
-

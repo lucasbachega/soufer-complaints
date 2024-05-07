@@ -13,10 +13,14 @@ export const userInfoSlice = createSlice({
       state.isLogged = true;
       state.data = payload;
     },
+    logout(state) {
+      state.isLogged = false;
+      state.data = {};
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { login } = userInfoSlice.actions;
+export const { login, logout } = userInfoSlice.actions;
 
 export default userInfoSlice.reducer;
