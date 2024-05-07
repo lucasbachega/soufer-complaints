@@ -3,7 +3,7 @@ import {
   GetApp,
   RefreshOutlined,
 } from "@mui/icons-material";
-import { Box, Button, IconButton, Typography } from "@mui/joy";
+import { Box, Button, IconButton, Tooltip, Typography } from "@mui/joy";
 import React, { useCallback, useEffect, useState } from "react";
 import OccurrencesTable from "../../../components/table/occurrences-table";
 import { HttpClient } from "../../../api/httpClient";
@@ -15,16 +15,15 @@ const AllOccurrences = () => {
 
   const [filters, setFilters] = useState({
     period: "all",
-    categoria: "",
+    category: "",
   });
 
   const getData = async () => {
     setLoading(true);
     const res = await HttpClient.admin.listarOcorrencias({
       period: filters?.period,
-      categoria: filters?.categoria,
+      categoria: filters?.category,
     });
-    console.log(res);
     if (res.ok) {
       setData(res.data?.map((item) => ({ ...item, id: item?._id })));
     } else {
@@ -36,6 +35,10 @@ const AllOccurrences = () => {
   useEffect(() => {
     getData();
   }, [filters]);
+
+  const handleChangeFilters = useCallback((filter, value) => {
+    setFilters((prev) => ({ ...prev, [filter]: value }));
+  }, []);
 
   const handleUpdateOccurrence = useCallback(({ id, changes = {} }) => {
     setData((prev) =>
@@ -54,9 +57,11 @@ const AllOccurrences = () => {
         <AssignmentOutlined sx={{ fontSize: "2rem" }} />
         <Typography level="h2">Todas as ocorrências</Typography>
         <Box flex={1} />
-        <IconButton disabled={loading} onClick={getData}>
-          <RefreshOutlined />
-        </IconButton>
+        <Tooltip title="Atualizar">
+          <IconButton disabled={loading} onClick={getData}>
+            <RefreshOutlined />
+          </IconButton>
+        </Tooltip>
         <Button startDecorator={<GetApp />} color="success">
           Exportar para Excel
         </Button>
@@ -64,6 +69,7 @@ const AllOccurrences = () => {
       <OccurrencesTable
         data={data}
         filters={filters}
+        onChangeFilters={handleChangeFilters}
         getData={getData}
         loading={loading}
         onUpdateOccurrence={handleUpdateOccurrence}

@@ -1,8 +1,9 @@
 import { DateRange } from "@mui/icons-material";
 import { Box, FormControl, FormLabel, Option, Select } from "@mui/joy";
 import React from "react";
+import CategoryFilter from "./filters/CategoryFilter";
 
-const Filterbar = () => {
+const Filterbar = ({ filters, onChange }) => {
   const renderFilters = () => (
     <React.Fragment>
       <FormControl size="sm">
@@ -10,8 +11,9 @@ const Filterbar = () => {
         <Select
           startDecorator={<DateRange />}
           size="sm"
-          value={"all"}
-          placeholder="Filter by status"
+          value={filters?.period}
+          placeholder="Filtrar por data"
+          onChange={(e, v) => onChange("period", v)}
           slotProps={{ button: { sx: { whiteSpace: "nowrap" } } }}
         >
           <Option value="today">Hoje</Option>
@@ -20,19 +22,23 @@ const Filterbar = () => {
           <Option value="all">Todo o período</Option>
         </Select>
       </FormControl>
-      <FormControl size="sm">
+      {/* <FormControl size="sm">
         <FormLabel>Status</FormLabel>
         <Select
           size="sm"
           placeholder="Filtrar por status"
           slotProps={{ button: { sx: { whiteSpace: "nowrap" } } }}
+          value={filters?.status}
+          onChange={(e, v) => onChange("status", v)}
         >
-          <Option value="paid">Paid</Option>
-          <Option value="pending">Pending</Option>
-          <Option value="refunded">Refunded</Option>
-          <Option value="cancelled">Cancelled</Option>
+          <Option value="open">Em aberto</Option>
+          <Option value="completed">Concluído</Option>
         </Select>
-      </FormControl>
+      </FormControl> */}
+      <CategoryFilter
+        value={filters?.category}
+        onChange={(v) => onChange("category", v)}
+      />
     </React.Fragment>
   );
   return (

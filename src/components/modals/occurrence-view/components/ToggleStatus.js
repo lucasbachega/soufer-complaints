@@ -12,6 +12,7 @@ import {
   ModalDialog,
   Radio,
   RadioGroup,
+  Tooltip,
   Typography,
 } from "@mui/joy";
 import { useEffect, useState } from "react";
@@ -58,15 +59,17 @@ function ToggleStatus({
 
   return (
     <>
-      <Chip
-        variant={status === "completed" ? "soft" : "outlined"}
-        color={occurrenceStatus[status]?.color}
-        sx={{ position: "absolute", right: 50, top: 12 }}
-        startDecorator={<EditOutlined />}
-        onClick={() => setOpen(true)}
-      >
-        {occurrenceStatus[status]?.text}
-      </Chip>
+      <Tooltip title="Alterar status">
+        <Chip
+          variant={status === "completed" ? "soft" : "outlined"}
+          color={occurrenceStatus[status]?.color}
+          sx={{ position: "absolute", right: 50, top: 12 }}
+          startDecorator={<EditOutlined />}
+          onClick={() => setOpen(true)}
+        >
+          {occurrenceStatus[status]?.text}
+        </Chip>
+      </Tooltip>
       <Modal
         open={open}
         onClose={() => {

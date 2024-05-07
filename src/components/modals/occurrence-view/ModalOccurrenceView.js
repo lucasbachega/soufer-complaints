@@ -25,11 +25,14 @@ const ModalOccurrenceView = ({
   updateData = () => {},
 }) => {
   return (
-    <Modal open={open}>
+    <Modal
+      open={open}
+      slotProps={{ backdrop: { sx: { backdropFilter: "blur(1px)" } } }}
+    >
       <ModalOverflow sx={{ overflowY: "scroll", overflowX: "hidden" }}>
         <ModalDialog minWidth={"sm"} layout={"center"}>
           <ModalClose onClick={onClose} />
-          <Typography lineHeight={1} level="title-sm" color="neutral">
+          <Typography lineHeight={1} level="body-sm" color="neutral">
             Ocorrência: {data?.id}
           </Typography>
           <Typography lineHeight={1} level="h4" color="neutral">

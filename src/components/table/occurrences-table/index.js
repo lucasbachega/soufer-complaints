@@ -10,12 +10,15 @@ import Filterbar from "./Filterbar";
 import TableHeader from "./TableHeader";
 import TableItem from "./TableItem";
 import LoadingScreen from "../../loading/LoadingScreen";
+import { Typography } from "@mui/joy";
 
 export default function OccurrencesTable({
   data = [],
   getData = () => {},
   onUpdateOccurrence = ({ id = "", changes = {} }) => {},
   loading,
+  filters = {},
+  onChangeFilters,
 }) {
   const [modalView, setModalView] = React.useState(null);
 
@@ -27,7 +30,7 @@ export default function OccurrencesTable({
 
   return (
     <React.Fragment>
-      <Filterbar />
+      <Filterbar onChange={onChangeFilters} filters={filters} />
       <Box flex={1} display={"flex"} flexBasis={0} sx={{ p: 3, pb: 5, pt: 0 }}>
         <Sheet
           className="OrderTableContainer"
@@ -45,7 +48,7 @@ export default function OccurrencesTable({
         >
           {loading ? (
             <LoadingScreen />
-          ) : (
+          ) : data?.length ? (
             <Table
               aria-labelledby="tableTitle"
               stickyHeader
@@ -65,6 +68,19 @@ export default function OccurrencesTable({
               <TableHeader />
               <tbody>{data.map(renderRows)}</tbody>
             </Table>
+          ) : (
+            <Box
+              display={"flex"}
+              flexDirection={"column"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              gap={1}
+              height={400}
+            >
+              <Typography textAlign={"center"} level="title-lg" color="neutral">
+                Nenhuma ocorrência encontrada
+              </Typography>
+            </Box>
           )}
         </Sheet>
       </Box>
