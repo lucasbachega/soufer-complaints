@@ -11,7 +11,10 @@ function ProductsSelector({ value = "", onChange = () => {} }) {
       required
       label={"Produto"}
       placeholder={"Selecione um produto"}
-      options={data}
+      options={data?.map((prod) => ({
+        label: prod?.label,
+        value: prod?.id,
+      }))}
     />
   );
 }

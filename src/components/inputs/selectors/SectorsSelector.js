@@ -11,7 +11,10 @@ function SectorsSelector({ value = "", onChange = () => {} }) {
       required
       label={"Setor"}
       placeholder={"Selecione um setor"}
-      options={data}
+      options={data?.map((sector) => ({
+        label: sector?.label,
+        value: sector?.id,
+      }))}
     />
   );
 }

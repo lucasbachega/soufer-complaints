@@ -17,6 +17,7 @@ const TextArea = ({
   minRows = 2,
   onFocus,
   onBlur,
+  disabled,
 }) => {
   return (
     <FormControl required={required} error={error}>
@@ -33,6 +34,7 @@ const TextArea = ({
         variant={variant}
         onFocus={onFocus}
         onBlur={onBlur}
+        disabled={disabled}
       />
       {Boolean(helperText) && (
         <FormHelperText>

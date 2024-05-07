@@ -3,54 +3,45 @@ import React, { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import LoadingScreen from "../../components/loading/LoadingScreen";
 import Sidebar from "./components/Sidebar";
+import { HttpClient } from "../../api/httpClient";
+import { useSelector } from "react-redux";
 
 const AdminWrapper = () => {
-  const [loading, setLoading] = useState(true);
-  const [isLogged, setIsLogged] = useState(true);
+  const isLogged = useSelector((state) => state.userInfo.isLogged);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  }, []);
-
-  if (loading) {
-    return <LoadingScreen />;
-  } else {
-    if (isLogged) {
-      return (
+  if (isLogged) {
+    return (
+      <Box
+        height={"100%"}
+        width={"100%"}
+        display={"flex"}
+        alignItems={"flex-start"}
+      >
+        <Sidebar />
         <Box
-          height={"100%"}
+          flex={1}
           width={"100%"}
+          height={"100%"}
           display={"flex"}
-          alignItems={"flex-start"}
+          flexDirection={"column"}
         >
-          <Sidebar />
           <Box
-            flex={1}
             width={"100%"}
+            flex={1}
+            flexBasis={0}
             height={"100%"}
+            overflow={"auto"}
             display={"flex"}
+            position={"relative"}
             flexDirection={"column"}
           >
-            <Box
-              width={"100%"}
-              flex={1}
-              flexBasis={0}
-              height={"100%"}
-              overflow={"auto"}
-              display={"flex"}
-              position={"relative"}
-              flexDirection={"column"}
-            >
-              <Outlet />
-            </Box>
+            <Outlet />
           </Box>
         </Box>
-      );
-    } else {
-      return <Navigate replace to={"/auth"} />;
-    }
+      </Box>
+    );
+  } else {
+    return <Navigate replace to={"/auth"} />;
   }
 };
 

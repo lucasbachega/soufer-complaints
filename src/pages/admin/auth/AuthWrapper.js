@@ -22,17 +22,11 @@ const AuthWrapper = () => {
         display={"flex"}
         flexDirection={"column"}
         alignItems={"center"}
-        sx={{ pt: 8, pb: 10 }}
+        sx={{ pt: 3, pb: 10 }}
       >
         <Box display={"flex"} alignItems={"center"} flexDirection={"column"}>
           <img src={Logo} width={"200px"} />
-          <Typography
-            mt={2}
-            fontWeight={500}
-            textAlign={"center"}
-            level="h2"
-            gutterBottom
-          >
+          <Typography mt={1} fontWeight={500} textAlign={"center"} level="h2">
             Portal de ocorrências
           </Typography>
           <Typography color="neutral" textAlign="center" level="h4">

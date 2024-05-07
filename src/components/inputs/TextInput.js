@@ -14,6 +14,7 @@ const TextInput = ({
   endDecorator,
   error,
   required,
+  disabled,
   type,
 }) => {
   return (
@@ -28,6 +29,7 @@ const TextInput = ({
         size={size}
         type={type}
         variant={variant}
+        disabled={disabled}
       />
       {Boolean(helperText) && (
         <FormHelperText>

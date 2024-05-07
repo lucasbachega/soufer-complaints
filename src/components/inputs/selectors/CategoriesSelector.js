@@ -11,7 +11,10 @@ function CategoriesSelector({ value = "", onChange = () => {} }) {
       required
       label={"Categoria"}
       placeholder={"Selecione uma categoria"}
-      options={data}
+      options={data?.map((category) => ({
+        label: category?.label,
+        value: category?.id,
+      }))}
     />
   );
 }

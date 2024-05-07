@@ -24,6 +24,7 @@ const SelectInput = ({
   defaultValue,
   options = [],
   required,
+  disabled,
 }) => {
   return (
     <FormControl required={required} error={error}>
@@ -37,6 +38,7 @@ const SelectInput = ({
         startDecorator={startDecorator}
         endDecorator={endDecorator}
         defaultValue={defaultValue}
+        disabled={disabled}
         onChange={(e, value) => Boolean(value) && onChange(value)}
       >
         {!options?.length && (
