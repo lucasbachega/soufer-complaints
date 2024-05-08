@@ -64,6 +64,6 @@ function startServer() {
 
   // start http server
   app.listen(serverPORT, () => {
-    console.log(`Server NotePay Expenses App is listening on port ${serverPORT}`);
+    console.log(`Soufer Portal Ocorrências App is listening on port ${serverPORT}`);
   });
 }
