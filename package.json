@@ -41,6 +41,9 @@
     "start": "env-cmd -f .env.local react-scripts start",
     "start:prod": "env-cmd -f .env.production node server.js",
     "server": "env-cmd -f .env.local nodemon server.js",
+    "server:prod": "env-cmd -f .env.production node server.js",
+    "build:local": "env-cmd -f .env.local react-scripts build",
+    "build:prod": "env-cmd -f .env.production react-scripts build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
