@@ -433,7 +433,7 @@ router.get("/complaints/export/excel", async (req, res) => {
     { header: "Setor", key: "setor", width: 20 },
     { header: "Produto", key: "produto", width: 20 },
     { header: "Categoria", key: "categoria", width: 20 },
-    { header: "Motivo", key: "categoria", width: 35 },
+    { header: "Motivo", key: "motivo", width: 35 },
     { header: "Causa", key: "causa", width: 20 },
     { header: "Correção", key: "correcao", width: 20 },
     { header: "Status", key: "status", width: 15 },
