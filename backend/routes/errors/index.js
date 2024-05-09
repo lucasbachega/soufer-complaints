@@ -54,6 +54,14 @@ class OcorrenciaNotFound extends Error {
   }
 }
 
+class AnexoNotFound extends Error {
+  constructor() {
+    super(`Anexo não encontrado`);
+    this.name = "AnexoNotFound";
+    this.status = 400;
+  }
+}
+
 module.exports = {
   InvalidUserAccess,
   UnidadeNotFound,
@@ -62,4 +70,5 @@ module.exports = {
   CategoriaNotFound,
   RequiredFieldError,
   OcorrenciaNotFound,
+  AnexoNotFound
 };

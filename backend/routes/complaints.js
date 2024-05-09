@@ -8,10 +8,13 @@ const {
   ProdutoNotFound,
   CategoriaNotFound,
   OcorrenciaNotFound,
+  AnexoNotFound,
 } = require("./errors");
 const router = express.Router();
 const multer = require("multer");
-var fs = require("fs");
+const fs = require("fs");
+const path = require("path");
+const { nanoid } = require("@reduxjs/toolkit");
 
 // multer middleware (file upload)
 const multerMid = multer({
@@ -27,11 +30,9 @@ const multerMid = multer({
       }
       return callback(null, uri);
     },
-    // filename: (req, file, callback) => {
-    //   console.log(req.body);
-    //   const ocorrencia_id = req.body.ocorrencia_id || "unknown_id";
-    //   return callback(null, `${ocorrencia_id}-${file.originalname}`);
-    // },
+    filename: function (req, file, cb) {
+      cb(null, nanoid(6) + path.extname(file.originalname)); //Appending extension
+    },
   }),
   limits: {
     // no larger than 30mb.
@@ -258,6 +259,29 @@ router.post("/upload", multerMid.array("files", 5), async (req, res) => {
     ok: true,
     anexos,
   });
+});
+
+/**
+ * Streaming comprovantes
+ */
+router.get("/:id/file/:filename", async (req, res) => {
+  const { id, filename } = req.params;
+  // Verificar da ocorrência
+  const ocorrencia = await Database.collection("ocorrencias").findOne({
+    _id: new ObjectId(id),
+  });
+  if (!ocorrencia) {
+    throw new OcorrenciaNotFound();
+  }
+  const anexos = ocorrencia.anexos || [];
+  const file = anexos.find((anexo) => anexo.filename === filename);
+  if (!file) throw new AnexoNotFound();
+
+  const { path: localpath, mimetype } = file;
+  const urlFile = path.join(__dirname, "../../", localpath);
+
+  res.setHeader("Content-Type", mimetype);
+  fs.createReadStream(urlFile).pipe(res);
 });
 
 module.exports = router;
