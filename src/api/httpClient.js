@@ -104,6 +104,13 @@ class HttpClient {
   }
 
   /**
+   * Sair do Sistema (Logout)
+   */
+  static async logout() {
+    return this.post("/auth/logout");
+  }
+
+  /**
    * Listar unidades ativas disponíveis para seleção
    */
   static async listUnidades() {
@@ -176,13 +183,7 @@ class HttpClient {
     /**
      * Listar ocorrências p/ admin de acordo com filtros
      */
-    async listarOcorrencias({
-      period,
-      unidade,
-      categoria,
-      produto,
-      setor,
-    } = {}) {
+    async listarOcorrencias({ period, unidade, categoria, produto, setor } = {}) {
       return HttpClient.get("/admin/complaints", {
         params: {
           unidade_id: unidade,
@@ -339,3 +340,4 @@ class HttpClient {
 }
 
 export { HttpClient };
+
