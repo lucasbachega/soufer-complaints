@@ -4,6 +4,7 @@ import { ImageList } from "@mui/material";
 import { nanoid } from "@reduxjs/toolkit";
 import React, { memo, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import { getBlob } from "../../../../utils/images";
 import AttachItem from "./AttachItem";
 
 const AttachBox = ({
@@ -11,20 +12,35 @@ const AttachBox = ({
   onRemoveFile = (id = "") => {},
   addFiles = (files = []) => {},
 }) => {
+  const handleDropFiles = async (acceptedFiles) => {
+    let prepared = [];
+    for (let index = 0; index < acceptedFiles.length; index++) {
+      const file = acceptedFiles[index];
+      const blob = await getBlob(file);
+      const fileId = nanoid(5);
+      try {
+        const data = {
+          id: fileId,
+          filename: file.path,
+          preview: URL.createObjectURL(file),
+          type: file.type,
+          blob: new Blob([blob], { type: file.type }),
+        };
+        prepared.push(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    if (prepared && prepared.length) {
+      addFiles(prepared);
+    }
+  };
+
   const { getRootProps, getInputProps } = useDropzone({
     accept: {
       "image/*": [],
     },
-    onDrop: (acceptedFiles) => {
-      addFiles(
-        acceptedFiles.map((file) =>
-          Object.assign(file, {
-            id: nanoid(),
-            preview: URL.createObjectURL(file),
-          })
-        )
-      );
-    },
+    onDrop: handleDropFiles,
   });
 
   useEffect(() => {

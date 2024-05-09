@@ -100,7 +100,7 @@ class HttpClient {
    */
   static async testLogin() {
     const r = await this.get("/admin/login/check");
-    return r;
+    return r.data;
   }
 
   /**
@@ -156,6 +156,18 @@ class HttpClient {
     });
   }
 
+  //Upload de arquivos
+  static async uploadArquivos({ files = [], occurrenceId }) {
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append("files", file.blob, file.filename);
+    }
+    if (occurrenceId) {
+      formData.append("ocorrencia_id", occurrenceId);
+    }
+    return this.post("/complaints/upload", formData);
+  }
+
   /**
    * Controle de administrador
    * Área restrita - Login necessário
@@ -164,7 +176,13 @@ class HttpClient {
     /**
      * Listar ocorrências p/ admin de acordo com filtros
      */
-    async listarOcorrencias({ period, unidade, categoria, produto, setor } = {}) {
+    async listarOcorrencias({
+      period,
+      unidade,
+      categoria,
+      produto,
+      setor,
+    } = {}) {
       return HttpClient.get("/admin/complaints", {
         params: {
           unidade_id: unidade,
@@ -321,4 +339,3 @@ class HttpClient {
 }
 
 export { HttpClient };
-
