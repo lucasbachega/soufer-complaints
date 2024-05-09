@@ -30,8 +30,12 @@ router.get("/test", async (req, res) => {
  * Verificar se usuário já está logado
  */
 router.get("/login/check", async (req, res) => {
+  const user = await Database.collection("users").findOne({
+    _id: new ObjectId(req.userId),
+  });
   return res.status(200).send({
     ok: true,
+    user: user?.username,
     message: "Usuário autenticado",
   });
 });
