@@ -19,6 +19,8 @@ const {
   startOfYear,
   endOfYear,
 } = require("date-fns");
+const excelJS = require("exceljs");
+
 /**
  * Login por usuário e senha
  */
@@ -338,6 +340,119 @@ router.put("/complaints/:id", async (req, res) => {
     }
   );
   return res.status(200).send({ ok: true });
+});
+
+// Exportar dados de ocorrências para Excel
+router.get("/complaints/export/excel", async (req, res) => {
+  const { period } = req.query;
+
+  const filters = {};
+  const today = new Date();
+
+  switch (period) {
+    case "all":
+      break;
+    case "today":
+      filters.created_at = {
+        $gte: startOfToday(),
+        $lt: endOfToday(),
+      };
+    case "month":
+      filters.created_at = {
+        $gte: startOfMonth(today),
+        $lt: endOfMonth(today),
+      };
+      break;
+    case "year":
+      filters.created_at = {
+        $gte: startOfYear(today),
+        $lt: endOfYear(today),
+      };
+      break;
+    default:
+      break;
+  }
+
+  // Listar Ocorrências do banco de dados
+  const resultado = await Database.collection("ocorrencias")
+    .find({
+      ...filters,
+    })
+    .sort({ created_at: -1 })
+    .toArray();
+
+  const workbook = new excelJS.Workbook(); // Create a new workbook
+  const worksheet = workbook.addWorksheet("Ocorrências"); // New Worksheet
+
+  // Column for data in excel. key must match data key
+  worksheet.columns = [
+    { header: "Criada em", key: "created_at", width: 15 },
+    { header: "Unidade", key: "unidade", width: 15 },
+    //   { header: "ID", key: "report_id", width: 6 },
+    { header: "Cliente", key: "cliente", width: 35 },
+    { header: "Representante", key: "representante", width: 25 },
+    { header: "Ordem de venda", key: "ordem_venda", width: 15 },
+    { header: "Setor", key: "setor", width: 20 },
+    { header: "Produto", key: "produto", width: 20 },
+    { header: "Categoria", key: "categoria", width: 20 },
+    { header: "Motivo", key: "categoria", width: 35 },
+    { header: "Causa", key: "causa", width: 20 },
+    { header: "Correção", key: "correcao", width: 20 },
+    { header: "Status", key: "status", width: 15 },
+  ];
+
+  // Set an auto filter from the cell in row 3 and column 1
+  // to the cell in row 5 and column 12
+  worksheet.autoFilter = {
+    from: {
+      row: 1,
+      column: 1,
+    },
+    to: {
+      row: 1,
+      column: worksheet.columns.length,
+    },
+  };
+
+  for (let i = 0; i < resultado.length; i++) {
+    const {
+      created_at,
+      unidade,
+      cliente,
+      representante,
+      ordem_venda,
+      setor,
+      categoria,
+      produto,
+      motivo,
+      causa,
+      correcao,
+      status,
+    } = resultado[i];
+    // Add data in worksheet
+    worksheet.addRow({
+      created_at,
+      unidade: unidade.text,
+      cliente,
+      representante,
+      ordem_venda,
+      setor: setor.text,
+      produto: produto.text,
+      categoria: categoria.text,
+      motivo,
+      causa,
+      correcao,
+      status,
+    });
+  }
+  // Making first line in excel bold
+  worksheet.getRow(1).eachCell((cell) => {
+    cell.font = { bold: true };
+  });
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  workbook.xlsx.write(res, {
+    filename: "ocorrencias.xlsx",
+  });
 });
 
 module.exports = router;
