@@ -183,7 +183,13 @@ class HttpClient {
     /**
      * Listar ocorrências p/ admin de acordo com filtros
      */
-    async listarOcorrencias({ period, unidade, categoria, produto, setor } = {}) {
+    async listarOcorrencias({
+      period,
+      unidade,
+      categoria,
+      produto,
+      setor,
+    } = {}) {
       return HttpClient.get("/admin/complaints", {
         params: {
           unidade_id: unidade,
@@ -203,6 +209,14 @@ class HttpClient {
         causa,
         correcao,
         status,
+      });
+    },
+    async exportarExcel({ period }) {
+      return HttpClient.get(`/admin/complaints/export/excel`, {
+        responseType: "blob",
+        params: {
+          period,
+        },
       });
     },
     /**
@@ -341,4 +355,3 @@ class HttpClient {
 }
 
 export { HttpClient };
-
