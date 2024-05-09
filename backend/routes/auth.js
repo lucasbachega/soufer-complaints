@@ -46,4 +46,15 @@ router.post("/login", async (req, res) => {
   }
 });
 
+/**
+ * Logout (Sair do sistema)
+ */
+router.post("/logout", async (req, res) => {
+  // Limpa os cookies
+  res.clearCookie("portaloc_access_token");
+  return res.send({
+    ok: true,
+  });
+});
+
 module.exports = router;
