@@ -59,7 +59,7 @@ export default () => {
                 Icon={AdminPanelSettingsOutlined}
                 title={"Painel do administrador"}
                 description={"Configure e acompanhe as ocorrências"}
-                onClick={() => navigate("/auth/login")}
+                onClick={() => navigate("/admin")}
               />
             </Box>
           </Container>

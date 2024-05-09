@@ -10,10 +10,17 @@ const SECRET = process.env.API_SECRET_KEY || "InsecureSecret";
  */
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  const user = await Database.collection("users").findOne({
-    username,
-    pwd: password,
-  });
+  const user = await Database.collection("users").findOne(
+    {
+      username,
+      pwd: password,
+    },
+    {
+      projection: {
+        pwd: 0,
+      },
+    }
+  );
   if (user) {
     // Generate Acess Token...
     const acessToken = jwt.sign({ userId: username }, SECRET, {

@@ -1,17 +1,30 @@
 import { Box, Container, LinearProgress } from "@mui/joy";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { HttpClient } from "../../api/httpClient";
 import DiscartModal from "../../components/modals/DiscartModal";
+import { fetchCategories } from "../../store/reducers/occurrenceCategoriesSlice";
+import { fetchProducts } from "../../store/reducers/productsSlice";
+import { fetchSectors } from "../../store/reducers/sectorsSlice";
+import { fetchUnits } from "../../store/reducers/unitsSlice";
 import { occurrenceInitialState } from "../../utils/state_models";
 import Appbar from "./components/Appbar";
-import OccurrenceForm from "./components/OccurrenceForm";
-import AttachBox from "./components/attach/AttachBox";
-import { HttpClient } from "../../api/httpClient";
 import CompletedModal from "./components/CompletedModal";
 import ErrorModal from "./components/ErrorModal";
+import OccurrenceForm from "./components/OccurrenceForm";
+import AttachBox from "./components/attach/AttachBox";
 
 export default (props) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(fetchUnits());
+    dispatch(fetchSectors());
+    dispatch(fetchProducts());
+    dispatch(fetchCategories());
+  }, []);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -62,8 +75,14 @@ export default (props) => {
       setor: data.sector,
       unidade: data.unit,
     });
-
     if (res.ok) {
+      if (files?.length) {
+        const uploadRes = await HttpClient.uploadArquivos({
+          files,
+          occurrenceId: res?.ocorrencia?._id,
+        });
+        console.log(uploadRes);
+      }
       setCompleted(true);
     } else {
       setError(res?.error?.message);

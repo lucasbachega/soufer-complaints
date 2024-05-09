@@ -25,19 +25,28 @@ const excelJS = require("exceljs");
  * Login por usuário e senha
  */
 router.get("/test", async (req, res) => {
-  return res.status(200).send(`Olá <b>${req.userId}</b>! Você está autenticado`);
+  return res
+    .status(200)
+    .send(`Olá <b>${req.userId}</b>! Você está autenticado`);
 });
 
 /**
  * Verificar se usuário já está logado
  */
 router.get("/login/check", async (req, res) => {
-  const user = await Database.collection("users").findOne({
-    _id: new ObjectId(req.userId),
-  });
+  const user = await Database.collection("users").findOne(
+    {
+      username: req.userId,
+    },
+    {
+      projection: {
+        pwd: 0,
+      },
+    }
+  );
   return res.status(200).send({
     ok: true,
-    user: user?.username,
+    user: user,
     message: "Usuário autenticado",
   });
 });
@@ -46,7 +55,10 @@ router.get("/login/check", async (req, res) => {
  * UNIDADES
  */
 router.get("/unidades", async (req, res) => {
-  const r = await Database.collection("unidades").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("unidades")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/unidades", async (req, res) => {
@@ -64,7 +76,9 @@ router.post("/unidades", async (req, res) => {
 router.put("/unidades/:id", async (req, res) => {
   const { id } = req.params;
   const { text, active } = req.body;
-  const _unidade = await Database.collection("unidades").findOne({ _id: new ObjectId(id) });
+  const _unidade = await Database.collection("unidades").findOne({
+    _id: new ObjectId(id),
+  });
   if (!_unidade) throw new UnidadeNotFound();
   const edits = {};
   if ("text" in req.body) {
@@ -88,7 +102,9 @@ router.put("/unidades/:id", async (req, res) => {
 });
 router.delete("/unidades/:id", async (req, res) => {
   const { id } = req.params;
-  const _unidade = await Database.collection("unidades").findOne({ _id: new ObjectId(id) });
+  const _unidade = await Database.collection("unidades").findOne({
+    _id: new ObjectId(id),
+  });
   if (!_unidade) throw new UnidadeNotFound();
   await Database.collection("unidades").deleteOne({ _id: _unidade._id });
   return res.status(200).send({
@@ -100,7 +116,10 @@ router.delete("/unidades/:id", async (req, res) => {
  * SETOR
  */
 router.get("/setor", async (req, res) => {
-  const r = await Database.collection("setor").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("setor")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/setor", async (req, res) => {
@@ -118,7 +137,9 @@ router.post("/setor", async (req, res) => {
 router.put("/setor/:id", async (req, res) => {
   const { id } = req.params;
   const { text, active } = req.body;
-  const _setor = await Database.collection("setor").findOne({ _id: new ObjectId(id) });
+  const _setor = await Database.collection("setor").findOne({
+    _id: new ObjectId(id),
+  });
   if (!_setor) throw new SetorNotFound();
   const edits = {};
   if ("text" in req.body) {
@@ -142,7 +163,9 @@ router.put("/setor/:id", async (req, res) => {
 });
 router.delete("/setor/:id", async (req, res) => {
   const { id } = req.params;
-  const _setor = await Database.collection("setor").findOne({ _id: new ObjectId(id) });
+  const _setor = await Database.collection("setor").findOne({
+    _id: new ObjectId(id),
+  });
   if (!_setor) throw new SetorNotFound();
   await Database.collection("setor").deleteOne({ _id: _setor._id });
   return res.status(200).send({
@@ -154,7 +177,10 @@ router.delete("/setor/:id", async (req, res) => {
  * PRODUTOS
  */
 router.get("/produtos", async (req, res) => {
-  const r = await Database.collection("produtos").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("produtos")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/produtos", async (req, res) => {
@@ -172,7 +198,9 @@ router.post("/produtos", async (req, res) => {
 router.put("/produtos/:id", async (req, res) => {
   const { id } = req.params;
   const { text, active } = req.body;
-  const _produtos = await Database.collection("produtos").findOne({ _id: new ObjectId(id) });
+  const _produtos = await Database.collection("produtos").findOne({
+    _id: new ObjectId(id),
+  });
   if (!_produtos) throw new ProdutoNotFound();
   const edits = {};
   if ("text" in req.body) {
@@ -196,7 +224,9 @@ router.put("/produtos/:id", async (req, res) => {
 });
 router.delete("/produtos/:id", async (req, res) => {
   const { id } = req.params;
-  const _produtos = await Database.collection("produtos").findOne({ _id: new ObjectId(id) });
+  const _produtos = await Database.collection("produtos").findOne({
+    _id: new ObjectId(id),
+  });
   if (!_produtos) throw new ProdutoNotFound();
   await Database.collection("produtos").deleteOne({ _id: _produtos._id });
   return res.status(200).send({
@@ -208,7 +238,10 @@ router.delete("/produtos/:id", async (req, res) => {
  * CATEGORIAS
  */
 router.get("/categorias", async (req, res) => {
-  const r = await Database.collection("categorias").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("categorias")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/categorias", async (req, res) => {
@@ -226,7 +259,9 @@ router.post("/categorias", async (req, res) => {
 router.put("/categorias/:id", async (req, res) => {
   const { id } = req.params;
   const { text, active } = req.body;
-  const _categorias = await Database.collection("categorias").findOne({ _id: new ObjectId(id) });
+  const _categorias = await Database.collection("categorias").findOne({
+    _id: new ObjectId(id),
+  });
   if (!_categorias) throw new CategoriaNotFound();
   const edits = {};
   if ("text" in req.body) {
@@ -250,7 +285,9 @@ router.put("/categorias/:id", async (req, res) => {
 });
 router.delete("/categorias/:id", async (req, res) => {
   const { id } = req.params;
-  const _categorias = await Database.collection("categorias").findOne({ _id: new ObjectId(id) });
+  const _categorias = await Database.collection("categorias").findOne({
+    _id: new ObjectId(id),
+  });
   if (!_categorias) throw new CategoriaNotFound();
   await Database.collection("categorias").deleteOne({ _id: _categorias._id });
   return res.status(200).send({
@@ -264,7 +301,8 @@ router.delete("/categorias/:id", async (req, res) => {
 
 // Listar ocorrências com base em filtros selecionados
 router.get("/complaints", async (req, res) => {
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
+    req.query;
 
   const filters = {};
   if (status) filters.status = status;
