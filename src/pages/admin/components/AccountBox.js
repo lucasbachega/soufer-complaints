@@ -1,13 +1,39 @@
 import { ExitToAppOutlined } from "@mui/icons-material";
-import { Avatar, Box, IconButton, Tooltip, Typography } from "@mui/joy";
-import React from "react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Dropdown,
+  IconButton,
+  Menu,
+  MenuButton,
+  Tooltip,
+  Typography,
+} from "@mui/joy";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { HttpClient } from "../../../api/httpClient";
+import { setError } from "../../../store/reducers/errorBaseSlice";
 import { logout } from "../../../store/reducers/userInfoSlice";
 
 const AccountBox = () => {
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
   const data = useSelector((state) => state.userInfo.data);
+
+  const handleLogout = async () => {
+    setLoading(true);
+    const res = await HttpClient.logout();
+    if (res?.ok) {
+      dispatch(logout());
+    } else {
+      dispatch(
+        setError({ title: "Erro ao sair", message: res?.error?.message })
+      );
+    }
+    setLoading(false);
+  };
 
   return (
     <Box
@@ -31,11 +57,36 @@ const AccountBox = () => {
           </Typography>
         </Tooltip>
       </Box>
-      <Tooltip title="Sair">
-        <IconButton onClick={() => dispatch(logout())}>
+
+      <Dropdown>
+        <MenuButton
+          slots={{ root: IconButton }}
+          slotProps={{
+            root: {
+              color: "danger",
+              disabled: loading,
+            },
+          }}
+        >
           <ExitToAppOutlined />
-        </IconButton>
-      </Tooltip>
+        </MenuButton>
+        <Menu>
+          <Box p={2}>
+            <Typography mb={2} level="title-md">
+              Tem certeza que deseja sair?
+            </Typography>
+            <Button
+              loading={loading}
+              disabled={loading}
+              autoFocus
+              onClick={handleLogout}
+              color="danger"
+            >
+              Sair da conta
+            </Button>
+          </Box>
+        </Menu>
+      </Dropdown>
     </Box>
   );
 };
