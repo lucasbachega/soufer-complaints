@@ -84,8 +84,8 @@ function startServer() {
     });
   } else {
     // Production Mode (Setup SSL Certificates)
-    const privateKey = fs.readFileSync("./privKey.pem");
-    const certificate = fs.readFileSync("./fullchain.pem");
+    const privateKey = fs.readFileSync(path.join(__dirname, "./privKey.pem"));
+    const certificate = fs.readFileSync(path.join(__dirname, "./fullchain.pem"));
 
     // Executar
     https
