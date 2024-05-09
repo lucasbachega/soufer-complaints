@@ -38,11 +38,11 @@ function startServer() {
   }
 
   // backend routes;
+  app.use(cookieParser());
   app.use("/api", bodyParser.json({ limit: "15mb" }));
   app.use("/api/admin", middlewares.auth, routes.admin);
   app.use("/api/complaints", routes.complaints);
   app.use("/api/auth", routes.auth);
-  app.use(cookieParser());
 
   // serve frontend app
   app.use(express.static(path.join(__dirname, "build")));
