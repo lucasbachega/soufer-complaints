@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const SECRET = process.env.API_SECRET_KEY || "InsecureSecret";
 
 module.exports = (req, res, next) => {
-  const token = req.headers["api-access-token"] || req.cookies.portaloc_access_token;
+  const token = req.headers["api-access-token"] || req?.cookies?.portaloc_access_token;
   if (!token) return res.status(400).send("API Access Token was not provided");
   try {
     const decoded = jwt.verify(token, SECRET, {});
