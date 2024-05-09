@@ -9,15 +9,17 @@ function AttachItem({ preview, filename, onRemove = () => {}, id }) {
       sx={{ position: "relative", borderRadius: 4, overflow: "hidden" }}
       title={filename}
     >
-      <Tooltip title="Remover">
-        <IconButton
-          onClick={() => onRemove(id)}
-          variant="solid"
-          sx={{ position: "absolute", zIndex: 10, top: 5, right: 5 }}
-        >
-          <DeleteOutlineOutlined />
-        </IconButton>
-      </Tooltip>
+      {onRemove && (
+        <Tooltip title="Remover">
+          <IconButton
+            onClick={() => onRemove(id)}
+            variant="solid"
+            sx={{ position: "absolute", zIndex: 10, top: 5, right: 5 }}
+          >
+            <DeleteOutlineOutlined />
+          </IconButton>
+        </Tooltip>
+      )}
       <Zoom>
         <img src={preview} width={"100%"} />
       </Zoom>

@@ -1,19 +1,5 @@
-import {
-  AutorenewRounded,
-  CheckRounded,
-  MoreHorizRounded,
-} from "@mui/icons-material";
-import {
-  Chip,
-  Divider,
-  Dropdown,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  Tooltip,
-  Typography,
-} from "@mui/joy";
+import { AttachFileOutlined } from "@mui/icons-material";
+import { Chip, Tooltip, Typography } from "@mui/joy";
 import React, { memo } from "react";
 import { formatDate } from "../../../utils/date_functions";
 import { occurrenceStatus } from "../../../utils/occurrences";
@@ -63,7 +49,13 @@ const TableItem = ({ row = {}, onClick }) => {
 
       <DefaultCell>{row.categoria?.text}</DefaultCell>
 
-      <DefaultCell>{row.anexos}</DefaultCell>
+      <DefaultCell>
+        {Boolean(row.anexos?.length) && (
+          <Chip variant="outlined" size="sm" startDecorator={<AttachFileOutlined />}>
+            {row.anexos?.length}
+          </Chip>
+        )}
+      </DefaultCell>
     </tr>
   );
 };

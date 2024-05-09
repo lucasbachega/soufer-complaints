@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AdminWrapper from "../pages/admin/AdminWrapper";
 import AuthWrapper from "../pages/admin/auth/AuthWrapper";
@@ -11,6 +12,7 @@ import Home from "../pages/home";
 import NewOccurrence from "../pages/new-occurrence";
 
 export default function () {
+  const isLogged = useSelector((state) => state.userInfo.isLogged);
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -22,10 +24,13 @@ export default function () {
         <Route path="sectors" element={<Sectors />} />
         <Route path="products" element={<Products />} />
         <Route path="categories" element={<Categories />} />
+
         {/* Login STACK  */}
-        <Route path="login" element={<AuthWrapper />}>
-          <Route index element={<Login />} />
-        </Route>
+        {!isLogged && (
+          <Route path="login" element={<AuthWrapper />}>
+            <Route index element={<Login />} />
+          </Route>
+        )}
       </Route>
     </Routes>
   );

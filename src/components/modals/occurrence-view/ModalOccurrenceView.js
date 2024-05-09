@@ -1,8 +1,6 @@
-import { EditOutlined } from "@mui/icons-material";
+import { AttachmentOutlined } from "@mui/icons-material";
 import {
   Box,
-  Button,
-  Chip,
   Divider,
   Modal,
   ModalClose,
@@ -12,11 +10,12 @@ import {
   Typography,
 } from "@mui/joy";
 import React, { memo } from "react";
-import { formatMoment } from "../../../utils/date_functions";
-import TextArea from "../../inputs/TextInputArea";
-import ToggleStatus from "./components/ToggleStatus";
-import SaveInput from "../../inputs/SaveInput";
 import { HttpClient } from "../../../api/httpClient";
+import { formatMoment } from "../../../utils/date_functions";
+import SaveInput from "../../inputs/SaveInput";
+import DetailItem from "./components/DetailItem";
+import FilesSection from "./components/FilesSection";
+import ToggleStatus from "./components/ToggleStatus";
 
 const ModalOccurrenceView = ({
   open,
@@ -30,7 +29,7 @@ const ModalOccurrenceView = ({
       slotProps={{ backdrop: { sx: { backdropFilter: "blur(1px)" } } }}
     >
       <ModalOverflow sx={{ overflowY: "scroll", overflowX: "hidden" }}>
-        <ModalDialog minWidth={"sm"} layout={"center"}>
+        <ModalDialog maxWidth={"sm"} minWidth={"sm"} layout={"center"}>
           <ModalClose onClick={onClose} />
           <Typography lineHeight={1} level="body-sm" color="neutral">
             Ocorrência: {data?.id}
@@ -96,72 +95,32 @@ const ModalOccurrenceView = ({
               }
             />
           </Stack>
-          <Stack pb={5} mt={2} direction={"column"} gap={2}>
-            <Stack direction="row" gap={2}>
-              <Typography color="neutral" width={150} level="title-sm">
-                Unidade
-              </Typography>
-              <Typography flex={1} level="title-sm">
-                {data?.unidade?.text || "--"}
-              </Typography>
-            </Stack>
-            <Stack direction="row" gap={2}>
-              <Typography color="neutral" width={150} level="title-sm">
-                Cliente
-              </Typography>
-              <Typography flex={1} level="title-sm">
-                {data?.cliente || "--"}
-              </Typography>
-            </Stack>
-            <Stack direction="row" gap={2}>
-              <Typography color="neutral" width={150} level="title-sm">
-                Representante
-              </Typography>
-              <Typography flex={1} level="title-sm">
-                {data?.representante || "--"}
-              </Typography>
-            </Stack>
-            <Stack direction="row" gap={2}>
-              <Typography color="neutral" width={150} level="title-sm">
-                Ordem de venda
-              </Typography>
-              <Typography flex={1} level="title-sm">
-                {data?.order_venda || "--"}
-              </Typography>
-            </Stack>
-            <Stack direction="row" gap={2}>
-              <Typography color="neutral" width={150} level="title-sm">
-                Setor
-              </Typography>
-              <Typography flex={1} level="title-sm">
-                {data?.setor?.text || "--"}
-              </Typography>
-            </Stack>
-            <Stack direction="row" gap={2}>
-              <Typography color="neutral" width={150} level="title-sm">
-                Produto
-              </Typography>
-              <Typography flex={1} level="title-sm">
-                {data?.produto?.text || "--"}
-              </Typography>
-            </Stack>
-            <Stack direction="row" gap={2}>
-              <Typography color="neutral" width={150} level="title-sm">
-                Categoria
-              </Typography>
-              <Typography flex={1} level="title-sm">
-                {data?.categoria?.text || "--"}
-              </Typography>
-            </Stack>
-            <Stack direction="row" gap={2}>
-              <Typography color="neutral" width={150} level="title-sm">
-                Motivo
-              </Typography>
-              <Typography flex={1} level="title-sm">
-                {data?.reason || "--"}
-              </Typography>
-            </Stack>
+          <Stack pb={2} mt={2} direction={"column"} gap={2}>
+            <DetailItem label={"Unidade"} value={data?.unidade?.text} />
+            <DetailItem label={"Cliente"} value={data?.cliente} />
+            <DetailItem label={"Representante"} value={data?.representante} />
+            <DetailItem label={"Ordem de venda"} value={data?.order_venda} />
+            <DetailItem label={"Setor"} value={data?.setor?.text} />
+            <DetailItem label={"Produto"} value={data?.produto?.text} />
+            <DetailItem label={"Categoria"} value={data?.categoria?.text} />
+            <DetailItem label={"Motivo"} value={data?.reason} />
           </Stack>
+          <Stack direction="row" alignItems={"center"} gap={2}>
+            <AttachmentOutlined />
+            <Typography level="h3">Anexos ({data?.anexos?.length})</Typography>
+          </Stack>
+          <Box pb={5}>
+            {Boolean(data?.anexos?.length) ? (
+              <FilesSection
+                occurrenceId={data?._id}
+                files={data?.anexos || []}
+              />
+            ) : (
+              <Typography fontStyle={"italic"} color="neutral" level="body-md">
+                Nenhum anexo adicionado
+              </Typography>
+            )}
+          </Box>
         </ModalDialog>
       </ModalOverflow>
     </Modal>

@@ -197,10 +197,11 @@ class HttpClient {
      * Atualizar uma ocorrência
      * (alterar status e dados de análise)
      */
-    async updateOcorrencia(id, { causa, correcao } = {}) {
+    async updateOcorrencia(id, { causa, correcao, status } = {}) {
       return HttpClient.put(`/admin/complaints/${id}`, {
         causa,
         correcao,
+        status,
       });
     },
     /**
