@@ -31,7 +31,7 @@ const Products = () => {
   }, []);
 
   const handleCreate = useCallback(async (text) => {
-    const res = await HttpClient.admin.createSetor({ text });
+    const res = await HttpClient.admin.createProduto({ text });
     if (res.ok) {
       dispatch(openSnackbar({ message: "Produto criado" }));
       setData((prev) => [
