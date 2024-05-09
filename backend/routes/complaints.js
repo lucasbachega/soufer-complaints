@@ -246,8 +246,10 @@ router.post("/upload", multerMid.array("files", 5), async (req, res) => {
     { _id: ocorrencia._id },
     {
       $push: {
-        $each: anexos,
-        $position: 0,
+        anexos: {
+          $each: anexos,
+          $position: 0,
+        },
       },
     }
   );
