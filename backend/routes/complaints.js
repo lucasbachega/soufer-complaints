@@ -7,8 +7,37 @@ const {
   SetorNotFound,
   ProdutoNotFound,
   CategoriaNotFound,
+  OcorrenciaNotFound,
 } = require("./errors");
 const router = express.Router();
+const multer = require("multer");
+var fs = require("fs");
+
+// multer middleware (file upload)
+const multerMid = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, callback) => {
+      const today = new Date();
+      const str = today.toLocaleDateString("pt-BR");
+      const [dia, mes, ano] = str.split("/");
+      const uri = `./files/${ano}/${dia}-${mes}`;
+
+      if (!fs.existsSync(uri)) {
+        fs.mkdirSync(uri, { recursive: true });
+      }
+      return callback(null, uri);
+    },
+    // filename: (req, file, callback) => {
+    //   console.log(req.body);
+    //   const ocorrencia_id = req.body.ocorrencia_id || "unknown_id";
+    //   return callback(null, `${ocorrencia_id}-${file.originalname}`);
+    // },
+  }),
+  limits: {
+    // no larger than 30mb.
+    fileSize: 30 * 1024 * 1024,
+  },
+});
 
 /**
  * Listar Unidades disponíveis para seleção
@@ -167,10 +196,10 @@ router.post("/register", async (req, res) => {
       text: _categoria.text,
     },
     motivo,
-    anexos: 0,
     causa: "",
     correcao: "",
     status: "open", // em aberto
+    anexos: [],
   };
 
   // Salvar no banco de dados
@@ -184,6 +213,48 @@ router.post("/register", async (req, res) => {
       causa: undefined,
       correcao: undefined,
     },
+  });
+});
+
+/**
+ * Upload de anexos
+ */
+router.post("/upload", multerMid.array("files", 5), async (req, res) => {
+  const files = req.files;
+  const ocorrenciaId = req.body.ocorrencia_id;
+  if (!ocorrenciaId) {
+    throw new OcorrenciaNotFound();
+  }
+
+  // Verificar da ocorrência
+  const ocorrencia = await Database.collection("ocorrencias").findOne({
+    _id: new ObjectId(ocorrenciaId),
+  });
+  if (!ocorrencia) {
+    throw new OcorrenciaNotFound();
+  }
+
+  const anexos = [];
+
+  for (let i = 0; i < files.length; i++) {
+    const { originalname, mimetype, filename, path, size } = files[i];
+    anexos.push({ originalname, mimetype, filename, path, size, upload_at: new Date() });
+  }
+
+  // Save to database
+  await Database.collection("ocorrencias").updateOne(
+    { _id: ocorrencia._id },
+    {
+      $push: {
+        $each: anexos,
+        $position: 0,
+      },
+    }
+  );
+
+  return res.status(201).send({
+    ok: true,
+    anexos,
   });
 });
 

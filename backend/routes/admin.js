@@ -27,6 +27,16 @@ router.get("/test", async (req, res) => {
 });
 
 /**
+ * Verificar se usuário já está logado
+ */
+router.get("/login/check", async (req, res) => {
+  return res.status(200).send({
+    ok: true,
+    message: "Usuário autenticado",
+  });
+});
+
+/**
  * UNIDADES
  */
 router.get("/unidades", async (req, res) => {

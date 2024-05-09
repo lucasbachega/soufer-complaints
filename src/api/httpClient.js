@@ -96,6 +96,14 @@ class HttpClient {
   }
 
   /**
+   * Efetuar Teste de Login
+   */
+  static async testLogin() {
+    const r = await this.get("/admin/login/check");
+    return r;
+  }
+
+  /**
    * Listar unidades ativas disponíveis para seleção
    */
   static async listUnidades() {
@@ -156,13 +164,7 @@ class HttpClient {
     /**
      * Listar ocorrências p/ admin de acordo com filtros
      */
-    async listarOcorrencias({
-      period,
-      unidade,
-      categoria,
-      produto,
-      setor,
-    } = {}) {
+    async listarOcorrencias({ period, unidade, categoria, produto, setor } = {}) {
       return HttpClient.get("/admin/complaints", {
         params: {
           unidade_id: unidade,
@@ -319,3 +321,4 @@ class HttpClient {
 }
 
 export { HttpClient };
+

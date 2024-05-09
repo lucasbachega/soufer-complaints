@@ -19,6 +19,16 @@ router.post("/login", async (req, res) => {
     const acessToken = jwt.sign({ userId: username }, SECRET, {
       expiresIn: "7d",
     });
+
+    // Save Access Token to Cookie
+    res.cookie("portaloc_access_token", acessToken, {
+      httpOnly: true,
+      maxAge: 7200 * 1000, // 2hr
+      // domain: process.env.COOKIE_DOMAIN || "localhost",
+      domain: req.hostname,
+      secure: false,
+    });
+
     return res.status(200).send({
       ok: true,
       user,
