@@ -5,6 +5,8 @@ const path = require("path");
 const { middlewares, Database, routes } = require("./backend");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const https = require("node:https");
+const fs = require("node:fs");
 
 /**
  * Efetuar a conexão com o banco de dados
@@ -37,6 +39,17 @@ function startServer() {
     );
   }
 
+  if (process.env.MODE === "production") {
+    // redirect every single incoming request to https
+    app.enable("trust proxy");
+    app.use(function (req, res, next) {
+      if (!req.secure) {
+        res.redirect("https://" + req.headers.host + req.url);
+      }
+      return next();
+    });
+  }
+
   // backend routes;
   app.use(cookieParser());
   app.use("/api", bodyParser.json({ limit: "15mb" }));
@@ -62,8 +75,29 @@ function startServer() {
     });
   });
 
-  // start http server
-  app.listen(serverPORT, () => {
-    console.log(`Soufer Portal Ocorrências App is listening on port ${serverPORT}`);
-  });
+  if (process.env.MODE === "development") {
+    // start http server
+    app.listen(serverPORT, () => {
+      console.log(
+        `Soufer Portal Ocorrências App is listening on port ${serverPORT} DEVELOPMENT MODE`
+      );
+    });
+  } else {
+    // Production Mode (Setup SSL Certificates)
+    const privateKey = fs.readFileSync("./privKey.pem");
+    const certificate = fs.readFileSync("./fullchain.pem");
+
+    // Executar
+    https
+      .createServer(
+        {
+          key: privateKey,
+          cert: certificate,
+        },
+        app
+      )
+      .listen(443, () => {
+        console.log(`Soufer Portal Ocorrências App is listening on port 443 PRODUCTION MODE`);
+      });
+  }
 }
