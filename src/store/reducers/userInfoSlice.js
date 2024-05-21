@@ -2,7 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLogged: false,
-  data: {},
+  data: {
+    roles: []
+  },
 };
 
 export const userInfoSlice = createSlice({
@@ -22,5 +24,7 @@ export const userInfoSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { login, logout } = userInfoSlice.actions;
+
+export const selectUserIsAdmin = (state) => state?.userInfo?.data?.roles?.includes('admin')
 
 export default userInfoSlice.reducer;

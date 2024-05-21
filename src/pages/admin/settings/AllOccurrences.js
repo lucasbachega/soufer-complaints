@@ -92,7 +92,7 @@ const AllOccurrences = () => {
     <>
       <Box p={3} pb={2} display={"flex"} alignItems={"center"} gap={2}>
         <AssignmentOutlined sx={{ fontSize: "2rem" }} />
-        <Typography level="h2">Todas as ocorrências</Typography>
+        <Typography level="h3">Todas as ocorrências</Typography>
         <Box flex={1} />
         <Tooltip title="Atualizar">
           <IconButton disabled={loading} onClick={getData}>

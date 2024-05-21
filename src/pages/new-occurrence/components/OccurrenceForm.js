@@ -44,13 +44,6 @@ const OccurrenceForm = ({
         />
         <TextInput
           disabled={loading}
-          value={data?.representative}
-          onChange={(v) => onChangeValue("representative", v)}
-          label={"Representante"}
-          required
-        />
-        <TextInput
-          disabled={loading}
           value={data?.salesOrder}
           onChange={(v) => onChangeValue("salesOrder", v)}
           label={"Ordem de venda / Renomeio"}

@@ -1,6 +1,7 @@
 import { AssignmentOutlined, Close } from "@mui/icons-material";
-import { Avatar, Box, Button, IconButton, Typography } from "@mui/joy";
+import { Avatar, Box, Button, Divider, IconButton, Typography } from "@mui/joy";
 import React, { memo } from "react";
+import UserIndicator from "../../home/components/UserIndicator";
 
 const Appbar = ({ onCancel = () => {}, isOk, onCreate, loading }) => {
   return (
@@ -29,6 +30,25 @@ const Appbar = ({ onCancel = () => {}, isOk, onCreate, loading }) => {
         Nova ocorrência
       </Typography>
       <Box flex={1} />
+      <UserIndicator
+        disableExit
+        disableUsername
+        sx={{
+          height: 40,
+          pr: 2,
+          boxShadow: "none",
+          display: { xs: "none", md: "flex" },
+        }}
+      />
+      <Divider
+        orientation="vertical"
+        sx={{
+          height: 20,
+          mx: 2,
+          alignSelf: "center",
+          display: { xs: "none", md: "flex" },
+        }}
+      />
       <Button
         sx={{ display: { xs: "none", md: "flex" } }}
         onClick={onCancel}
@@ -37,7 +57,12 @@ const Appbar = ({ onCancel = () => {}, isOk, onCreate, loading }) => {
       >
         Cancelar
       </Button>
-      <Button disabled={!isOk || loading} onClick={onCreate} size="md">
+      <Button
+        disabled={!isOk || loading}
+        onClick={onCreate}
+        size="md"
+        sx={{ px: 4 }}
+      >
         {loading ? "Enviando" : "Enviar"}
       </Button>
     </Box>

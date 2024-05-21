@@ -219,6 +219,32 @@ class HttpClient {
         },
       });
     },
+
+    //USERS
+    async createUser({ firstname, username, password, roles }) {
+      return HttpClient.post("/admin/users", {
+        firstname,
+        username,
+        password,
+        roles,
+      });
+    },
+    async listarUsers() {
+      return HttpClient.get("/admin/users");
+    },
+    async updateUser(id, { firstname, username, roles, block }) {
+      return HttpClient.put(`/admin/users/${id}`, {
+        firstname,
+        username,
+        roles,
+        block,
+      });
+    },
+    async deleteUser(id) {
+      return HttpClient.delete(`/admin/users/${id}`);
+    },
+
+    //UNITS
     /**
      * Criar uma unidade
      */

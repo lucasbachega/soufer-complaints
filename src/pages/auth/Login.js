@@ -3,10 +3,10 @@ import { Alert, Button, IconButton, Stack, Typography } from "@mui/joy";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { HttpClient } from "../../../api/httpClient";
-import PasswordInput from "../../../components/inputs/PasswordInput";
-import TextInput from "../../../components/inputs/TextInput";
-import { login } from "../../../store/reducers/userInfoSlice";
+import { HttpClient } from "../../api/httpClient";
+import PasswordInput from "../../components/inputs/PasswordInput";
+import TextInput from "../../components/inputs/TextInput";
+import { login } from "../../store/reducers/userInfoSlice";
 
 const Login = () => {
   const dispatch = useDispatch();

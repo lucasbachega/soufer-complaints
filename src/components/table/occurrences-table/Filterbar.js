@@ -22,19 +22,6 @@ const Filterbar = ({ filters, onChange }) => {
           <Option value="all">Todo o período</Option>
         </Select>
       </FormControl>
-      {/* <FormControl size="sm">
-        <FormLabel>Status</FormLabel>
-        <Select
-          size="sm"
-          placeholder="Filtrar por status"
-          slotProps={{ button: { sx: { whiteSpace: "nowrap" } } }}
-          value={filters?.status}
-          onChange={(e, v) => onChange("status", v)}
-        >
-          <Option value="open">Em aberto</Option>
-          <Option value="completed">Concluído</Option>
-        </Select>
-      </FormControl> */}
       <CategoryFilter
         value={filters?.category}
         onChange={(v) => onChange("category", v)}

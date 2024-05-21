@@ -1,13 +1,16 @@
 import "@fontsource/inter";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
 import App from "./App";
+import { HttpClient } from "./api/httpClient";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import { Provider } from "react-redux";
 import { store } from "./store/store";
 
-document.getElementById("load_application").innerHTML = "";
+// Configure HttpClient
+HttpClient.setup();
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Provider store={store}>

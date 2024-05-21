@@ -1,7 +1,6 @@
 export const occurrenceInitialState = {
   unit: "",
   customer: "",
-  representative: "",
   salesOrder: "",
   sector: "",
   product: "",

@@ -3,13 +3,13 @@ import { IconButton } from "@mui/joy";
 import React, { useState } from "react";
 import TextInput from "./TextInput";
 
-const PasswordInput = ({ value, onChange, disabled }) => {
+const PasswordInput = ({ value, label = "Senha", onChange, disabled }) => {
   const [visible, setVisible] = useState(false);
   return (
     <TextInput
       value={value}
       onChange={onChange}
-      label={"Senha"}
+      label={label}
       disabled={disabled}
       required
       type={visible ? "text" : "password"}

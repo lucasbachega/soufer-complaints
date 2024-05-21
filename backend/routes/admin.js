@@ -26,7 +26,9 @@ const excelJS = require("exceljs");
  * Login por usuário e senha
  */
 router.get("/test", async (req, res) => {
-  return res.status(200).send(`Olá <b>${req.userId}</b>! Você está autenticado`);
+  return res
+    .status(200)
+    .send(`Olá <b>${req.userId}</b>! Você está autenticado`);
 });
 
 /**
@@ -54,7 +56,10 @@ router.get("/login/check", async (req, res) => {
  * UNIDADES
  */
 router.get("/unidades", async (req, res) => {
-  const r = await Database.collection("unidades").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("unidades")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/unidades", async (req, res) => {
@@ -112,7 +117,10 @@ router.delete("/unidades/:id", async (req, res) => {
  * SETOR
  */
 router.get("/setor", async (req, res) => {
-  const r = await Database.collection("setor").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("setor")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/setor", async (req, res) => {
@@ -170,7 +178,10 @@ router.delete("/setor/:id", async (req, res) => {
  * PRODUTOS
  */
 router.get("/produtos", async (req, res) => {
-  const r = await Database.collection("produtos").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("produtos")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/produtos", async (req, res) => {
@@ -228,7 +239,10 @@ router.delete("/produtos/:id", async (req, res) => {
  * CATEGORIAS
  */
 router.get("/categorias", async (req, res) => {
-  const r = await Database.collection("categorias").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("categorias")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/categorias", async (req, res) => {
@@ -329,7 +343,7 @@ router.put("/users/:id", async (req, res) => {
     updateTexts({
       collection: "user",
       id,
-      text,
+      text: firstname,
     });
   }
   if ("password" in req.body) edits.pwd = password;
@@ -364,7 +378,8 @@ router.delete("/users/:id", async (req, res) => {
 
 // Listar ocorrências com base em filtros selecionados
 router.get("/complaints", async (req, res) => {
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
+    req.query;
 
   const filters = {};
   if (status) filters.status = status;

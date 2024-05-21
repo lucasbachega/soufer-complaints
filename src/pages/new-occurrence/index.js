@@ -71,7 +71,6 @@ export default (props) => {
       motivo: data.reason,
       ordem_venda: data.salesOrder,
       produto: data.product,
-      representante: data.representative,
       setor: data.sector,
       unidade: data.unit,
     });
@@ -81,7 +80,6 @@ export default (props) => {
           files,
           occurrenceId: res?.ocorrencia?._id,
         });
-        console.log(uploadRes);
       }
       setCompleted(true);
     } else {

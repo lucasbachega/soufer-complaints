@@ -5,6 +5,7 @@ import {
   CategoryOutlined,
   HomeOutlined,
   InventoryOutlined,
+  PeopleAltOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -70,6 +71,13 @@ const Sidebar = () => {
           />
           <Divider sx={{ mx: -2, mt: 1 }} />
           <ListSubheader>Configurações</ListSubheader>
+          <SidebarItem
+            Icon={PeopleAltOutlined}
+            label="Usuários"
+            selected={isSelected("users", pathname)}
+            path="users"
+            onClick={(path) => navigate(`/admin/${path}`)}
+          />
           <SidebarItem
             Icon={BusinessOutlined}
             label="Unidades"

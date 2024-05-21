@@ -129,7 +129,15 @@ router.get("/categorias", async (req, res) => {
  * Registrar uma ocorrência
  */
 router.post("/register", async (req, res) => {
-  const { unidade_id, setor_id, produto_id, categoria_id, cliente, ordem_venda, motivo } = req.body;
+  const {
+    unidade_id,
+    setor_id,
+    produto_id,
+    categoria_id,
+    cliente,
+    ordem_venda,
+    motivo,
+  } = req.body;
 
   if (!unidade_id) throw new RequiredFieldError("Unidade");
   if (!cliente) throw new RequiredFieldError("Cliente");
@@ -241,7 +249,14 @@ router.post("/upload", multerMid.array("files", 5), async (req, res) => {
 
   for (let i = 0; i < files.length; i++) {
     const { originalname, mimetype, filename, path, size } = files[i];
-    anexos.push({ originalname, mimetype, filename, path, size, upload_at: new Date() });
+    anexos.push({
+      originalname,
+      mimetype,
+      filename,
+      path,
+      size,
+      upload_at: new Date(),
+    });
   }
 
   // Save to database

@@ -1,8 +1,7 @@
 import { Box, Container, Typography } from "@mui/joy";
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Logo from "../../../assets/logo/soufer-logo.png";
-import PathIndicator from "./components/PathIndicator";
+import Logo from "../../assets/logo/soufer-logo.png";
 
 const AuthWrapper = () => {
   return (
@@ -15,7 +14,6 @@ const AuthWrapper = () => {
       alignItems={"center"}
       p={3}
     >
-      <PathIndicator />
       <Container
         maxWidth="xs"
         component={Box}
@@ -28,9 +26,6 @@ const AuthWrapper = () => {
           <img src={Logo} width={"200px"} />
           <Typography mt={1} fontWeight={500} textAlign={"center"} level="h2">
             Portal de ocorrências
-          </Typography>
-          <Typography color="neutral" textAlign="center" level="h4">
-            ADMINISTRADOR
           </Typography>
         </Box>
         <Box

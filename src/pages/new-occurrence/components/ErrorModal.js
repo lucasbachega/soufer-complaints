@@ -1,4 +1,4 @@
-import { CheckCircle, InfoRounded } from "@mui/icons-material";
+import { InfoRounded } from "@mui/icons-material";
 import {
   Button,
   DialogActions,
@@ -13,7 +13,12 @@ function ErrorModal({ open, onClose, error, onRetry }) {
   return (
     open && (
       <Modal open={open} onClose={onClose}>
-        <ModalDialog minWidth={400} variant="outlined" role="alertdialog">
+        <ModalDialog
+          minWidth={400}
+          maxWidth={"sm"}
+          variant="outlined"
+          role="alertdialog"
+        >
           <ModalClose />
           <DialogTitle>
             <InfoRounded color="error" sx={{ mr: 1 }} />

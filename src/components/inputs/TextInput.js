@@ -17,6 +17,7 @@ const TextInput = ({
   disabled,
   autoFocus,
   type,
+  sx,
 }) => {
   return (
     <FormControl required={required} error={error}>
@@ -32,6 +33,7 @@ const TextInput = ({
         type={type}
         variant={variant}
         disabled={disabled}
+        sx={sx}
       />
       {Boolean(helperText) && (
         <FormHelperText>

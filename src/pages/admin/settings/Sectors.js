@@ -61,7 +61,7 @@ const Sectors = () => {
     <>
       <Box p={3} pb={2} display={"flex"} alignItems={"center"} gap={2}>
         <BusinessCenter sx={{ fontSize: "2rem" }} />
-        <Typography level="h2">Setores ({data?.length || "-"})</Typography>
+        <Typography level="h3">Setores ({data?.length || "-"})</Typography>
         <Box flex={1} />
         <Tooltip title="Atualizar">
           <IconButton disabled={loading} onClick={getData}>
