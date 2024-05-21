@@ -7,6 +7,7 @@ const {
   ProdutoNotFound,
   CategoriaNotFound,
   OcorrenciaNotFound,
+  UserNotFound,
 } = require("./errors");
 const { updateTexts } = require("./utils");
 const router = express.Router();
@@ -25,9 +26,7 @@ const excelJS = require("exceljs");
  * Login por usuário e senha
  */
 router.get("/test", async (req, res) => {
-  return res
-    .status(200)
-    .send(`Olá <b>${req.userId}</b>! Você está autenticado`);
+  return res.status(200).send(`Olá <b>${req.userId}</b>! Você está autenticado`);
 });
 
 /**
@@ -55,10 +54,7 @@ router.get("/login/check", async (req, res) => {
  * UNIDADES
  */
 router.get("/unidades", async (req, res) => {
-  const r = await Database.collection("unidades")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("unidades").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/unidades", async (req, res) => {
@@ -116,10 +112,7 @@ router.delete("/unidades/:id", async (req, res) => {
  * SETOR
  */
 router.get("/setor", async (req, res) => {
-  const r = await Database.collection("setor")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("setor").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/setor", async (req, res) => {
@@ -177,10 +170,7 @@ router.delete("/setor/:id", async (req, res) => {
  * PRODUTOS
  */
 router.get("/produtos", async (req, res) => {
-  const r = await Database.collection("produtos")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("produtos").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/produtos", async (req, res) => {
@@ -238,10 +228,7 @@ router.delete("/produtos/:id", async (req, res) => {
  * CATEGORIAS
  */
 router.get("/categorias", async (req, res) => {
-  const r = await Database.collection("categorias")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("categorias").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/categorias", async (req, res) => {
@@ -296,13 +283,88 @@ router.delete("/categorias/:id", async (req, res) => {
 });
 
 /**
+ * USUÁRIOS
+ */
+router.get("/users", async (req, res) => {
+  const r = await Database.collection("users")
+    .find(
+      {},
+      {
+        projection: {
+          pwd: 0,
+        },
+      }
+    )
+    .sort({ firstname: 1 })
+    .toArray();
+  return res.send(r);
+});
+router.post("/users", async (req, res) => {
+  const { username, firstname, password, email, roles } = req.body;
+  const r = await Database.collection("users").insertOne({
+    username,
+    firstname,
+    pwd: password,
+    email,
+    roles: roles || [],
+    created_at: new Date(),
+    block: false,
+  });
+  return res.status(201).send({
+    ok: true,
+    id: r.insertedId.toString(),
+  });
+});
+router.put("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const { username, firstname, password, email, roles, block } = req.body;
+  const _user = await Database.collection("users").findOne({
+    _id: new ObjectId(id),
+  });
+  if (!_user) throw new UserNotFound();
+  const edits = {};
+  if ("username" in req.body) edits.username = username;
+  if ("firstname" in req.body) {
+    edits.firstname = firstname;
+    updateTexts({
+      collection: "user",
+      id,
+      text,
+    });
+  }
+  if ("password" in req.body) edits.pwd = password;
+  if ("email" in req.body) edits.email = email;
+  if ("roles" in req.body) edits.roles = roles;
+  if ("block" in req.body) edits.block = !!block;
+  await Database.collection("users").updateOne(
+    { _id: _user._id },
+    {
+      $set: edits,
+    }
+  );
+  return res.status(200).send({
+    ok: true,
+  });
+});
+router.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  const _user = await Database.collection("users").findOne({
+    _id: new ObjectId(id),
+  });
+  if (!_user) throw new UserNotFound();
+  await Database.collection("users").deleteOne({ _id: _user._id });
+  return res.status(200).send({
+    ok: true,
+  });
+});
+
+/**
  * CONTROLE DE OCORRÊNCIAS
  */
 
 // Listar ocorrências com base em filtros selecionados
 router.get("/complaints", async (req, res) => {
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
-    req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
 
   const filters = {};
   if (status) filters.status = status;
@@ -457,7 +519,7 @@ router.get("/complaints/export/excel", async (req, res) => {
       created_at,
       unidade,
       cliente,
-      representante,
+      user,
       ordem_venda,
       setor,
       categoria,
@@ -472,7 +534,7 @@ router.get("/complaints/export/excel", async (req, res) => {
       created_at,
       unidade: unidade.text,
       cliente,
-      representante,
+      representante: user.text,
       ordem_venda,
       setor: setor.text,
       produto: produto.text,
@@ -487,7 +549,10 @@ router.get("/complaints/export/excel", async (req, res) => {
   worksheet.getRow(1).eachCell((cell) => {
     cell.font = { bold: true };
   });
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  res.setHeader(
+    "Content-Type",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
   workbook.xlsx.write(res, {
     filename: "ocorrencias.xlsx",
   });

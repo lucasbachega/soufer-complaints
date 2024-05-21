@@ -38,6 +38,14 @@ class CategoriaNotFound extends Error {
   }
 }
 
+class UserNotFound extends Error {
+  constructor() {
+    super("Usuário não foi encontrado");
+    this.name = "UserNotFound";
+    this.status = 400;
+  }
+}
+
 class RequiredFieldError extends Error {
   constructor(fieldname) {
     super(`O preenchimento do campo "${fieldname}" é obrigatório`);
@@ -70,5 +78,6 @@ module.exports = {
   CategoriaNotFound,
   RequiredFieldError,
   OcorrenciaNotFound,
-  AnexoNotFound
+  AnexoNotFound,
+  UserNotFound
 };

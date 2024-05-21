@@ -9,6 +9,7 @@ const {
   CategoriaNotFound,
   OcorrenciaNotFound,
   AnexoNotFound,
+  UserNotFound,
 } = require("./errors");
 const router = express.Router();
 const multer = require("multer");
@@ -128,27 +129,25 @@ router.get("/categorias", async (req, res) => {
  * Registrar uma ocorrência
  */
 router.post("/register", async (req, res) => {
-  const {
-    unidade_id,
-    setor_id,
-    produto_id,
-    categoria_id,
-    cliente,
-    representante,
-    ordem_venda,
-    motivo,
-  } = req.body;
+  const { unidade_id, setor_id, produto_id, categoria_id, cliente, ordem_venda, motivo } = req.body;
 
   if (!unidade_id) throw new RequiredFieldError("Unidade");
   if (!cliente) throw new RequiredFieldError("Cliente");
   if (!categoria_id) throw new RequiredFieldError("Tipo de ocorrência");
-  if (!representante) throw new RequiredFieldError("Representante");
   if (!ordem_venda) throw new RequiredFieldError("Ordem de venda");
   if (!motivo) throw new RequiredFieldError("Motivo");
   if (!produto_id) throw new RequiredFieldError("Produto");
   if (!setor_id) throw new RequiredFieldError("Setor");
 
+  // Usuário autenticado
+  const user_id = req.userId;
+
   // Buscar dados relacionados
+  // Usuário
+  const _user = await Database.collection("users").findOne({
+    _id: new ObjectId(user_id),
+  });
+  if (!_user) throw new UserNotFound();
   // Unidade
   const _unidade = await Database.collection("unidades").findOne({
     _id: new ObjectId(unidade_id),
@@ -177,12 +176,15 @@ router.post("/register", async (req, res) => {
   // dados da ocorrência
   const ocorrencia = {
     created_at: new Date(),
+    user: {
+      _id: _user._id,
+      text: _user.firstname,
+    },
     unidade: {
       _id: _unidade._id,
       text: _unidade.text,
     },
     cliente,
-    representante,
     ordem_venda,
     setor: {
       _id: _setor._id,

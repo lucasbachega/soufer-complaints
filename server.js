@@ -53,8 +53,8 @@ function startServer() {
   // backend routes;
   app.use(cookieParser());
   app.use("/api", bodyParser.json({ limit: "15mb" }));
-  app.use("/api/admin", middlewares.auth, routes.admin);
-  app.use("/api/complaints", routes.complaints);
+  app.use("/api/admin", middlewares.auth({ restrictAcess: true, role: "admin" }), routes.admin);
+  app.use("/api/complaints", middlewares.auth({}), routes.complaints);
   app.use("/api/auth", routes.auth);
 
   // serve frontend app

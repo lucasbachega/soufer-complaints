@@ -23,7 +23,7 @@ router.post("/login", async (req, res) => {
   );
   if (user) {
     // Generate Acess Token...
-    const acessToken = jwt.sign({ userId: username }, SECRET, {
+    const acessToken = jwt.sign({ userId: username, roles: user.roles || [] }, SECRET, {
       expiresIn: "7d",
     });
 
@@ -55,6 +55,57 @@ router.post("/logout", async (req, res) => {
   return res.send({
     ok: true,
   });
+});
+
+/**
+ * Trocar a senha de acesso
+ */
+router.post("/change-password", async (req, res) => {
+  const { username, password, newPassword } = req.body;
+  const user = await Database.collection("users").findOne(
+    {
+      username,
+      pwd: password,
+    },
+    {
+      projection: {
+        pwd: 0,
+      },
+    }
+  );
+  if (user) {
+    // Generate Acess Token...
+    const acessToken = jwt.sign({ userId: username, roles: user.roles || [] }, SECRET, {
+      expiresIn: "7d",
+    });
+
+    // Save Access Token to Cookie
+    res.cookie("portaloc_access_token", acessToken, {
+      httpOnly: true,
+      maxAge: 7200 * 1000, // 2hr
+      // domain: process.env.COOKIE_DOMAIN || "localhost",
+      domain: req.hostname,
+      secure: false,
+    });
+
+    // Atualizar a senha
+    await Database.collection("users").updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          pwd: newPassword,
+        },
+      }
+    );
+
+    return res.status(200).send({
+      ok: true,
+      user,
+      acessToken,
+    });
+  } else {
+    throw new InvalidUserAccess();
+  }
 });
 
 module.exports = router;
