@@ -29,7 +29,6 @@ router.get("/test", async (req, res) => {
   return res.status(200).send(`Olá <b>${req.userId}</b>! Você está autenticado`);
 });
 
-
 /**
  * UNIDADES
  */
@@ -390,7 +389,7 @@ router.get("/complaints", async (req, res) => {
   return res.send(
     resultado.map((result) => ({
       ...result,
-      representante: result?.user?.text,
+      representante: result?.user?.text || result.representante,
       user: undefined,
     }))
   );
@@ -461,8 +460,6 @@ router.get("/complaints/export/excel", async (req, res) => {
       break;
   }
 
-  console.log(period, filters.created_at)
-
   // Listar Ocorrências do banco de dados
   const resultado = await Database.collection("ocorrencias")
     .find({
@@ -510,6 +507,7 @@ router.get("/complaints/export/excel", async (req, res) => {
       unidade,
       cliente,
       user,
+      representante,
       ordem_venda,
       setor,
       categoria,
@@ -524,7 +522,7 @@ router.get("/complaints/export/excel", async (req, res) => {
       created_at,
       unidade: unidade.text,
       cliente,
-      representante: user.text,
+      representante: user?.text || representante,
       ordem_venda,
       setor: setor.text,
       produto: produto.text,
