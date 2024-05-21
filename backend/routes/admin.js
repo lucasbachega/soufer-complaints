@@ -26,40 +26,15 @@ const excelJS = require("exceljs");
  * Login por usuário e senha
  */
 router.get("/test", async (req, res) => {
-  return res
-    .status(200)
-    .send(`Olá <b>${req.userId}</b>! Você está autenticado`);
+  return res.status(200).send(`Olá <b>${req.userId}</b>! Você está autenticado`);
 });
 
-/**
- * Verificar se usuário já está logado
- */
-router.get("/login/check", async (req, res) => {
-  const user = await Database.collection("users").findOne(
-    {
-      username: req.userId,
-    },
-    {
-      projection: {
-        pwd: 0,
-      },
-    }
-  );
-  return res.status(200).send({
-    ok: true,
-    user: user,
-    message: "Usuário autenticado",
-  });
-});
 
 /**
  * UNIDADES
  */
 router.get("/unidades", async (req, res) => {
-  const r = await Database.collection("unidades")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("unidades").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/unidades", async (req, res) => {
@@ -117,10 +92,7 @@ router.delete("/unidades/:id", async (req, res) => {
  * SETOR
  */
 router.get("/setor", async (req, res) => {
-  const r = await Database.collection("setor")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("setor").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/setor", async (req, res) => {
@@ -178,10 +150,7 @@ router.delete("/setor/:id", async (req, res) => {
  * PRODUTOS
  */
 router.get("/produtos", async (req, res) => {
-  const r = await Database.collection("produtos")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("produtos").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/produtos", async (req, res) => {
@@ -239,10 +208,7 @@ router.delete("/produtos/:id", async (req, res) => {
  * CATEGORIAS
  */
 router.get("/categorias", async (req, res) => {
-  const r = await Database.collection("categorias")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("categorias").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/categorias", async (req, res) => {
@@ -378,8 +344,7 @@ router.delete("/users/:id", async (req, res) => {
 
 // Listar ocorrências com base em filtros selecionados
 router.get("/complaints", async (req, res) => {
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
-    req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
 
   const filters = {};
   if (status) filters.status = status;
@@ -398,6 +363,7 @@ router.get("/complaints", async (req, res) => {
         $gte: startOfToday(),
         $lt: endOfToday(),
       };
+      break;
     case "month":
       filters.created_at = {
         $gte: startOfMonth(today),
@@ -421,7 +387,13 @@ router.get("/complaints", async (req, res) => {
     .sort({ created_at: -1 })
     .toArray();
 
-  return res.send(resultado);
+  return res.send(
+    resultado.map((result) => ({
+      ...result,
+      representante: result?.user?.text,
+      user: undefined,
+    }))
+  );
 });
 
 // Atualizar dados de uma ocorrência...
@@ -472,6 +444,7 @@ router.get("/complaints/export/excel", async (req, res) => {
         $gte: startOfToday(),
         $lt: endOfToday(),
       };
+      break;
     case "month":
       filters.created_at = {
         $gte: startOfMonth(today),
@@ -487,6 +460,8 @@ router.get("/complaints/export/excel", async (req, res) => {
     default:
       break;
   }
+
+  console.log(period, filters.created_at)
 
   // Listar Ocorrências do banco de dados
   const resultado = await Database.collection("ocorrencias")

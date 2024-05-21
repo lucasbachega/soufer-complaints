@@ -42,6 +42,27 @@ const multerMid = multer({
 });
 
 /**
+ * Verificar se usuário já está logado
+ */
+router.get("/login/check", async (req, res) => {
+  const user = await Database.collection("users").findOne(
+    {
+      _id: new ObjectId(req.userId),
+    },
+    {
+      projection: {
+        pwd: 0,
+      },
+    }
+  );
+  return res.status(200).send({
+    ok: true,
+    user: user,
+    message: "Usuário autenticado",
+  });
+});
+
+/**
  * Listar Unidades disponíveis para seleção
  */
 router.get("/unidades", async (req, res) => {

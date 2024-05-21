@@ -99,7 +99,7 @@ class HttpClient {
    * Efetuar Teste de Login
    */
   static async testLogin() {
-    const r = await this.get("/admin/login/check");
+    const r = await this.get("/complaints/login/check");
     return r.data;
   }
 
@@ -381,3 +381,4 @@ class HttpClient {
 }
 
 export { HttpClient };
+

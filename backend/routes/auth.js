@@ -23,7 +23,7 @@ router.post("/login", async (req, res) => {
   );
   if (user) {
     // Generate Acess Token...
-    const acessToken = jwt.sign({ userId: username, roles: user.roles || [] }, SECRET, {
+    const acessToken = jwt.sign({ userId: user._id.toString(), roles: user.roles || [] }, SECRET, {
       expiresIn: "7d",
     });
 
