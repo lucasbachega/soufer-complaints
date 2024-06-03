@@ -1,6 +1,7 @@
 import {
-  AdminPanelSettingsOutlined,
+  AddCircleOutlineOutlined,
   AssignmentOutlined,
+  SettingsOutlined
 } from "@mui/icons-material";
 import { Box, Container, Divider, Typography } from "@mui/joy";
 import Capa from "../../assets/background/soufer-capa.jpeg";
@@ -65,6 +66,14 @@ export default () => {
             >
               <ActionCard
                 Icon={AssignmentOutlined}
+                title={"Minhas ocorrências"}
+                description={
+                  "Acompanhe suas reclemações enviadas anteriormente"
+                }
+                onClick={() => navigate("/my-occurrences")}
+              />
+              <ActionCard
+                Icon={AddCircleOutlineOutlined}
                 title={"Nova ocorrência"}
                 description={"Preencha o formulário de reclamação"}
                 onClick={() => navigate("/new-occurrence")}
@@ -72,7 +81,7 @@ export default () => {
               {isAdmin && (
                 <ActionCard
                   disabled={!isAdmin}
-                  Icon={AdminPanelSettingsOutlined}
+                  Icon={SettingsOutlined}
                   title={"Painel do administrador"}
                   description={"Configure e acompanhe as ocorrências"}
                   onClick={() => navigate("/admin")}

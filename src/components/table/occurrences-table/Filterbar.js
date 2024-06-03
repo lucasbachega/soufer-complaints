@@ -36,7 +36,7 @@ const Filterbar = ({ filters, onChange }) => {
           borderRadius: "sm",
           p: 3,
           pt: 0,
-          display: { xs: "none", sm: "flex" },
+          display: "flex",
           flexWrap: "wrap",
           gap: 1.5,
           "& > *": {

@@ -9,6 +9,7 @@ import Users from "../pages/admin/settings/Users";
 import AuthWrapper from "../pages/auth/AuthWrapper";
 import Login from "../pages/auth/Login";
 import Home from "../pages/home";
+import MyOccurrences from "../pages/my-occurrences";
 import NewOccurrence from "../pages/new-occurrence";
 import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
@@ -25,6 +26,15 @@ export default function () {
           </ProtectedRoutes>
         }
       />
+      <Route
+        path="/my-occurrences"
+        element={
+          <ProtectedRoutes>
+            <MyOccurrences />
+          </ProtectedRoutes>
+        }
+      />
+      ˝
       <Route
         path="/new-occurrence"
         element={

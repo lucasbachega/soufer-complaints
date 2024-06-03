@@ -163,6 +163,24 @@ class HttpClient {
     });
   }
 
+  static async listMyOccurrences({
+    period,
+    unidade,
+    categoria,
+    produto,
+    setor,
+  }) {
+    return this.get("/complaints/ocorrencias", {
+      params: {
+        unidade_id: unidade,
+        categoria_id: categoria,
+        produto_id: produto,
+        setor_id: setor,
+        period,
+      },
+    });
+  }
+
   //Upload de arquivos
   static async uploadArquivos({ files = [], occurrenceId }) {
     const formData = new FormData();
@@ -381,4 +399,3 @@ class HttpClient {
 }
 
 export { HttpClient };
-

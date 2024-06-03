@@ -16,6 +16,14 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const { nanoid } = require("@reduxjs/toolkit");
+const {
+  startOfToday,
+  endOfToday,
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear,
+} = require("date-fns");
 
 // multer middleware (file upload)
 const multerMid = multer({
@@ -246,6 +254,58 @@ router.post("/register", async (req, res) => {
       correcao: undefined,
     },
   });
+});
+
+//Listar ocorrencias pessoais (logado)
+router.get("/ocorrencias", async (req, res) => {
+  // Usuário autenticado
+  const user_id = req.userId;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
+    req.query;
+
+  const filters = {};
+  if (status) filters.status = status;
+  if (produto_id) filters["produto._id"] = new ObjectId(produto_id);
+  if (unidade_id) filters["unidade._id"] = new ObjectId(unidade_id);
+  if (categoria_id) filters["categoria._id"] = new ObjectId(categoria_id);
+  if (setor_id) filters["setor._id"] = new ObjectId(setor_id);
+
+  const today = new Date();
+
+  switch (period) {
+    case "all":
+      break;
+    case "today":
+      filters.created_at = {
+        $gte: startOfToday(),
+        $lt: endOfToday(),
+      };
+      break;
+    case "month":
+      filters.created_at = {
+        $gte: startOfMonth(today),
+        $lt: endOfMonth(today),
+      };
+      break;
+    case "year":
+      filters.created_at = {
+        $gte: startOfYear(today),
+        $lt: endOfYear(today),
+      };
+      break;
+    default:
+      break;
+  }
+
+  const ocorrencias = await Database.collection("ocorrencias")
+    .find({
+      "user._id": new ObjectId(user_id),
+      ...filters,
+    })
+    .sort({ created_at: -1 })
+    .toArray();
+
+  return res.send(ocorrencias || []);
 });
 
 /**
