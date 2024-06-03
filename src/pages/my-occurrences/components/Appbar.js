@@ -1,17 +1,17 @@
 import {
-    Add,
-    ArrowBack,
-    AssignmentOutlined,
-    RefreshOutlined
+  Add,
+  ArrowBack,
+  AssignmentOutlined,
+  RefreshOutlined,
 } from "@mui/icons-material";
 import {
-    Avatar,
-    Box,
-    Button,
-    Divider,
-    IconButton,
-    Tooltip,
-    Typography,
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Tooltip,
+  Typography,
 } from "@mui/joy";
 import React, { memo } from "react";
 import { useNavigate } from "react-router-dom";
@@ -84,14 +84,6 @@ const Appbar = ({ onClose = () => {}, loading, onRefresh = () => {} }) => {
         sx={{ px: 2, ml: 1, display: { xs: "none", md: "flex" } }}
       >
         Nova ocorrência
-      </Button>
-      <Button
-        variant="outlined"
-        onClick={() => {}}
-        size="md"
-        sx={{ px: 2, display: { xs: "none", md: "flex" } }}
-      >
-        Exportar Excel
       </Button>
     </Box>
   );

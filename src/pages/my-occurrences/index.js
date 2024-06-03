@@ -35,7 +35,7 @@ export default () => {
 
   useEffect(() => {
     getOccurrences();
-  }, []);
+  }, [filters]);
 
   return (
     <Box flex={1} display={"flex"} flexDirection={"column"}>
@@ -44,6 +44,7 @@ export default () => {
       <OccurrencesTable
         filters={filters}
         loading={loading}
+        readOnly
         onChangeFilters={handleChangeFilters}
         data={data}
         sx={{ p: 2, pb: 2 }}

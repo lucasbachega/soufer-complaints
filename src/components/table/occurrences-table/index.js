@@ -20,6 +20,7 @@ export default function OccurrencesTable({
   filters = {},
   onChangeFilters,
   sx,
+  readOnly,
 }) {
   const theme = useTheme();
 
@@ -145,6 +146,7 @@ export default function OccurrencesTable({
         open={Boolean(modalView)}
         onClose={() => setModalView(null)}
         updateData={onUpdateOccurrence}
+        readOnly={readOnly}
       />
     </React.Fragment>
   );

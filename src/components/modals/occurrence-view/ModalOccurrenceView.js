@@ -22,6 +22,7 @@ const ModalOccurrenceView = ({
   data = {},
   onClose,
   updateData = () => {},
+  readOnly,
 }) => {
   return (
     <Modal
@@ -42,6 +43,7 @@ const ModalOccurrenceView = ({
           </Typography>
           <Divider sx={{ my: 1 }} />
           <ToggleStatus
+            readOnly={readOnly}
             initialStatus={data?.status}
             occurrenceId={data?.id}
             onUpdate={(newValue) =>
@@ -53,48 +55,50 @@ const ModalOccurrenceView = ({
               })
             }
           />
-          <Stack direction={"column"} gap={2}>
-            <SaveInput
-              inputProps={{
-                label: "Análise de causa",
-                placeholder: "Adicione notas sobre a causa...",
-              }}
-              initialValue={data?.causa}
-              onSave={async (value) =>
-                await HttpClient.admin.updateOcorrencia(data?.id, {
-                  causa: value,
-                })
-              }
-              onSuccess={(newValue) =>
-                updateData({
-                  id: data?.id,
-                  changes: {
-                    causa: newValue,
-                  },
-                })
-              }
-            />
-            <SaveInput
-              inputProps={{
-                label: "Ação de correção",
-                placeholder: "Adicione notas sobre a correção...",
-              }}
-              initialValue={data?.correcao}
-              onSave={async (value) =>
-                await HttpClient.admin.updateOcorrencia(data?.id, {
-                  correcao: value,
-                })
-              }
-              onSuccess={(newValue) =>
-                updateData({
-                  id: data?.id,
-                  changes: {
-                    correcao: newValue,
-                  },
-                })
-              }
-            />
-          </Stack>
+          {!readOnly && (
+            <Stack direction={"column"} gap={2}>
+              <SaveInput
+                inputProps={{
+                  label: "Análise de causa",
+                  placeholder: "Adicione notas sobre a causa...",
+                }}
+                initialValue={data?.causa}
+                onSave={async (value) =>
+                  await HttpClient.admin.updateOcorrencia(data?.id, {
+                    causa: value,
+                  })
+                }
+                onSuccess={(newValue) =>
+                  updateData({
+                    id: data?.id,
+                    changes: {
+                      causa: newValue,
+                    },
+                  })
+                }
+              />
+              <SaveInput
+                inputProps={{
+                  label: "Ação de correção",
+                  placeholder: "Adicione notas sobre a correção...",
+                }}
+                initialValue={data?.correcao}
+                onSave={async (value) =>
+                  await HttpClient.admin.updateOcorrencia(data?.id, {
+                    correcao: value,
+                  })
+                }
+                onSuccess={(newValue) =>
+                  updateData({
+                    id: data?.id,
+                    changes: {
+                      correcao: newValue,
+                    },
+                  })
+                }
+              />
+            </Stack>
+          )}
           <Stack pb={2} mt={2} direction={"column"} gap={2}>
             <DetailItem label={"Unidade"} value={data?.unidade?.text} />
             <DetailItem label={"Cliente"} value={data?.cliente} />

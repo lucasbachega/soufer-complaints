@@ -6,26 +6,25 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  FormLabel,
   Modal,
   ModalClose,
   ModalDialog,
   Radio,
   RadioGroup,
-  Tooltip,
-  Typography,
+  Tooltip
 } from "@mui/joy";
-import { useEffect, useState } from "react";
-import { occurrenceStatus } from "../../../../utils/occurrences";
-import { HttpClient } from "../../../../api/httpClient";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { openSnackbar } from "../../../../store/reducers/snackbarBaseSlice";
+import { HttpClient } from "../../../../api/httpClient";
 import { setError } from "../../../../store/reducers/errorBaseSlice";
+import { openSnackbar } from "../../../../store/reducers/snackbarBaseSlice";
+import { occurrenceStatus } from "../../../../utils/occurrences";
 
 function ToggleStatus({
   initialStatus = "",
   occurrenceId,
   onUpdate = () => {},
+  readOnly,
 }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
@@ -64,55 +63,57 @@ function ToggleStatus({
           variant={status === "completed" ? "soft" : "outlined"}
           color={occurrenceStatus[status]?.color}
           sx={{ position: "absolute", right: 50, top: 12 }}
-          startDecorator={<EditOutlined />}
-          onClick={() => setOpen(true)}
+          startDecorator={!readOnly && <EditOutlined />}
+          onClick={() => !readOnly && setOpen(true)}
         >
           {occurrenceStatus[status]?.text}
         </Chip>
       </Tooltip>
-      <Modal
-        open={open}
-        onClose={() => {
-          setOpen(false);
-          setStatus(initialStatus);
-        }}
-      >
-        <ModalDialog minWidth={400}>
-          <ModalClose />
-          <DialogTitle>Status da ocorrência</DialogTitle>
-          <DialogContent sx={{ p: 2 }}>
-            <FormControl disabled={loading}>
-              <RadioGroup
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
+      {!readOnly && (
+        <Modal
+          open={open}
+          onClose={() => {
+            setOpen(false);
+            setStatus(initialStatus);
+          }}
+        >
+          <ModalDialog minWidth={400}>
+            <ModalClose />
+            <DialogTitle>Status da ocorrência</DialogTitle>
+            <DialogContent sx={{ p: 2 }}>
+              <FormControl disabled={loading}>
+                <RadioGroup
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <Radio value="open" label="Em aberto" color="neutral" />
+                  <Radio value="completed" label="Concluído" color="success" />
+                </RadioGroup>
+              </FormControl>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={handleSave}
+                variant="solid"
+                loading={loading}
+                disabled={loading}
               >
-                <Radio value="open" label="Em aberto" color="neutral" />
-                <Radio value="completed" label="Concluído" color="success" />
-              </RadioGroup>
-            </FormControl>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={handleSave}
-              variant="solid"
-              loading={loading}
-              disabled={loading}
-            >
-              Salvar
-            </Button>
-            <Button
-              variant="plain"
-              color="neutral"
-              onClick={() => {
-                setOpen(false);
-                setStatus(initialStatus);
-              }}
-            >
-              Cancelar
-            </Button>
-          </DialogActions>
-        </ModalDialog>
-      </Modal>
+                Salvar
+              </Button>
+              <Button
+                variant="plain"
+                color="neutral"
+                onClick={() => {
+                  setOpen(false);
+                  setStatus(initialStatus);
+                }}
+              >
+                Cancelar
+              </Button>
+            </DialogActions>
+          </ModalDialog>
+        </Modal>
+      )}
     </>
   );
 }
