@@ -26,7 +26,8 @@ class EmailSender {
     // Send the email
     this.transporter.sendMail(
       {
-        from: " Portal Ocorrências soufer@soufer.com.br",
+        // from: " Portal Ocorrências soufer@soufer.com.br",
+        from: 'portalocorrencias@soufer.com.br',
         to,
         subject,
         html,
