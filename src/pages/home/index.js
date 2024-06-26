@@ -52,7 +52,7 @@ export default () => {
               textAlign={"center"}
               level="body-lg"
             >
-              Boas vindas ao portal de ocorrências da Soufer, informe suas
+              Seja bem-vindo ao portal de ocorrências da Soufer, informe suas
               reclamações ou consulte o painel de administrador
             </Typography>
             <Box
@@ -68,7 +68,7 @@ export default () => {
                 Icon={AssignmentOutlined}
                 title={"Minhas ocorrências"}
                 description={
-                  "Acompanhe suas reclemações enviadas anteriormente"
+                  "Acompanhe suas reclamações enviadas anteriormente"
                 }
                 onClick={() => navigate("/my-occurrences")}
               />
