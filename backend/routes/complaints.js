@@ -24,6 +24,7 @@ const {
   startOfYear,
   endOfYear,
 } = require("date-fns");
+const { EmailSender } = require("../utils/email-sender");
 
 // multer middleware (file upload)
 const multerMid = multer({
@@ -158,15 +159,7 @@ router.get("/categorias", async (req, res) => {
  * Registrar uma ocorrência
  */
 router.post("/register", async (req, res) => {
-  const {
-    unidade_id,
-    setor_id,
-    produto_id,
-    categoria_id,
-    cliente,
-    ordem_venda,
-    motivo,
-  } = req.body;
+  const { unidade_id, setor_id, produto_id, categoria_id, cliente, ordem_venda, motivo } = req.body;
 
   if (!unidade_id) throw new RequiredFieldError("Unidade");
   if (!cliente) throw new RequiredFieldError("Cliente");
@@ -245,6 +238,33 @@ router.post("/register", async (req, res) => {
   // Salvar no banco de dados
   const r = await Database.collection("ocorrencias").insertOne(ocorrencia);
 
+  EmailSender.sendEmail({
+    to: "ocorrencias@gruposoufer.com.br",
+    cc: _user.email,
+    subject: "Nova Ocorrência",
+    html: `Olá Equipe Comercial! <br /><br />
+    Uma nova ocorrência foi registrada com as seguintes informações: <br />
+
+      Motivo: <h3>${motivo}</h3> <br />
+
+      <ul>
+        <li>Registrada por: <b>${_user.firstname || ""} | ${_user.email}</b></li>
+        <li>Unidade: <b>${_unidade.text || ""}</b></li>
+        <li>Cliente: <b>${cliente || ""}</b></li>
+        <li>Ordem de venda: <b>${ordem_venda || ""}</b></li>
+        <li>Setor: <b>${_setor.text || ""}</b></li>
+        <li>Produto: <b>${_produto.text || ""}</b></li>
+        <li>Categoria: <b>${_categoria.text || ""}</b></li>
+      </ul>
+
+   </b> <br />
+  
+    Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br /><br />
+    Atenciosamente, <br />
+    Equipe Soufer
+    `,
+  });
+
   return res.status(201).send({
     ok: true,
     ocorrencia: {
@@ -260,8 +280,7 @@ router.post("/register", async (req, res) => {
 router.get("/ocorrencias", async (req, res) => {
   // Usuário autenticado
   const user_id = req.userId;
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
-    req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
 
   const filters = {};
   if (status) filters.status = status;

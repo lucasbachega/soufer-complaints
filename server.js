@@ -7,6 +7,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const https = require("node:https");
 const fs = require("node:fs");
+const { EmailSender } = require("./backend/utils/email-sender");
 
 /**
  * Efetuar a conexão com o banco de dados
@@ -15,6 +16,10 @@ console.log("Conectando ao banco de dados...");
 Database.connect()
   .then(() => {
     console.log("Banco de dados conectado com sucesso");
+
+    // Configuração do Email Sender
+    EmailSender.start();
+
     startServer();
   })
   .catch((e) => {
