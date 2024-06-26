@@ -37,7 +37,7 @@ class EmailSender {
           if (error) {
             console.log("Error Send Email:", error);
             const t = setTimeout(() => {
-              this.sendEmail({ to, subject, html, cc }, retryNum + 1);
+              EmailSender.sendEmail({ to, subject, html, cc }, retryNum + 1);
               clearTimeout(t);
             }, 500);
           } else {
