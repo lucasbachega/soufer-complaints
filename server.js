@@ -19,6 +19,7 @@ Database.connect()
 
     // Configuração do Email Sender
     EmailSender.start();
+    console.log("EmailSender started with sucess.");
 
     startServer();
   })
