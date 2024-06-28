@@ -71,7 +71,7 @@ const RemoveButton = memo(({ userId, onRemove = () => {} }) => {
   );
 });
 
-const ChangePasswordButton = memo(({ firstname, username, userId }) => {
+const ChangePasswordButton = memo(({ firstname, username, email, userId }) => {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -90,6 +90,7 @@ const ChangePasswordButton = memo(({ firstname, username, userId }) => {
         onClose={() => setOpen(false)}
         firstname={firstname}
         username={username}
+        email={email}
         userId={userId}
       />
     </>
@@ -149,7 +150,7 @@ const UserItem = ({ row = {}, onRemove = () => {} }) => {
           <Box>
             <Typography level="title-md">{copyData?.firstname}</Typography>
             <Typography mt={-0.2} color="neutral" level="title-sm">
-              {copyData?.username}
+              {copyData?.email}
             </Typography>
           </Box>
           <Box flex={1} />
@@ -166,6 +167,7 @@ const UserItem = ({ row = {}, onRemove = () => {} }) => {
             userId={row?.id}
             firstname={copyData?.firstname}
             username={copyData?.username}
+            email={copyData?.email}
           />
           <IconButton>
             <Edit />

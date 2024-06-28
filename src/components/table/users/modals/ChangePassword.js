@@ -1,15 +1,15 @@
 import { Close, Warning } from "@mui/icons-material";
 import {
-    Alert,
-    Box,
-    Button,
-    DialogContent,
-    DialogTitle,
-    IconButton,
-    Modal,
-    ModalClose,
-    ModalDialog,
-    Stack,
+  Alert,
+  Box,
+  Button,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  Modal,
+  ModalClose,
+  ModalDialog,
+  Stack,
 } from "@mui/joy";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -19,7 +19,14 @@ import { openSnackbar } from "../../../../store/reducers/snackbarBaseSlice";
 import PasswordInput from "../../../inputs/PasswordInput";
 import DetailItem from "../../../modals/occurrence-view/components/DetailItem";
 
-const ChangePassword = ({ open, onClose, username, firstname, userId }) => {
+const ChangePassword = ({
+  open,
+  onClose,
+  username,
+  firstname,
+  email,
+  userId,
+}) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState("");
@@ -62,7 +69,7 @@ const ChangePassword = ({ open, onClose, username, firstname, userId }) => {
 
   return (
     <Modal onClick={(e) => e.stopPropagation()} open={open} onClose={onClose}>
-      <ModalDialog onClick={(e) => e.stopPropagation()} minWidth={350}>
+      <ModalDialog onClick={(e) => e.stopPropagation()} minWidth={400}>
         <ModalClose />
         <DialogTitle>Redefinir senha</DialogTitle>
         <DialogContent>
@@ -75,6 +82,7 @@ const ChangePassword = ({ open, onClose, username, firstname, userId }) => {
             px={2}
           >
             <DetailItem label={"Nome"} value={firstname} />
+            <DetailItem label={"E-mail"} value={email} />
             <DetailItem label={"Usuário"} value={username} />
           </Box>
 
