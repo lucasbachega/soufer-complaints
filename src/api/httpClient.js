@@ -239,11 +239,12 @@ class HttpClient {
     },
 
     //USERS
-    async createUser({ firstname, username, password, roles }) {
+    async createUser({ firstname, username, password, email, roles }) {
       return HttpClient.post("/admin/users", {
         firstname,
         username,
         password,
+        email,
         roles,
       });
     },

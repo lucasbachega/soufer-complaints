@@ -11,7 +11,7 @@ import {
   ModalDialog,
   Radio,
   RadioGroup,
-  Tooltip
+  Tooltip,
 } from "@mui/joy";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -58,11 +58,19 @@ function ToggleStatus({
 
   return (
     <>
-      <Tooltip title="Alterar status">
+      <Tooltip
+        disableHoverListener={readOnly}
+        disableFocusListener={readOnly}
+        title="Alterar status"
+      >
         <Chip
           variant={status === "completed" ? "soft" : "outlined"}
           color={occurrenceStatus[status]?.color}
-          sx={{ position: "absolute", right: 50, top: 12 }}
+          sx={{
+            position: "absolute",
+            right: 50,
+            top: 12,
+          }}
           startDecorator={!readOnly && <EditOutlined />}
           onClick={() => !readOnly && setOpen(true)}
         >

@@ -25,6 +25,7 @@ const CreateUserModal = ({
     initialData || {
       firstname: "",
       username: "",
+      email: "",
       password: "",
       roles: [],
     }
@@ -36,6 +37,7 @@ const CreateUserModal = ({
         initialData || {
           firstname: "",
           username: "",
+          email: "",
           password: "",
           roles: [],
         }
@@ -61,12 +63,12 @@ const CreateUserModal = ({
 
   return (
     <Modal open={open} onClose={onClose}>
-      <ModalDialog minWidth={350}>
+      <ModalDialog minWidth={400}>
         <ModalClose />
         <DialogTitle>
           {editMode ? "Editar usuário" : "Criar usuário"}
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ overflowX: "hidden", px: 1 }}>
           <form onSubmit={handleConfirm}>
             <Stack mt={2} gap={2}>
               <TextInput
@@ -75,6 +77,12 @@ const CreateUserModal = ({
                 autoFocus
                 value={data?.firstname}
                 onChange={(value) => handleChangeValue("firstname", value)}
+              />
+              <TextInput
+                label={"E-mail"}
+                type={"email"}
+                value={data?.email}
+                onChange={(value) => handleChangeValue("email", value)}
               />
               <TextInput
                 required
