@@ -33,7 +33,7 @@ const ModalOccurrenceView = ({
         <ModalDialog maxWidth={"sm"} minWidth={"sm"} layout={"center"}>
           <ModalClose onClick={onClose} />
           <Typography lineHeight={1} level="body-sm" color="neutral">
-            Ocorrência: {data?.id}
+            {data?.id}
           </Typography>
           <Typography lineHeight={1} level="h4" color="neutral">
             {formatMoment(data?.created_at)}
@@ -103,11 +103,11 @@ const ModalOccurrenceView = ({
             <DetailItem label={"Unidade"} value={data?.unidade?.text} />
             <DetailItem label={"Cliente"} value={data?.cliente} />
             <DetailItem label={"Representante"} value={data?.representante} />
-            <DetailItem label={"Ordem de venda"} value={data?.order_venda} />
+            <DetailItem label={"Ordem de venda"} value={data?.ordem_venda} />
             <DetailItem label={"Setor"} value={data?.setor?.text} />
             <DetailItem label={"Produto"} value={data?.produto?.text} />
             <DetailItem label={"Categoria"} value={data?.categoria?.text} />
-            <DetailItem label={"Motivo"} value={data?.reason} />
+            <DetailItem label={"Motivo"} value={data?.motivo} />
           </Stack>
           <Stack direction="row" alignItems={"center"} gap={2}>
             <AttachmentOutlined />

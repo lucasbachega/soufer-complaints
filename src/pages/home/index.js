@@ -1,7 +1,7 @@
 import {
   AddCircleOutlineOutlined,
   AssignmentOutlined,
-  SettingsOutlined
+  SettingsOutlined,
 } from "@mui/icons-material";
 import { Box, Container, Divider, Typography } from "@mui/joy";
 import Capa from "../../assets/background/soufer-capa.jpeg";
@@ -52,8 +52,8 @@ export default () => {
               textAlign={"center"}
               level="body-lg"
             >
-              Seja bem-vindo ao portal de ocorrências da Soufer, informe suas
-              reclamações ou consulte o painel de administrador
+              Seja bem-vindo ao portal de ocorrências da Soufer. Informe suas
+              reclamações ou consulte o painel de administrador.
             </Typography>
             <Box
               width={"100%"}

@@ -33,7 +33,7 @@ const Sidebar = () => {
 
   return (
     <Box
-      width={"18em"}
+      width={"16em"}
       height={"100%"}
       display={"flex"}
       flexDirection={"column"}
@@ -51,8 +51,8 @@ const Sidebar = () => {
         </IconButton>
       </Tooltip>
       <Box p={2} pt={3}>
-        <img width={"150px"} src={Logo} />
-        <Typography gutterBottom mt={1} level="h4">
+        <img width={"110px"} src={Logo} />
+        <Typography mt={1} level="h4">
           Portal de ocorrências
         </Typography>
         <Typography color="neutral" level="title-md">
@@ -64,7 +64,7 @@ const Sidebar = () => {
           <Divider sx={{ mx: -2, mb: 1 }} />
           <SidebarItem
             Icon={AssignmentOutlined}
-            label="Todas as ocorrências"
+            label="Ocorrências"
             selected={isSelected("occurrences", pathname)}
             path="occurrences"
             onClick={(path) => navigate(`/admin/${path}`)}
