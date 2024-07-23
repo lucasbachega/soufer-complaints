@@ -1,6 +1,7 @@
 import {
   AddCircleOutlineOutlined,
   AssignmentOutlined,
+  Checklist,
   SettingsOutlined,
 } from "@mui/icons-material";
 import { Box, Container, Divider, Typography } from "@mui/joy";
@@ -10,13 +11,17 @@ import ActionCard from "./components/ActionCard";
 
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { selectUserIsAdmin } from "../../store/reducers/userInfoSlice";
+import {
+  selectUserIsAdmin,
+  selectUserIsGestor,
+} from "../../store/reducers/userInfoSlice";
 import UserIndicator from "./components/UserIndicator";
 
 export default () => {
   const navigate = useNavigate();
 
   const isAdmin = useSelector(selectUserIsAdmin);
+  const isGestor = useSelector(selectUserIsGestor);
 
   return (
     <Box flex={1} flexBasis={0} display={"flex"} alignItems={"flex-start"}>
@@ -67,9 +72,7 @@ export default () => {
               <ActionCard
                 Icon={AssignmentOutlined}
                 title={"Minhas ocorrências"}
-                description={
-                  "Acompanhe suas reclamações enviadas anteriormente"
-                }
+                description={"Acompanhe suas reclamações enviadas"}
                 onClick={() => navigate("/my-occurrences")}
               />
               <ActionCard
@@ -78,12 +81,23 @@ export default () => {
                 description={"Preencha o formulário de reclamação"}
                 onClick={() => navigate("/new-occurrence")}
               />
+              {isGestor && (
+                <ActionCard
+                  disabled={!isAdmin}
+                  Icon={Checklist}
+                  title={"Gestor"}
+                  description={
+                    "Gerencie as ocorrências, explique as causas e correções."
+                  }
+                  onClick={() => navigate("/gestor")}
+                />
+              )}
               {isAdmin && (
                 <ActionCard
                   disabled={!isAdmin}
                   Icon={SettingsOutlined}
-                  title={"Painel do administrador"}
-                  description={"Configure e acompanhe as ocorrências"}
+                  title={"Administrador"}
+                  description={"Configure usuários e acompanhe as ocorrências"}
                   onClick={() => navigate("/admin")}
                 />
               )}

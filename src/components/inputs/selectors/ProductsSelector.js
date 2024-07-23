@@ -1,7 +1,12 @@
 import { useSelector } from "react-redux";
 import SelectInput from "../SelectInput";
 
-function ProductsSelector({ value = "", onChange = () => {}, disabled }) {
+function ProductsSelector({
+  value = "",
+  onChange = () => {},
+  disabled,
+  ...props
+}) {
   const data = useSelector((state) => state.products.data);
 
   return (
@@ -16,6 +21,7 @@ function ProductsSelector({ value = "", onChange = () => {}, disabled }) {
         label: prod?.label,
         value: prod?.id,
       }))}
+      {...props}
     />
   );
 }

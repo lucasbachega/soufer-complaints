@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import { HttpClient } from "../../../api/httpClient";
 import TextInput from "../../../components/inputs/TextInput";
 import UsersTable from "../../../components/table/users";
-import CreateUserModal from "../../../components/table/users/modals/CreateUserModal";
+import ModalUser from "../../../components/table/users/modals/ModalUser";
 import { setError as setErrorStore } from "../../../store/reducers/errorBaseSlice";
 import { openSnackbar } from "../../../store/reducers/snackbarBaseSlice";
 import { includesOnSearch } from "../../../utils/search";
@@ -93,7 +93,7 @@ const Users = () => {
             <RefreshOutlined />
           </IconButton>
         </Tooltip>
-        <CreateUserModal
+        <ModalUser
           open={newModal}
           onClose={() => setNewModal(false)}
           onConfirm={handleCreate}

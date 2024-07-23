@@ -1,7 +1,12 @@
 import { useSelector } from "react-redux";
 import SelectInput from "../SelectInput";
 
-function SectorsSelector({ value = "", onChange = () => {}, disabled }) {
+function SectorsSelector({
+  value = "",
+  onChange = () => {},
+  disabled,
+  ...props
+}) {
   const data = useSelector((state) => state.sectors.data);
 
   return (
@@ -16,6 +21,7 @@ function SectorsSelector({ value = "", onChange = () => {}, disabled }) {
         label: sector?.label,
         value: sector?.id,
       }))}
+      {...props}
     />
   );
 }

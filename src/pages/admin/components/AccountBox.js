@@ -44,7 +44,7 @@ const AccountBox = () => {
       display={"flex"}
       alignItems={"center"}
     >
-      <Avatar variant="solid">
+      <Avatar size="sm" variant="solid">
         {data?.firstname ? data?.firstname[0]?.toUpperCase() : ""}
       </Avatar>
       <Box overflow={"hidden"} flexBasis={0} flex={1} px={2} pr={1}>

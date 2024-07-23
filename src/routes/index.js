@@ -8,6 +8,7 @@ import Units from "../pages/admin/settings/Units";
 import Users from "../pages/admin/settings/Users";
 import AuthWrapper from "../pages/auth/AuthWrapper";
 import Login from "../pages/auth/Login";
+import Gestor from "../pages/gestor";
 import Home from "../pages/home";
 import MyOccurrences from "../pages/my-occurrences";
 import NewOccurrence from "../pages/new-occurrence";
@@ -34,12 +35,19 @@ export default function () {
           </ProtectedRoutes>
         }
       />
-      ˝
       <Route
         path="/new-occurrence"
         element={
           <ProtectedRoutes>
             <NewOccurrence />
+          </ProtectedRoutes>
+        }
+      />
+      <Route
+        path="/gestor"
+        element={
+          <ProtectedRoutes>
+            <Gestor />
           </ProtectedRoutes>
         }
       />

@@ -229,6 +229,7 @@ class HttpClient {
         status,
       });
     },
+
     async exportarExcel({ period }) {
       return HttpClient.get(`/admin/complaints/export/excel`, {
         responseType: "blob",
@@ -239,24 +240,27 @@ class HttpClient {
     },
 
     //USERS
-    async createUser({ firstname, username, password, email, roles }) {
+    async createUser({ firstname, username, password, email, roles, areas }) {
       return HttpClient.post("/admin/users", {
         firstname,
         username,
         password,
         email,
         roles,
+        areas,
       });
     },
     async listarUsers() {
       return HttpClient.get("/admin/users");
     },
-    async updateUser(id, { firstname, username, roles, block }) {
+    async updateUser(id, { firstname, username, roles, block, email, areas }) {
       return HttpClient.put(`/admin/users/${id}`, {
         firstname,
         username,
         roles,
         block,
+        email,
+        areas,
       });
     },
     async deleteUser(id) {

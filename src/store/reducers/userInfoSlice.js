@@ -26,5 +26,6 @@ export const userInfoSlice = createSlice({
 export const { login, logout } = userInfoSlice.actions;
 
 export const selectUserIsAdmin = (state) => state?.userInfo?.data?.roles?.includes('admin')
+export const selectUserIsGestor = (state) => state?.userInfo?.data?.roles?.includes('gestor')
 
 export default userInfoSlice.reducer;

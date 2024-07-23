@@ -36,14 +36,19 @@ const occurrenceStatus = {
  * Login por usuário e senha
  */
 router.get("/test", async (req, res) => {
-  return res.status(200).send(`Olá <b>${req.userId}</b>! Você está autenticado`);
+  return res
+    .status(200)
+    .send(`Olá <b>${req.userId}</b>! Você está autenticado`);
 });
 
 /**
  * UNIDADES
  */
 router.get("/unidades", async (req, res) => {
-  const r = await Database.collection("unidades").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("unidades")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/unidades", async (req, res) => {
@@ -101,7 +106,10 @@ router.delete("/unidades/:id", async (req, res) => {
  * SETOR
  */
 router.get("/setor", async (req, res) => {
-  const r = await Database.collection("setor").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("setor")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/setor", async (req, res) => {
@@ -159,7 +167,10 @@ router.delete("/setor/:id", async (req, res) => {
  * PRODUTOS
  */
 router.get("/produtos", async (req, res) => {
-  const r = await Database.collection("produtos").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("produtos")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/produtos", async (req, res) => {
@@ -217,7 +228,10 @@ router.delete("/produtos/:id", async (req, res) => {
  * CATEGORIAS
  */
 router.get("/categorias", async (req, res) => {
-  const r = await Database.collection("categorias").find().sort({ text: 1 }).toArray();
+  const r = await Database.collection("categorias")
+    .find()
+    .sort({ text: 1 })
+    .toArray();
   return res.send(r);
 });
 router.post("/categorias", async (req, res) => {
@@ -300,7 +314,7 @@ router.post("/users", async (req, res) => {
     created_at: new Date(),
     block: false,
   };
-  if (roles?.includes("gestor")) {
+  if (roles?.includes("gestor") && areas?.length) {
     // Verif. as áreas do gestor
     for (let i = 0; i < areas.length; i++) {
       const { unidade_id, setor_id } = areas[i];
@@ -323,7 +337,8 @@ router.post("/users", async (req, res) => {
 });
 router.put("/users/:id", async (req, res) => {
   const { id } = req.params;
-  const { username, firstname, password, email, roles, block, areas } = req.body;
+  const { username, firstname, password, email, roles, block, areas } =
+    req.body;
   const _user = await Database.collection("users").findOne({
     _id: new ObjectId(id),
   });
@@ -342,7 +357,10 @@ router.put("/users/:id", async (req, res) => {
   if ("email" in req.body) edits.email = email;
   if ("roles" in req.body) edits.roles = roles;
   if ("block" in req.body) edits.block = !!block;
-  if ((roles?.includes("gestor") || _user?.roles?.includes("gestor")) && areas) {
+  if (
+    (roles?.includes("gestor") || _user?.roles?.includes("gestor")) &&
+    areas?.length
+  ) {
     edits.areas = [];
     // Verif. as áreas do gestor
     for (let i = 0; i < areas.length; i++) {
@@ -386,7 +404,8 @@ router.delete("/users/:id", async (req, res) => {
 
 // Listar ocorrências com base em filtros selecionados
 router.get("/complaints", async (req, res) => {
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
+    req.query;
 
   const filters = {};
   if (status) filters.status = status;
@@ -476,8 +495,12 @@ router.put("/complaints/:id", async (req, res) => {
       }</b> foi atualizada: <br /><br />
         <ul>
          <li>Status: <b>${occurrenceStatus[ocorrencia?.status]?.text}</b></li>
-         <li>Análise de causa: <b>${editFields.causa || ocorrencia.causa || ""}</b></li>
-           <li>Correção: <b>${editFields.correcao || ocorrencia.correcao || ""}</b></li>
+         <li>Análise de causa: <b>${
+           editFields.causa || ocorrencia.causa || ""
+         }</b></li>
+           <li>Correção: <b>${
+             editFields.correcao || ocorrencia.correcao || ""
+           }</b></li>
         </ul>
      </b> <br />
       Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br /><br />

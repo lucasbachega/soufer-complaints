@@ -23,6 +23,7 @@ const TextInput = ({
     <FormControl required={required} error={error}>
       {Boolean(label) && <FormLabel>{label}</FormLabel>}
       <Input
+        fullWidth
         autoFocus={autoFocus}
         startDecorator={startDecorator}
         endDecorator={endDecorator}
