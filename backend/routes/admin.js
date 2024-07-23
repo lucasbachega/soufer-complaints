@@ -289,16 +289,33 @@ router.get("/users", async (req, res) => {
   return res.send(r);
 });
 router.post("/users", async (req, res) => {
-  const { username, firstname, password, email, roles } = req.body;
-  const r = await Database.collection("users").insertOne({
+  const { username, firstname, password, email, roles, areas } = req.body;
+  const user = {
     username,
     firstname,
     pwd: password,
     email,
     roles: roles || [],
+    areas: [],
     created_at: new Date(),
     block: false,
-  });
+  };
+  if (roles?.includes("gestor")) {
+    // Verif. as áreas do gestor
+    for (let i = 0; i < areas.length; i++) {
+      const { unidade_id, setor_id } = areas[i];
+      const _setor = await Database.collection("setor").findOne({
+        _id: new ObjectId(setor_id),
+      });
+      if (!_setor) throw new SetorNotFound();
+      const _unidade = await Database.collection("unidades").findOne({
+        _id: new ObjectId(unidade_id),
+      });
+      if (!_unidade) throw new UnidadeNotFound();
+      user.areas.push({ unidade_id: _unidade._id, setor_id: _setor._id });
+    }
+  }
+  const r = await Database.collection("users").insertOne(user);
   return res.status(201).send({
     ok: true,
     id: r.insertedId.toString(),
@@ -306,7 +323,7 @@ router.post("/users", async (req, res) => {
 });
 router.put("/users/:id", async (req, res) => {
   const { id } = req.params;
-  const { username, firstname, password, email, roles, block } = req.body;
+  const { username, firstname, password, email, roles, block, areas } = req.body;
   const _user = await Database.collection("users").findOne({
     _id: new ObjectId(id),
   });
@@ -325,6 +342,22 @@ router.put("/users/:id", async (req, res) => {
   if ("email" in req.body) edits.email = email;
   if ("roles" in req.body) edits.roles = roles;
   if ("block" in req.body) edits.block = !!block;
+  if ((roles?.includes("gestor") || _user?.roles?.includes("gestor")) && areas) {
+    edits.areas = [];
+    // Verif. as áreas do gestor
+    for (let i = 0; i < areas.length; i++) {
+      const { unidade_id, setor_id } = areas[i];
+      const _setor = await Database.collection("setor").findOne({
+        _id: new ObjectId(setor_id),
+      });
+      if (!_setor) throw new SetorNotFound();
+      const _unidade = await Database.collection("unidades").findOne({
+        _id: new ObjectId(unidade_id),
+      });
+      if (!_unidade) throw new UnidadeNotFound();
+      edits.areas.push({ unidade_id: _unidade._id, setor_id: _setor._id });
+    }
+  }
   await Database.collection("users").updateOne(
     { _id: _user._id },
     {
@@ -515,6 +548,7 @@ router.get("/complaints/export/excel", async (req, res) => {
     { header: "Causa", key: "causa", width: 20 },
     { header: "Correção", key: "correcao", width: 20 },
     { header: "Status", key: "status", width: 15 },
+    { header: "Respondido por", key: "answerBy", width: 20 },
   ];
 
   // Set an auto filter from the cell in row 3 and column 1
@@ -545,6 +579,7 @@ router.get("/complaints/export/excel", async (req, res) => {
       causa,
       correcao,
       status,
+      answerBy,
     } = resultado[i];
     // Add data in worksheet
     worksheet.addRow({
@@ -560,6 +595,7 @@ router.get("/complaints/export/excel", async (req, res) => {
       causa,
       correcao,
       status,
+      answerBy: answerBy?.firstname,
     });
   }
   // Making first line in excel bold

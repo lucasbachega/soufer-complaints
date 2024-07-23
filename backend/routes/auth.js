@@ -23,9 +23,13 @@ router.post("/login", async (req, res) => {
   );
   if (user) {
     // Generate Acess Token...
-    const acessToken = jwt.sign({ userId: user._id.toString(), roles: user.roles || [] }, SECRET, {
-      expiresIn: "7d",
-    });
+    const acessToken = jwt.sign(
+      { userId: user._id.toString(), roles: user.roles || [], areas: user.areas },
+      SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
     // Save Access Token to Cookie
     res.cookie("portaloc_access_token", acessToken, {

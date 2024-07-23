@@ -10,6 +10,7 @@ module.exports =
       const decoded = jwt.verify(token, SECRET, {});
       req.userId = decoded.userId;
       req.roles = decoded.roles;
+      req.areas = decoded.areas;
 
       if (restrictAcess && !req?.roles.includes(role)) {
         return res.status(403).send("Acesso restrito somente para administradores");

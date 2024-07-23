@@ -238,15 +238,9 @@ router.post("/register", async (req, res) => {
   // Salvar no banco de dados
   const r = await Database.collection("ocorrencias").insertOne(ocorrencia);
 
-  EmailSender.sendEmail({
-    to: "ocorrencias@gruposoufer.com.br",
-    cc: _user.email,
-    subject: "Nova Ocorrência",
-    html: `Olá Equipe Comercial! <br /><br />
-    Uma nova ocorrência foi registrada com as seguintes informações: <br />
-
+  // Enviar e-mail para os responsáveis
+  const body = `A Ocorrência foi registrada com as seguintes informações: <br />
       Motivo: <h3>${motivo}</h3> <br />
-
       <ul>
         <li>Registrada por: <b>${_user.firstname || ""} | ${_user.email}</b></li>
         <li>Unidade: <b>${_unidade.text || ""}</b></li>
@@ -256,12 +250,38 @@ router.post("/register", async (req, res) => {
         <li>Produto: <b>${_produto.text || ""}</b></li>
         <li>Categoria: <b>${_categoria.text || ""}</b></li>
       </ul>
-
    </b> <br />
-  
     Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br /><br />
     Atenciosamente, <br />
-    Equipe Soufer
+    Equipe Soufer`;
+
+  const users = await Database.collection("users").find({
+    roles: "gestor",
+    areas: {
+      $elemMatch: {
+        unidade_id: ocorrencia.unidade._id,
+        setor_id: ocorrencia.setor._id,
+      },
+    },
+  });
+  for (let i = 0; i < users.length; i++) {
+    const { firstname, email } = users[i];
+    EmailSender.sendEmail({
+      to: email,
+      subject: `Nova Ocorrência (Unidade/setor: ${ocorrencia.unidade.text}/${ocorrencia.setor.text})`,
+      html: `Olá ${firstname}! Uma nova ocorrência requer sua atenção: <br /><br />
+        ${body}
+      `,
+    });
+  }
+
+  // Notificação e-mail padrão
+  EmailSender.sendEmail({
+    to: "ocorrencias@gruposoufer.com.br",
+    cc: _user.email,
+    subject: "Nova Ocorrência",
+    html: `Olá Equipe Comercial! <br /><br />
+   ${body}
     `,
   });
 

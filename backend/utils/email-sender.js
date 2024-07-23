@@ -18,7 +18,7 @@ class EmailSender {
       console.error("WARNING: Email Sender Not Configured! Aborting...");
       return;
     }
-    if (retryNum > 5) {
+    if (retryNum > 10) {
       console.error("WARNING: Email Sender Aborting... (MAX_TRIES)");
       return;
     }
@@ -40,7 +40,7 @@ class EmailSender {
             const t = setTimeout(() => {
               EmailSender.sendEmail({ to, subject, html, cc }, retryNum + 1);
               clearTimeout(t);
-            }, 500);
+            }, 1000);
           } else {
             console.log("Email sent:", info.response);
           }
