@@ -1,7 +1,7 @@
 import {
-    AttachFileOutlined,
-    BusinessCenterOutlined,
-    InventoryOutlined,
+  AttachFileOutlined,
+  BusinessCenterOutlined,
+  InventoryOutlined,
 } from "@mui/icons-material";
 import { Box, Chip, Stack, Typography } from "@mui/joy";
 import React, { memo } from "react";
@@ -20,10 +20,11 @@ const OccurrenceListCard = ({ row = {}, onClick = () => {} }) => {
       display={"flex"}
       alignItems={"flex-start"}
       position={"relative"}
-      width={"100%"}
+      height={140}
       component={"div"}
       onClick={() => onClick(row)}
       sx={{
+        cursor: "pointer",
         bgcolor: "#FFF",
         borderLeftWidth: 3,
         borderLeftColor: (t) =>
@@ -37,23 +38,25 @@ const OccurrenceListCard = ({ row = {}, onClick = () => {} }) => {
       }}
     >
       <Box flex={1}>
-        <Typography mb={1} level="title-lg">
+        <Typography mb={1} level="title-lg" fontWeight={'lg'}>
           {row.categoria?.text}
         </Typography>
         <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
           <InventoryOutlined fontSize="small" color="action" />
-          <Typography color="neutral" level="title-md" fontWeight={"500"}>
+          <Typography level="title-sm" fontWeight={"500"}>
             {row.produto?.text}
           </Typography>
         </Stack>
         <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
           <BusinessCenterOutlined fontSize="small" color="action" />
-          <Typography color="neutral" level="title-md" fontWeight={"500"}>
+          <Typography level="title-sm" fontWeight={"500"}>
             {row.setor?.text}
           </Typography>
         </Stack>
-        <Typography mt={1} color="neutral" level="title-sm" fontWeight={"400"}>
-          Ordem de venda:{" "}
+        <Typography mt={1} level="title-sm" fontWeight={"400"}>
+          <Typography component={"span"} color="neutral" level="inherit">
+            Ordem de venda:{" "}
+          </Typography>
           <Typography component={"span"} level="inherit" fontWeight={"500"}>
             {row.ordem_venda || "--"}
           </Typography>
@@ -73,7 +76,7 @@ const OccurrenceListCard = ({ row = {}, onClick = () => {} }) => {
         </Chip>
         {Boolean(row.anexos?.length) && (
           <Chip
-            sx={{ mt: 1 }}
+            sx={{ mt: 2 }}
             variant="outlined"
             size="sm"
             startDecorator={<AttachFileOutlined />}

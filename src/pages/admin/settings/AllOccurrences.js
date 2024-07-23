@@ -45,6 +45,17 @@ const ExcelExportButton = ({ period }) => {
   );
 };
 
+export const formatOccurrences = (data = []) => {
+  return data?.map((item) => ({
+    ...item,
+    id: item?._id,
+    categoriaTexto: item?.categoria?.text,
+    setorTexto: item?.setor?.text,
+    produtoTexto: item?.produto?.text,
+    unidadeTexto: item?.unidade?.text,
+  }));
+};
+
 const AllOccurrences = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -62,7 +73,7 @@ const AllOccurrences = () => {
       categoria: filters?.category,
     });
     if (res.ok) {
-      setData(res.data?.map((item) => ({ ...item, id: item?._id })));
+      setData(formatOccurrences(res?.data || []));
     } else {
       setError(res?.error?.message);
     }
@@ -92,7 +103,9 @@ const AllOccurrences = () => {
     <>
       <Box p={3} pb={2} display={"flex"} alignItems={"center"} gap={2}>
         <AssignmentOutlined sx={{ fontSize: "2rem" }} />
-        <Typography level="h3">Todas as ocorrências</Typography>
+        <Typography level="h3">
+          Todas as ocorrências ({loading ? "-" : data?.length})
+        </Typography>
         <Box flex={1} />
         <Tooltip title="Atualizar">
           <IconButton disabled={loading} onClick={getData}>

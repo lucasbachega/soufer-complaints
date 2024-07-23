@@ -1,3 +1,4 @@
+const express = require("express");
 const Database = require("../db");
 const { ObjectId } = require("mongodb");
 const { OcorrenciaNotFound } = require("./errors");

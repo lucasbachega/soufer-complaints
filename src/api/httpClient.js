@@ -401,6 +401,50 @@ class HttpClient {
     },
     // **********************************************************************
   };
+
+  // Controle GESTOR
+  static gestor = {
+    /**
+     * Listar ocorrências p/ gestor de acordo com filtros
+     */
+    async listarOcorrencias({
+      period,
+      unidade,
+      categoria,
+      produto,
+      setor,
+    } = {}) {
+      return HttpClient.get("/gestor/complaints", {
+        params: {
+          unidade_id: unidade,
+          categoria_id: categoria,
+          produto_id: produto,
+          setor_id: setor,
+          period,
+        },
+      });
+    },
+    /**
+     * Atualizar uma ocorrência
+     * (alterar status e dados de análise)
+     */
+    async updateOcorrencia(id, { causa, correcao, status } = {}) {
+      return HttpClient.put(`/gestor/complaints/${id}`, {
+        causa,
+        correcao,
+        status,
+      });
+    },
+
+    async exportarExcel({ period }) {
+      return HttpClient.get(`/gestor/complaints/export/excel`, {
+        responseType: "blob",
+        params: {
+          period,
+        },
+      });
+    },
+  };
 }
 
 export { HttpClient };

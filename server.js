@@ -60,6 +60,7 @@ function startServer() {
   app.use(cookieParser());
   app.use("/api", bodyParser.json({ limit: "15mb" }));
   app.use("/api/admin", middlewares.auth({ restrictAcess: true, role: "admin" }), routes.admin);
+  app.use("/api/gestor", middlewares.auth({ restrictAcess: true, role: "gestor" }), routes.gestor);
   app.use("/api/complaints", middlewares.auth({}), routes.complaints);
   app.use("/api/auth", routes.auth);
 

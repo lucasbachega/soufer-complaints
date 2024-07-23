@@ -1,9 +1,34 @@
 import { DateRange } from "@mui/icons-material";
-import { Box, FormControl, FormLabel, Option, Select } from "@mui/joy";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Option,
+  Select,
+  ToggleButtonGroup,
+} from "@mui/joy";
 import React from "react";
 import CategoryFilter from "./filters/CategoryFilter";
 
-const Filterbar = ({ filters, onChange }) => {
+const ToggleListMode = ({ value, onChange = () => {} }) => {
+  return (
+    <ToggleButtonGroup
+      value={value}
+      onChange={(e, v) => {
+        if (v !== null) {
+          onChange(v);
+        }
+      }}
+      exclusive
+    >
+      <Button value="table">Tabela</Button>
+      <Button value="cards">Cards</Button>
+    </ToggleButtonGroup>
+  );
+};
+
+const Filterbar = ({ filters, onChange, viewMode, setViewMode }) => {
   const renderFilters = () => (
     <React.Fragment>
       <FormControl size="sm">
@@ -23,7 +48,7 @@ const Filterbar = ({ filters, onChange }) => {
         </Select>
       </FormControl>
       <CategoryFilter
-        value={filters?.category}
+        value={filters?.category || null}
         onChange={(v) => onChange("category", v)}
       />
     </React.Fragment>
@@ -31,12 +56,13 @@ const Filterbar = ({ filters, onChange }) => {
   return (
     <>
       <Box
-        className="SearchAndFilters-tabletUp"
+        width={"100%"}
         sx={{
           borderRadius: "sm",
           p: 3,
           pt: 0,
           display: "flex",
+          alignItems: "flex-end",
           flexWrap: "wrap",
           gap: 1.5,
           "& > *": {
@@ -45,6 +71,13 @@ const Filterbar = ({ filters, onChange }) => {
         }}
       >
         {renderFilters()}
+        <Box
+          flex={1}
+          display={{ md: "flex", xs: "none" }}
+          justifyContent={"flex-end"}
+        >
+          <ToggleListMode value={viewMode} onChange={setViewMode} />
+        </Box>
       </Box>
     </>
   );

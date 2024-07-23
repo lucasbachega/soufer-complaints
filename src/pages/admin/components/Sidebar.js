@@ -1,24 +1,22 @@
 import {
+  ArrowBack,
   AssignmentOutlined,
   BusinessCenterOutlined,
   BusinessOutlined,
   CategoryOutlined,
-  HomeOutlined,
   InventoryOutlined,
   PeopleAltOutlined,
 } from "@mui/icons-material";
 import {
   Box,
+  Button,
   Divider,
-  IconButton,
   List,
   ListSubheader,
-  Tooltip,
   Typography,
 } from "@mui/joy";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import Logo from "../../../assets/logo/soufer-logo.png";
 import AccountBox from "./AccountBox";
 import SidebarItem from "./SidebarItem";
 
@@ -33,7 +31,7 @@ const Sidebar = () => {
 
   return (
     <Box
-      width={"16em"}
+      width={"15.5em"}
       height={"100%"}
       display={"flex"}
       flexDirection={"column"}
@@ -41,21 +39,22 @@ const Sidebar = () => {
       boxShadow={"sm"}
       position={"relative"}
     >
-      <Tooltip placement="right" title="Página inicial">
-        <IconButton
-          variant="outlined"
+      <Box display={"flex"} alignItems={"center"} gap={1} px={1} pt={1} pb={0}>
+        <Button
+          color="primary"
+          variant="plain"
           onClick={() => navigate("/")}
-          sx={{ position: "absolute", top: 10, right: 15 }}
+          startDecorator={<ArrowBack />}
+          sx={{px: 1}}
         >
-          <HomeOutlined />
-        </IconButton>
-      </Tooltip>
-      <Box p={2} pt={3}>
-        <img width={"110px"} src={Logo} />
-        <Typography mt={1} level="h4">
-          Portal de ocorrências
+          Página inicial
+        </Button>
+      </Box>
+      <Box p={2} pt={0}>
+        <Typography mt={1} level="h3">
+          Portal Ocorrências
         </Typography>
-        <Typography color="neutral" level="title-md">
+        <Typography color="primary" fontWeight={"lg"} level="title-sm">
           ADMINISTRADOR
         </Typography>
       </Box>

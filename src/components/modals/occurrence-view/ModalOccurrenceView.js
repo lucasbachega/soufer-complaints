@@ -32,7 +32,7 @@ const ModalOccurrenceView = ({
       <ModalOverflow sx={{ overflowY: "scroll", overflowX: "hidden" }}>
         <ModalDialog maxWidth={"sm"} minWidth={"sm"} layout={"center"}>
           <ModalClose onClick={onClose} />
-          <Typography lineHeight={1} level="body-sm" color="neutral">
+          <Typography lineHeight={1} level="body-xs" color="neutral">
             {data?.id}
           </Typography>
           <Typography lineHeight={1} level="h4" color="neutral">
@@ -55,7 +55,7 @@ const ModalOccurrenceView = ({
               })
             }
           />
-          {!readOnly && (
+          {!readOnly ? (
             <Stack direction={"column"} gap={2}>
               <SaveInput
                 inputProps={{
@@ -98,6 +98,14 @@ const ModalOccurrenceView = ({
                 }
               />
             </Stack>
+          ) : (
+            <>
+              <Stack pt={0.5} direction={"column"} gap={2}>
+                <DetailItem label={"Análise da causa"} value={data?.causa} />
+                <DetailItem label={"Ação de correção"} value={data?.correcao} />
+              </Stack>
+              <Divider sx={{ mt: 2, mx: -2.5 }} />
+            </>
           )}
           <Stack pb={2} mt={2} direction={"column"} gap={2}>
             <DetailItem label={"Unidade"} value={data?.unidade?.text} />
