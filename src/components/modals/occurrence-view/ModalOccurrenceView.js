@@ -23,6 +23,7 @@ const ModalOccurrenceView = ({
   onClose,
   updateData = () => {},
   readOnly,
+  role = 'admin'
 }) => {
   return (
     <Modal
@@ -43,6 +44,7 @@ const ModalOccurrenceView = ({
           </Typography>
           <Divider sx={{ my: 1 }} />
           <ToggleStatus
+            role={role}
             readOnly={readOnly}
             initialStatus={data?.status}
             occurrenceId={data?.id}
@@ -64,7 +66,7 @@ const ModalOccurrenceView = ({
                 }}
                 initialValue={data?.causa}
                 onSave={async (value) =>
-                  await HttpClient.admin.updateOcorrencia(data?.id, {
+                  await HttpClient[role].updateOcorrencia(data?.id, {
                     causa: value,
                   })
                 }
@@ -84,7 +86,7 @@ const ModalOccurrenceView = ({
                 }}
                 initialValue={data?.correcao}
                 onSave={async (value) =>
-                  await HttpClient.admin.updateOcorrencia(data?.id, {
+                  await HttpClient[role].updateOcorrencia(data?.id, {
                     correcao: value,
                   })
                 }

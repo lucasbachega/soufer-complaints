@@ -46,7 +46,7 @@ const OccurrenceForm = ({
           disabled={loading}
           value={data?.salesOrder}
           onChange={(v) => onChangeValue("salesOrder", v)}
-          label={"Ordem de venda / Renomeio"}
+          label={"Ordem de venda"}
           required
         />
         <SectorsSelector

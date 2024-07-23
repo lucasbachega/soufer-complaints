@@ -106,6 +106,7 @@ export default () => {
         <ExcelExportButton period={filters?.period} />
       </Box>
       <OccurrencesTable
+        role={'gestor'}
         data={data}
         loading={loading}
         onChangeFilters={handleChangeFilters}

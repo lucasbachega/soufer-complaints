@@ -4,17 +4,15 @@ import {
   Checklist,
   SettingsOutlined,
 } from "@mui/icons-material";
-import { Box, Container, Divider, Typography } from "@mui/joy";
+import { Box, Container, Divider, Link, Typography } from "@mui/joy";
 import Capa from "../../assets/background/soufer-capa.jpeg";
 import Logo from "../../assets/logo/soufer-logo.png";
 import ActionCard from "./components/ActionCard";
 
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  selectUserIsAdmin,
-  selectUserIsGestor,
-} from "../../store/reducers/userInfoSlice";
+import pkge from "../../../package.json";
+import { selectUserIsAdmin, selectUserIsGestor } from "../../store/reducers/userInfoSlice";
 import UserIndicator from "./components/UserIndicator";
 
 export default () => {
@@ -32,12 +30,15 @@ export default () => {
           overflow={"auto"}
           pb={5}
           position={"relative"}
+          display={"flex"}
+          flexDirection={"column"}
         >
           <Box position={"absolute"} top={15} right={30}>
             <UserIndicator />
           </Box>
           <Container
             sx={{
+              flex: 1,
               p: 4,
               paddingTop: "100px",
               display: "flex",
@@ -51,14 +52,9 @@ export default () => {
               Portal de ocorrências
             </Typography>
             <Divider sx={{ my: 2 }} />
-            <Typography
-              maxWidth={"sm"}
-              color="neutral"
-              textAlign={"center"}
-              level="body-lg"
-            >
-              Seja bem-vindo ao portal de ocorrências da Soufer. Informe suas
-              reclamações ou consulte o painel de administrador.
+            <Typography maxWidth={"sm"} color="neutral" textAlign={"center"} level="body-lg">
+              Seja bem-vindo ao portal de ocorrências da Soufer. Informe suas reclamações ou
+              consulte o painel de administrador.
             </Typography>
             <Box
               width={"100%"}
@@ -83,12 +79,11 @@ export default () => {
               />
               {isGestor && (
                 <ActionCard
+                  isNew
                   disabled={!isAdmin}
                   Icon={Checklist}
                   title={"Gestor"}
-                  description={
-                    "Gerencie as ocorrências, explique as causas e correções."
-                  }
+                  description={"Gerencie as ocorrências, explique as causas e correções."}
                   onClick={() => navigate("/gestor")}
                 />
               )}
@@ -103,6 +98,23 @@ export default () => {
               )}
             </Box>
           </Container>
+          <Box mt={"auto"} p={2} display={"flex"} flexDirection={"column"} alignItems={"center"}>
+            <Typography fontWeight={"sm"} color="neutral" level="body-xs" textAlign={"center"}>
+              Versão: {pkge.version}
+            </Typography>
+            <Typography fontWeight={"sm"} color="neutral" level="body-xs" textAlign={"center"}>
+              Desenvolvido com 🤍 por{" "}
+              <Link
+                fontWeight={"sm"}
+                level="inherit"
+                href="https://www.instagram.com/lucascbachega/"
+                target="_blank"
+              >
+                lucascbachega
+              </Link>
+              .
+            </Typography>
+          </Box>
         </Box>
       </Box>
       <Box

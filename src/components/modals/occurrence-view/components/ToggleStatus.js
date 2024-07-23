@@ -25,6 +25,7 @@ function ToggleStatus({
   occurrenceId,
   onUpdate = () => {},
   readOnly,
+  role = 'admin'
 }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
@@ -33,7 +34,7 @@ function ToggleStatus({
 
   const handleSave = async () => {
     setLoading(true);
-    const res = await HttpClient.admin.updateOcorrencia(occurrenceId, {
+    const res = await HttpClient[role].updateOcorrencia(occurrenceId, {
       status,
     });
     if (res?.ok) {

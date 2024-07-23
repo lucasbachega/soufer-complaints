@@ -49,6 +49,7 @@ export default function OccurrencesTable({
   onChangeFilters,
   sx,
   readOnly,
+  role = 'admin'
 }) {
   const theme = useTheme();
 
@@ -221,6 +222,7 @@ export default function OccurrencesTable({
         onClose={() => setModalView(null)}
         updateData={onUpdateOccurrence}
         readOnly={readOnly}
+        role={role}
       />
     </React.Fragment>
   );
