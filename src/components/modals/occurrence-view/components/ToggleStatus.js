@@ -1,128 +1,46 @@
 import { EditOutlined } from "@mui/icons-material";
 import {
-  Button,
-  Chip,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  Modal,
-  ModalClose,
-  ModalDialog,
-  Radio,
-  RadioGroup,
-  Tooltip,
+  Dropdown,
+  ListItemDecorator,
+  Menu,
+  MenuButton,
+  MenuItem,
 } from "@mui/joy";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { HttpClient } from "../../../../api/httpClient";
-import { setError } from "../../../../store/reducers/errorBaseSlice";
-import { openSnackbar } from "../../../../store/reducers/snackbarBaseSlice";
 import { occurrenceStatus } from "../../../../utils/occurrences";
 
-function ToggleStatus({
-  initialStatus = "",
-  occurrenceId,
-  onUpdate = () => {},
-  readOnly,
-  role = 'admin'
-}) {
-  const dispatch = useDispatch();
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(initialStatus);
-
-  const handleSave = async () => {
-    setLoading(true);
-    const res = await HttpClient[role].updateOcorrencia(occurrenceId, {
-      status,
-    });
-    if (res?.ok) {
-      onUpdate(status);
-      dispatch(
-        openSnackbar({
-          message: "Status alterado",
-        })
-      );
-    } else {
-      setStatus(initialStatus);
-      dispatch(
-        setError({
-          title: "Erro ao alterar status",
-          message: res?.error,
-        })
-      );
-    }
-    setOpen(false);
-    setLoading(false);
-  };
-
+function ToggleStatus({ status = "", onChange = () => {}, readOnly }) {
   return (
     <>
-      <Tooltip
-        disableHoverListener={readOnly}
-        disableFocusListener={readOnly}
-        title="Alterar status"
-      >
-        <Chip
-          variant={status === "completed" ? "soft" : "outlined"}
-          color={occurrenceStatus[status]?.color}
-          sx={{
-            position: "absolute",
-            right: 50,
-            top: 12,
-          }}
+      <Dropdown>
+        <MenuButton
           startDecorator={!readOnly && <EditOutlined />}
-          onClick={() => !readOnly && setOpen(true)}
+          size="sm"
+          sx={{ pointerEvents: readOnly ? "none" : "auto" }}
+          color={occurrenceStatus[status]?.color}
         >
           {occurrenceStatus[status]?.text}
-        </Chip>
-      </Tooltip>
-      {!readOnly && (
-        <Modal
-          open={open}
-          onClose={() => {
-            setOpen(false);
-            setStatus(initialStatus);
-          }}
-        >
-          <ModalDialog minWidth={400}>
-            <ModalClose />
-            <DialogTitle>Status da ocorrência</DialogTitle>
-            <DialogContent sx={{ p: 2 }}>
-              <FormControl disabled={loading}>
-                <RadioGroup
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                >
-                  <Radio value="open" label="Em aberto" color="neutral" />
-                  <Radio value="completed" label="Concluído" color="success" />
-                </RadioGroup>
-              </FormControl>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleSave}
-                variant="solid"
-                loading={loading}
-                disabled={loading}
+        </MenuButton>
+        {!readOnly && (
+          <Menu
+            placement="auto-start"
+            sx={{ zIndex: (t) => t.zIndex.modal + 100 }}
+          >
+            {Object.keys(occurrenceStatus).map((statusKey) => (
+              <MenuItem
+                selected={status === statusKey}
+                key={statusKey}
+                color={occurrenceStatus[statusKey].color}
+                onClick={() => onChange("status", statusKey)}
               >
-                Salvar
-              </Button>
-              <Button
-                variant="plain"
-                color="neutral"
-                onClick={() => {
-                  setOpen(false);
-                  setStatus(initialStatus);
-                }}
-              >
-                Cancelar
-              </Button>
-            </DialogActions>
-          </ModalDialog>
-        </Modal>
-      )}
+                <ListItemDecorator>
+                  {occurrenceStatus[statusKey].icon}
+                </ListItemDecorator>{" "}
+                {occurrenceStatus[statusKey].text}
+              </MenuItem>
+            ))}
+          </Menu>
+        )}
+      </Dropdown>
     </>
   );
 }

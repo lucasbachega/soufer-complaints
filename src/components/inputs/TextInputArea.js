@@ -1,5 +1,11 @@
 import { InfoOutlined } from "@mui/icons-material";
-import { FormControl, FormHelperText, FormLabel, Textarea } from "@mui/joy";
+import {
+  Box,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Textarea,
+} from "@mui/joy";
 import React from "react";
 
 const TextArea = ({
@@ -19,11 +25,22 @@ const TextArea = ({
   onBlur,
   disabled,
   autoFocus,
+  readOnly,
+  labelRightContent,
+  sx,
 }) => {
   return (
     <FormControl required={required} error={error}>
-      {Boolean(label) && <FormLabel>{label}</FormLabel>}
+      {Boolean(label) && (
+        <FormLabel
+          sx={{ width: "100%", display: "flex", alignItems: "center" }}
+        >
+          {label} <Box flex={1} />
+          {labelRightContent}
+        </FormLabel>
+      )}
       <Textarea
+        readOnly={readOnly}
         autoFocus={autoFocus}
         placeholder={placeholder}
         value={value}
@@ -37,6 +54,7 @@ const TextArea = ({
         onFocus={onFocus}
         onBlur={onBlur}
         disabled={disabled}
+        sx={sx}
       />
       {Boolean(helperText) && (
         <FormHelperText>

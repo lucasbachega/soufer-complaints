@@ -10,6 +10,7 @@ import {
 } from "@mui/joy";
 import React from "react";
 import CategoryFilter from "./filters/CategoryFilter";
+import StatusFilter from "./filters/StatusFilter";
 
 const ToggleListMode = ({ value, onChange = () => {} }) => {
   return (
@@ -28,7 +29,7 @@ const ToggleListMode = ({ value, onChange = () => {} }) => {
   );
 };
 
-const Filterbar = ({ filters, onChange, viewMode, setViewMode }) => {
+const Filterbar = ({ filters = {}, onChange, viewMode, setViewMode }) => {
   const renderFilters = () => (
     <React.Fragment>
       <FormControl size="sm">
@@ -50,6 +51,10 @@ const Filterbar = ({ filters, onChange, viewMode, setViewMode }) => {
       <CategoryFilter
         value={filters?.category || null}
         onChange={(v) => onChange("category", v)}
+      />
+      <StatusFilter
+        value={filters?.status || null}
+        onChange={(v) => onChange("status", v)}
       />
     </React.Fragment>
   );

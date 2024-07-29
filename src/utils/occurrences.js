@@ -1,4 +1,8 @@
-import { AutorenewRounded, CheckCircle } from "@mui/icons-material";
+import {
+  AutorenewRounded,
+  CheckCircle,
+  ThumbDownOffAlt
+} from "@mui/icons-material";
 
 export const occurrenceStatus = {
   open: {
@@ -10,5 +14,10 @@ export const occurrenceStatus = {
     icon: <CheckCircle />,
     text: "Concluído",
     color: "success",
+  },
+  rejected: {
+    icon: <ThumbDownOffAlt />,
+    text: "Recusado",
+    color: "danger",
   },
 };

@@ -1,15 +1,9 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormHelperText,
-  Snackbar,
-  Stack,
-} from "@mui/joy";
-import TextArea from "./TextInputArea";
+import { AttachmentOutlined } from "@mui/icons-material";
+import { Box, Button, FormControl, FormHelperText, Stack } from "@mui/joy";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { openSnackbar } from "../../store/reducers/snackbarBaseSlice";
+import TextArea from "./TextInputArea";
 
 function SaveInput({
   inputProps,
@@ -50,31 +44,45 @@ function SaveInput({
         value={value}
         {...inputProps}
         endDecorator={
-          toSave &&
-          initialValue !== value && (
-            <Stack width={"100%"} direction={"row"} gap={1}>
-              <Box flex={1} />
-              <Button
-                onClick={() => {
-                  setLoading(false);
-                  setToSave(false);
-                  setValue(initialValue);
-                }}
-                size="sm"
-                variant="plain"
-              >
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleSave}
-                loading={loading}
-                disabled={loading}
-                size="sm"
-              >
-                Salvar
-              </Button>
-            </Stack>
-          )
+          <Stack
+            borderTop={1}
+            borderColor={"divider"}
+            width={"100%"}
+            direction={"row"}
+            gap={1}
+          >
+            <Button
+              size="sm"
+              variant="plain"
+              startDecorator={<AttachmentOutlined />}
+            >
+              Anexar
+            </Button>
+            <Box flex={1} />
+            {toSave && initialValue !== value && (
+              <>
+                <Button
+                  onClick={() => {
+                    setLoading(false);
+                    setToSave(false);
+                    setValue(initialValue);
+                  }}
+                  size="sm"
+                  variant="plain"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  loading={loading}
+                  disabled={loading}
+                  size="sm"
+                >
+                  Salvar
+                </Button>
+              </>
+            )}
+          </Stack>
         }
       />
       {Boolean(error) && <FormHelperText>{error}</FormHelperText>}

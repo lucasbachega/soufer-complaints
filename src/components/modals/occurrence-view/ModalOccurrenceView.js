@@ -1,18 +1,22 @@
 import { AttachmentOutlined } from "@mui/icons-material";
 import {
   Box,
+  Button,
+  DialogActions,
+  DialogContent,
   Divider,
+  FormControl,
   Modal,
   ModalClose,
   ModalDialog,
-  ModalOverflow,
   Stack,
   Typography,
 } from "@mui/joy";
-import React, { memo } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { HttpClient } from "../../../api/httpClient";
 import { formatMoment } from "../../../utils/date_functions";
-import SaveInput from "../../inputs/SaveInput";
+import TextInputArea from "../../inputs/TextInputArea";
+import AppendableField from "./components/AppendableField";
 import DetailItem from "./components/DetailItem";
 import FilesSection from "./components/FilesSection";
 import ToggleStatus from "./components/ToggleStatus";
@@ -23,93 +27,125 @@ const ModalOccurrenceView = ({
   onClose,
   updateData = () => {},
   readOnly,
-  role = 'admin'
+  role = "admin",
 }) => {
+  const [loading, setLoading] = useState(false);
+  const [copyData, setCopyData] = useState(null);
+  const [causaFiles, setCausaFiles] = useState([]);
+  const [correcaoFiles, setCorrecaoFiles] = useState([]);
+
+  useEffect(() => {
+    if (data) {
+      setCopyData({ ...data });
+    }
+  }, [data]);
+
+  const handleChangeValue = useCallback(
+    (field, value) => setCopyData((prev) => ({ ...prev, [field]: value })),
+    []
+  );
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      const res = await HttpClient[role].updateOcorrencia(data?.id, {
+        ...copyData,
+      });
+      updateData({
+        id: data?.id,
+        changes: copyData,
+      });
+      console.log(res);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!copyData || !data) return;
+
   return (
     <Modal
       open={open}
       slotProps={{ backdrop: { sx: { backdropFilter: "blur(1px)" } } }}
     >
-      <ModalOverflow sx={{ overflowY: "scroll", overflowX: "hidden" }}>
-        <ModalDialog maxWidth={"sm"} minWidth={"sm"} layout={"center"}>
-          <ModalClose onClick={onClose} />
-          <Typography lineHeight={1} level="body-xs" color="neutral">
-            {data?.id}
-          </Typography>
-          <Typography lineHeight={1} level="h4" color="neutral">
-            {formatMoment(data?.created_at)}
-          </Typography>
-          <Typography lineHeight={1} level="h2">
-            {data?.categoria?.text}
-          </Typography>
-          <Divider sx={{ my: 1 }} />
+      <ModalDialog maxWidth={"sm"} minWidth={"sm"} layout={"center"}>
+        <ModalClose onClick={onClose} sx={{ zIndex: 100 }} />
+        <Stack
+          borderRadius={"sm"}
+          m={-2.5}
+          p={2.5}
+          py={1.5}
+          boxShadow={"sm"}
+          direction={"row"}
+          alignItems={"flex-end"}
+          zIndex={70}
+          bgcolor={"#FFF"}
+          gap={1}
+        >
+          <Box flex={1}>
+            <Typography level="body-xs" fontWeight={"sm"} color="neutral">
+              {copyData?.id}
+            </Typography>
+            <Typography level="h5" fontWeight={"lg"} color="neutral">
+              {formatMoment(copyData?.created_at)}
+            </Typography>
+            <Typography level="h3">{copyData?.categoria?.text}</Typography>
+          </Box>
           <ToggleStatus
-            role={role}
             readOnly={readOnly}
-            initialStatus={data?.status}
-            occurrenceId={data?.id}
-            onUpdate={(newValue) =>
-              updateData({
-                id: data?.id,
-                changes: {
-                  status: newValue,
-                },
-              })
-            }
+            status={copyData?.status}
+            onChange={handleChangeValue}
           />
-          {!readOnly ? (
-            <Stack direction={"column"} gap={2}>
-              <SaveInput
-                inputProps={{
-                  label: "Análise de causa",
-                  placeholder: "Adicione notas sobre a causa...",
-                }}
-                initialValue={data?.causa}
-                onSave={async (value) =>
-                  await HttpClient[role].updateOcorrencia(data?.id, {
-                    causa: value,
-                  })
-                }
-                onSuccess={(newValue) =>
-                  updateData({
-                    id: data?.id,
-                    changes: {
-                      causa: newValue,
-                    },
-                  })
-                }
-              />
-              <SaveInput
-                inputProps={{
-                  label: "Ação de correção",
-                  placeholder: "Adicione notas sobre a correção...",
-                }}
-                initialValue={data?.correcao}
-                onSave={async (value) =>
-                  await HttpClient[role].updateOcorrencia(data?.id, {
-                    correcao: value,
-                  })
-                }
-                onSuccess={(newValue) =>
-                  updateData({
-                    id: data?.id,
-                    changes: {
-                      correcao: newValue,
-                    },
-                  })
-                }
-              />
-            </Stack>
-          ) : (
-            <>
-              <Stack pt={0.5} direction={"column"} gap={2}>
-                <DetailItem label={"Análise da causa"} value={data?.causa} />
-                <DetailItem label={"Ação de correção"} value={data?.correcao} />
-              </Stack>
-              <Divider sx={{ mt: 2, mx: -2.5 }} />
-            </>
-          )}
-          <Stack pb={2} mt={2} direction={"column"} gap={2}>
+        </Stack>
+        <DialogContent sx={{ position: "relative", p: 0, pt: 3, pr: 3, m: 0 }}>
+          <Stack direction={"column"} gap={2}>
+            {copyData?.status === "rejected" && (
+              <FormControl>
+                <TextInputArea
+                  minRows={1}
+                  autoFocus
+                  onChange={(v) => {
+                    handleChangeValue("motivoRejeicao", v);
+                  }}
+                  value={copyData?.motivoRejeicao}
+                  label="Motivo da rejeição"
+                  placeholder={"Descreva o motivo da rejeição..."}
+                  sx={{ py: 1 }}
+                />
+              </FormControl>
+            )}
+            <AppendableField
+              readOnly={readOnly}
+              inputProps={{
+                label: "Análise de causa",
+                placeholder: readOnly
+                  ? "Nada sobre a causa"
+                  : "Adicione notas sobre a causa...",
+              }}
+              fieldName={"causa"}
+              value={copyData?.causa}
+              onChange={handleChangeValue}
+              files={causaFiles}
+              onFilesChange={setCausaFiles}
+            />
+            <AppendableField
+              readOnly={readOnly}
+              inputProps={{
+                label: "Ação de correção",
+                placeholder: readOnly
+                  ? "Nada sobre a correção"
+                  : "Adicione notas sobre a correção...",
+              }}
+              fieldName={"correcao"}
+              value={copyData?.correcao}
+              onChange={handleChangeValue}
+              files={correcaoFiles}
+              onFilesChange={setCorrecaoFiles}
+            />
+          </Stack>
+
+          <Stack py={3} direction={"column"} gap={2}>
             <DetailItem label={"Unidade"} value={data?.unidade?.text} />
             <DetailItem label={"Cliente"} value={data?.cliente} />
             <DetailItem label={"Representante"} value={data?.representante} />
@@ -135,8 +171,27 @@ const ModalOccurrenceView = ({
               </Typography>
             )}
           </Box>
-        </ModalDialog>
-      </ModalOverflow>
+        </DialogContent>
+        {!readOnly && (
+          <>
+            <Divider />
+            <DialogActions sx={{ height: 25, pb: 1 }}>
+              <Button
+                onClick={handleSave}
+                size="sm"
+                loading={loading}
+                disabled={loading}
+              >
+                Salvar
+              </Button>
+              <Button size="sm" variant="plain">
+                Cancelar
+              </Button>
+              <Box flex={1} />
+            </DialogActions>
+          </>
+        )}
+      </ModalDialog>
     </Modal>
   );
 };
