@@ -513,9 +513,10 @@ router.put("/complaints/:id", async (req, res) => {
 /**
  * Upload de anexos
  */
-router.post("/complaints/:id/uploadFiles/:type", multerMid.array("files", 10), async (req, res) => {
-  const { id, type } = req.params;
+router.post("/complaints/:id/uploadFiles", multerMid.array("files", 10), async (req, res) => {
+  const { id } = req.params;
   const files = req.files;
+  const { type } = req.body;
   if (!id) {
     throw new OcorrenciaNotFound();
   }
