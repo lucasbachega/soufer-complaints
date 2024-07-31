@@ -398,8 +398,10 @@ router.get("/:id/file/:filename", async (req, res) => {
 
   const { path: localpath, mimetype } = file;
   const urlFile = path.join(__dirname, "../../", localpath);
-
   res.setHeader("Content-Type", mimetype);
+  if (!fs.existsSync(urlFile)) {
+    throw new AnexoNotFound();
+  }
   fs.createReadStream(urlFile).pipe(res);
 });
 
