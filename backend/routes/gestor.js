@@ -14,6 +14,8 @@ const {
 } = require("date-fns");
 const excelJS = require("exceljs");
 const { EmailSender } = require("../utils/email-sender");
+const fs = require("fs");
+const path = require("path");
 
 const occurrenceStatus = {
   open: {
@@ -136,6 +138,19 @@ router.put("/complaints/:id", async (req, res) => {
         filename: { $in: deleteAdminAnexos },
       },
     };
+    // Remover arquivo do file storage
+    for (const filename of deleteAdminAnexos) {
+      const file = ocorrencia?.admin_anexos?.find((anexo) => anexo.filename === filename);
+      if (file) {
+        const { path: localpath, mimetype } = file;
+        const urlFile = path.join(__dirname, "../../", localpath);
+        try {
+          fs.rmSync(urlFile);
+        } catch (error) {
+          console.error("Ocorreu uma falha interna ao remover anexos da ocorrência :: ", id, error);
+        }
+      }
+    }
   }
 
   // atualizar no banco
