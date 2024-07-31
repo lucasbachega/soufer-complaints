@@ -387,9 +387,14 @@ router.get("/:id/file/:filename", async (req, res) => {
   if (!ocorrencia) {
     throw new OcorrenciaNotFound();
   }
+
+  let file;
   const anexos = ocorrencia.anexos || [];
-  const file = anexos.find((anexo) => anexo.filename === filename);
-  if (!file) throw new AnexoNotFound();
+  const adminAnexos = ocorrencia.admin_anexos || [];
+  const ocorrenciaFile = anexos.find((anexo) => anexo.filename === filename);
+  const adminFile = adminAnexos.find((anexo) => anexo.filename === filename);
+  if (!ocorrenciaFile && !adminFile) throw new AnexoNotFound();
+  file = ocorrenciaFile || adminFile;
 
   const { path: localpath, mimetype } = file;
   const urlFile = path.join(__dirname, "../../", localpath);
