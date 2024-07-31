@@ -8,6 +8,7 @@ const {
   CategoriaNotFound,
   OcorrenciaNotFound,
   UserNotFound,
+  TipoAnexoNotFound,
 } = require("./errors");
 const { updateTexts } = require("./utils");
 const router = express.Router();
@@ -22,6 +23,8 @@ const {
 } = require("date-fns");
 const excelJS = require("exceljs");
 const { EmailSender } = require("../utils/email-sender");
+// multer middleware (file upload)
+const multerMid = require("../utils/multer-mid");
 
 const occurrenceStatus = {
   open: {
@@ -30,25 +33,23 @@ const occurrenceStatus = {
   completed: {
     text: "Concluído",
   },
+  rejected: {
+    text: "Recusado",
+  },
 };
 
 /**
  * Login por usuário e senha
  */
 router.get("/test", async (req, res) => {
-  return res
-    .status(200)
-    .send(`Olá <b>${req.userId}</b>! Você está autenticado`);
+  return res.status(200).send(`Olá <b>${req.userId}</b>! Você está autenticado`);
 });
 
 /**
  * UNIDADES
  */
 router.get("/unidades", async (req, res) => {
-  const r = await Database.collection("unidades")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("unidades").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/unidades", async (req, res) => {
@@ -106,10 +107,7 @@ router.delete("/unidades/:id", async (req, res) => {
  * SETOR
  */
 router.get("/setor", async (req, res) => {
-  const r = await Database.collection("setor")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("setor").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/setor", async (req, res) => {
@@ -167,10 +165,7 @@ router.delete("/setor/:id", async (req, res) => {
  * PRODUTOS
  */
 router.get("/produtos", async (req, res) => {
-  const r = await Database.collection("produtos")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("produtos").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/produtos", async (req, res) => {
@@ -228,10 +223,7 @@ router.delete("/produtos/:id", async (req, res) => {
  * CATEGORIAS
  */
 router.get("/categorias", async (req, res) => {
-  const r = await Database.collection("categorias")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("categorias").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/categorias", async (req, res) => {
@@ -337,8 +329,7 @@ router.post("/users", async (req, res) => {
 });
 router.put("/users/:id", async (req, res) => {
   const { id } = req.params;
-  const { username, firstname, password, email, roles, block, areas } =
-    req.body;
+  const { username, firstname, password, email, roles, block, areas } = req.body;
   const _user = await Database.collection("users").findOne({
     _id: new ObjectId(id),
   });
@@ -357,10 +348,7 @@ router.put("/users/:id", async (req, res) => {
   if ("email" in req.body) edits.email = email;
   if ("roles" in req.body) edits.roles = roles;
   if ("block" in req.body) edits.block = !!block;
-  if (
-    (roles?.includes("gestor") || _user?.roles?.includes("gestor")) &&
-    areas?.length
-  ) {
+  if ((roles?.includes("gestor") || _user?.roles?.includes("gestor")) && areas?.length) {
     edits.areas = [];
     // Verif. as áreas do gestor
     for (let i = 0; i < areas.length; i++) {
@@ -404,8 +392,7 @@ router.delete("/users/:id", async (req, res) => {
 
 // Listar ocorrências com base em filtros selecionados
 router.get("/complaints", async (req, res) => {
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
-    req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
 
   const filters = {};
   if (status) filters.status = status;
@@ -460,7 +447,7 @@ router.get("/complaints", async (req, res) => {
 // Atualizar dados de uma ocorrência...
 router.put("/complaints/:id", async (req, res) => {
   const { id } = req.params;
-  const { status, causa, correcao } = req.body;
+  const { status, causa, correcao, deleteAdminAnexos } = req.body;
   const ocorrencia = await Database.collection("ocorrencias").findOne({
     _id: new ObjectId(id),
   });
@@ -478,11 +465,25 @@ router.put("/complaints/:id", async (req, res) => {
   if ("correcao" in req.body) {
     editFields.correcao = correcao;
   }
+  if ("motivoRej" in req.body) {
+    editFields.motivoRej = motivoRej;
+  }
+
+  const updateAnexos = {};
+  if (deleteAdminAnexos && Array.isArray(deleteAdminAnexos) && deleteAdminAnexos.length) {
+    updateAnexos.$pull = {
+      admin_anexos: {
+        filename: { $in: deleteAdminAnexos },
+      },
+    };
+  }
+
   // atualizar no banco
   await Database.collection("ocorrencias").updateOne(
     { _id: ocorrencia._id },
     {
       $set: editFields,
+      ...updateAnexos,
     }
   );
   if (_user) {
@@ -495,12 +496,8 @@ router.put("/complaints/:id", async (req, res) => {
       }</b> foi atualizada: <br /><br />
         <ul>
          <li>Status: <b>${occurrenceStatus[ocorrencia?.status]?.text}</b></li>
-         <li>Análise de causa: <b>${
-           editFields.causa || ocorrencia.causa || ""
-         }</b></li>
-           <li>Correção: <b>${
-             editFields.correcao || ocorrencia.correcao || ""
-           }</b></li>
+         <li>Análise de causa: <b>${editFields.causa || ocorrencia.causa || ""}</b></li>
+           <li>Correção: <b>${editFields.correcao || ocorrencia.correcao || ""}</b></li>
         </ul>
      </b> <br />
       Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br /><br />
@@ -511,6 +508,60 @@ router.put("/complaints/:id", async (req, res) => {
   }
 
   return res.status(200).send({ ok: true });
+});
+
+/**
+ * Upload de anexos
+ */
+router.post("/complaints/:id/uploadFiles/:type", multerMid.array("files", 10), async (req, res) => {
+  const { id, type } = req.params;
+  const files = req.files;
+  if (!id) {
+    throw new OcorrenciaNotFound();
+  }
+  if (!["causa", "correcao"].includes(type)) {
+    throw new TipoAnexoNotFound(type);
+  }
+
+  // Verificar da ocorrência
+  const ocorrencia = await Database.collection("ocorrencias").findOne({
+    _id: new ObjectId(id),
+  });
+  if (!ocorrencia) {
+    throw new OcorrenciaNotFound();
+  }
+
+  const anexos = [];
+  for (let i = 0; i < files.length; i++) {
+    const { originalname, mimetype, filename, path, size } = files[i];
+    anexos.push({
+      type,
+      originalname,
+      mimetype,
+      filename,
+      path,
+      size,
+      upload_at: new Date(),
+    });
+  }
+
+  // Save to database
+  await Database.collection("ocorrencias").updateOne(
+    { _id: ocorrencia._id },
+    {
+      $push: {
+        admin_anexos: {
+          $each: anexos,
+          $position: 0,
+        },
+      },
+    }
+  );
+
+  return res.status(201).send({
+    ok: true,
+    anexos,
+  });
 });
 
 // Exportar dados de ocorrências para Excel

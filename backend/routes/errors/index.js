@@ -70,6 +70,14 @@ class AnexoNotFound extends Error {
   }
 }
 
+class TipoAnexoNotFound extends Error {
+  constructor(type) {
+    super(`O tipo de anexo "${type}" não é válido. Aceito somente: causa,correcao`);
+    this.name = "TipoAnexoNotFound";
+    this.status = 400;
+  }
+}
+
 module.exports = {
   InvalidUserAccess,
   UnidadeNotFound,
@@ -79,5 +87,6 @@ module.exports = {
   RequiredFieldError,
   OcorrenciaNotFound,
   AnexoNotFound,
-  UserNotFound
+  UserNotFound,
+  TipoAnexoNotFound,
 };

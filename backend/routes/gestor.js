@@ -1,7 +1,7 @@
 const express = require("express");
 const Database = require("../db");
 const { ObjectId } = require("mongodb");
-const { OcorrenciaNotFound } = require("./errors");
+const { OcorrenciaNotFound, TipoAnexoNotFound } = require("./errors");
 const router = express.Router();
 const {
   startOfToday,
@@ -22,7 +22,13 @@ const occurrenceStatus = {
   completed: {
     text: "Concluído",
   },
+  rejected: {
+    text: "Recusado",
+  },
 };
+
+// multer middleware (file upload)
+const multerMid = require("../utils/multer-mid");
 
 /**
  * CONTROLE DE OCORRÊNCIAS
@@ -88,7 +94,7 @@ router.get("/complaints", async (req, res) => {
 router.put("/complaints/:id", async (req, res) => {
   const { id } = req.params;
   const { areas, userId } = req;
-  const { status, causa, correcao } = req.body;
+  const { status, causa, correcao, motivoRej, deleteAdminAnexos } = req.body;
   const ocorrencia = await Database.collection("ocorrencias").findOne({
     _id: new ObjectId(id),
     $or: areas.map(({ unidade_id, setor_id }) => ({
@@ -119,11 +125,25 @@ router.put("/complaints/:id", async (req, res) => {
   if ("correcao" in req.body) {
     editFields.correcao = correcao;
   }
+  if ("motivoRej" in req.body) {
+    editFields.motivoRej = motivoRej;
+  }
+
+  const updateAnexos = {};
+  if (deleteAdminAnexos && Array.isArray(deleteAdminAnexos) && deleteAdminAnexos.length) {
+    updateAnexos.$pull = {
+      admin_anexos: {
+        filename: { $in: deleteAdminAnexos },
+      },
+    };
+  }
+
   // atualizar no banco
   await Database.collection("ocorrencias").updateOne(
     { _id: ocorrencia._id },
     {
       $set: editFields,
+      ...updateAnexos,
     }
   );
   if (_user) {
@@ -148,6 +168,60 @@ router.put("/complaints/:id", async (req, res) => {
   }
 
   return res.status(200).send({ ok: true });
+});
+
+/**
+ * Upload de anexos
+ */
+router.post("/complaints/:id/uploadFiles/:type", multerMid.array("files", 10), async (req, res) => {
+  const { id, type } = req.params;
+  const files = req.files;
+  if (!id) {
+    throw new OcorrenciaNotFound();
+  }
+  if (!["causa", "correcao"].includes(type)) {
+    throw new TipoAnexoNotFound(type);
+  }
+
+  // Verificar da ocorrência
+  const ocorrencia = await Database.collection("ocorrencias").findOne({
+    _id: new ObjectId(id),
+  });
+  if (!ocorrencia) {
+    throw new OcorrenciaNotFound();
+  }
+
+  const anexos = [];
+  for (let i = 0; i < files.length; i++) {
+    const { originalname, mimetype, filename, path, size } = files[i];
+    anexos.push({
+      type,
+      originalname,
+      mimetype,
+      filename,
+      path,
+      size,
+      upload_at: new Date(),
+    });
+  }
+
+  // Save to database
+  await Database.collection("ocorrencias").updateOne(
+    { _id: ocorrencia._id },
+    {
+      $push: {
+        admin_anexos: {
+          $each: anexos,
+          $position: 0,
+        },
+      },
+    }
+  );
+
+  return res.status(201).send({
+    ok: true,
+    anexos,
+  });
 });
 
 // Exportar dados de ocorrências para Excel
