@@ -43,13 +43,13 @@ function stableSort(array, comparator) {
 
 export default function OccurrencesTable({
   data = [],
-  onUpdateOccurrence = ({ id = "", changes = {} }) => {},
+  getData = () => {},
   loading,
   filters = {},
   onChangeFilters,
   sx,
   readOnly,
-  role = 'admin'
+  role = "admin",
 }) {
   const theme = useTheme();
 
@@ -220,7 +220,7 @@ export default function OccurrencesTable({
         data={modalView}
         open={Boolean(modalView)}
         onClose={() => setModalView(null)}
-        updateData={onUpdateOccurrence}
+        onRefresh={getData}
         readOnly={readOnly}
         role={role}
       />

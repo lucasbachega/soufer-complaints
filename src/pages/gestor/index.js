@@ -53,21 +53,19 @@ export default () => {
   const [filters, setFilters] = useState({
     period: "all",
     category: "",
+    status: "",
   });
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     setLoading(true);
-    const res = await HttpClient.gestor.listarOcorrencias({
-      period: filters?.period,
-      categoria: filters?.category,
-    });
+    const res = await HttpClient.gestor.listarOcorrencias(filters);
     if (res.ok) {
       setData(formatOccurrences(res?.data || []));
     } else {
       setError(res?.error?.message);
     }
     setLoading(false);
-  };
+  }, [filters]);
 
   useEffect(() => {
     getData();
@@ -106,12 +104,13 @@ export default () => {
         <ExcelExportButton period={filters?.period} />
       </Box>
       <OccurrencesTable
-        role={'gestor'}
+        role={"gestor"}
         data={data}
         loading={loading}
         onChangeFilters={handleChangeFilters}
         filters={filters}
         readOnly={false}
+        getData={getData}
         onUpdateOccurrence={handleUpdateOccurrence}
       />
     </Box>

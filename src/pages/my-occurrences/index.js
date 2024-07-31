@@ -13,16 +13,14 @@ export default () => {
   const [filters, setFilters] = useState({
     period: "all",
     category: "",
+    status: "",
   });
 
   const onClose = () => navigate(-1);
 
   const getOccurrences = useCallback(async () => {
     setLoading(true);
-    const res = await HttpClient.listMyOccurrences({
-      period: filters?.period,
-      categoria: filters?.category,
-    });
+    const res = await HttpClient.listMyOccurrences(filters);
     if (res?.ok) {
       setData(res.data?.map((item) => ({ ...item, id: item?._id })));
     }
@@ -45,6 +43,7 @@ export default () => {
         filters={filters}
         loading={loading}
         readOnly
+        getData={getOccurrences}
         onChangeFilters={handleChangeFilters}
         data={data}
         sx={{ p: 2, pb: 2 }}

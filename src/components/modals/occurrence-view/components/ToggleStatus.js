@@ -15,7 +15,7 @@ function ToggleStatus({ status = "", onChange = () => {}, readOnly }) {
         <MenuButton
           startDecorator={!readOnly && <EditOutlined />}
           size="sm"
-          sx={{ pointerEvents: readOnly ? "none" : "auto" }}
+          sx={{ pointerEvents: readOnly ? "none" : "auto", mr: 3 }}
           color={occurrenceStatus[status]?.color}
         >
           {occurrenceStatus[status]?.text}

@@ -169,6 +169,7 @@ class HttpClient {
     categoria,
     produto,
     setor,
+    status,
   }) {
     return this.get("/complaints/ocorrencias", {
       params: {
@@ -177,11 +178,12 @@ class HttpClient {
         produto_id: produto,
         setor_id: setor,
         period,
+        status,
       },
     });
   }
 
-  //Upload de arquivos
+  //Upload de arquivos (ocorrencia)
   static async uploadArquivos({ files = [], occurrenceId }) {
     const formData = new FormData();
     for (const file of files) {
@@ -198,6 +200,21 @@ class HttpClient {
    * Área restrita - Login necessário
    */
   static admin = {
+    //uplaod arquivos ocorrencia admin
+    async uploadOcorrenciaArquivos({ files = [], occurrenceId, type }) {
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append("files", file.blob, file.filename);
+      }
+      if (type) {
+        formData.append("type", type);
+      }
+      return HttpClient.post(
+        `/admin/complaints/${occurrenceId}/uploadFiles`,
+        formData
+      );
+    },
+
     /**
      * Listar ocorrências p/ admin de acordo com filtros
      */
@@ -207,6 +224,7 @@ class HttpClient {
       categoria,
       produto,
       setor,
+      status,
     } = {}) {
       return HttpClient.get("/admin/complaints", {
         params: {
@@ -215,6 +233,7 @@ class HttpClient {
           produto_id: produto,
           setor_id: setor,
           period,
+          status,
         },
       });
     },
@@ -222,11 +241,16 @@ class HttpClient {
      * Atualizar uma ocorrência
      * (alterar status e dados de análise)
      */
-    async updateOcorrencia(id, { causa, correcao, status } = {}) {
+    async updateOcorrencia(
+      id,
+      { causa, correcao, status, deleteAdminAnexos, motivoRej } = {}
+    ) {
       return HttpClient.put(`/admin/complaints/${id}`, {
         causa,
         correcao,
         status,
+        deleteAdminAnexos,
+        motivoRej,
       });
     },
 
@@ -404,6 +428,21 @@ class HttpClient {
 
   // Controle GESTOR
   static gestor = {
+    //uplaod arquivos ocorrencia admin
+    async uploadOcorrenciaArquivos({ files = [], occurrenceId, type }) {
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append("files", file.blob, file.filename);
+      }
+      if (type) {
+        formData.append("type", type);
+      }
+      return HttpClient.post(
+        `/gestor/complaints/${occurrenceId}/uploadFiles`,
+        formData
+      );
+    },
+
     /**
      * Listar ocorrências p/ gestor de acordo com filtros
      */
@@ -413,6 +452,7 @@ class HttpClient {
       categoria,
       produto,
       setor,
+      status,
     } = {}) {
       return HttpClient.get("/gestor/complaints", {
         params: {
@@ -421,6 +461,7 @@ class HttpClient {
           produto_id: produto,
           setor_id: setor,
           period,
+          status,
         },
       });
     },
@@ -428,11 +469,16 @@ class HttpClient {
      * Atualizar uma ocorrência
      * (alterar status e dados de análise)
      */
-    async updateOcorrencia(id, { causa, correcao, status } = {}) {
+    async updateOcorrencia(
+      id,
+      { causa, correcao, status, deleteAdminAnexos, motivoRej } = {}
+    ) {
       return HttpClient.put(`/gestor/complaints/${id}`, {
         causa,
         correcao,
         status,
+        deleteAdminAnexos,
+        motivoRej,
       });
     },
 

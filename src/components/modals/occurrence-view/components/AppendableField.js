@@ -5,6 +5,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import { useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import AttachItem from "../../../../pages/new-occurrence/components/attach/AttachItem";
+import { formatMoment } from "../../../../utils/date_functions";
 import { getBlob } from "../../../../utils/images";
 import TextInputArea from "../../../inputs/TextInputArea";
 
@@ -14,8 +15,10 @@ function AppendableField({
   onChange = () => {},
   fieldName,
   onFilesChange = () => {},
+  onToDeleteFilesChange = () => {},
   files = [],
   readOnly,
+  answerBy,
 }) {
   const handleDropFiles = async (acceptedFiles) => {
     let prepared = [];
@@ -40,8 +43,9 @@ function AppendableField({
   };
 
   const handleRemoveFile = useCallback(
-    (fileId = "") => {
-      onFilesChange([...files?.filter((file) => file.id !== fileId)]);
+    (filename = "") => {
+      onToDeleteFilesChange(filename);
+      onFilesChange([...files?.filter((file) => file.filename !== filename)]);
     },
     [files]
   );
@@ -59,11 +63,12 @@ function AppendableField({
 
   const thumbs = files.map((file) => (
     <AttachItem
-      id={file.id}
-      filename={file.name}
+      id={file.filename}
+      filename={file.filename}
       key={file.id}
       preview={file.preview}
-      onRemove={handleRemoveFile}
+      disableRemove={readOnly}
+      onRemove={!readOnly ? handleRemoveFile : null}
     />
   ));
 
@@ -80,9 +85,16 @@ function AppendableField({
         sx={{ py: 1 }}
         readOnly={readOnly}
         labelRightContent={
-          readOnly && (
-            <Typography component={"span"} color="neutral" level="body-xs">
-              Editado por: <strong>André Martins</strong>
+          readOnly &&
+          answerBy && (
+            <Typography
+              component={"span"}
+              color="neutral"
+              level="body-xs"
+              fontSize={".7rem"}
+            >
+              Por: <strong>{answerBy?.firstname}</strong> em{" "}
+              {formatMoment(answerBy?.timestamp)}
             </Typography>
           )
         }

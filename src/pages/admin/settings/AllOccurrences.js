@@ -64,21 +64,19 @@ const AllOccurrences = () => {
   const [filters, setFilters] = useState({
     period: "all",
     category: "",
+    status: "",
   });
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     setLoading(true);
-    const res = await HttpClient.admin.listarOcorrencias({
-      period: filters?.period,
-      categoria: filters?.category,
-    });
+    const res = await HttpClient.admin.listarOcorrencias(filters);
     if (res.ok) {
       setData(formatOccurrences(res?.data || []));
     } else {
       setError(res?.error?.message);
     }
     setLoading(false);
-  };
+  }, [filters]);
 
   useEffect(() => {
     getData();
