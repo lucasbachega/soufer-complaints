@@ -85,7 +85,6 @@ function AppendableField({
         sx={{ py: 1 }}
         readOnly={readOnly}
         labelRightContent={
-          readOnly &&
           answerBy && (
             <Typography
               component={"span"}
