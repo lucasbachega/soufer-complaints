@@ -264,7 +264,15 @@ class HttpClient {
     },
 
     //USERS
-    async createUser({ firstname, username, password, email, roles, areas }) {
+    async createUser({
+      firstname,
+      username,
+      password,
+      email,
+      roles,
+      areas,
+      assignAllAreas,
+    }) {
       return HttpClient.post("/admin/users", {
         firstname,
         username,
@@ -272,12 +280,16 @@ class HttpClient {
         email,
         roles,
         areas,
+        assignAllAreas,
       });
     },
     async listarUsers() {
       return HttpClient.get("/admin/users");
     },
-    async updateUser(id, { firstname, username, roles, block, email, areas }) {
+    async updateUser(
+      id,
+      { firstname, username, roles, block, email, areas, assignAllAreas }
+    ) {
       return HttpClient.put(`/admin/users/${id}`, {
         firstname,
         username,
@@ -285,6 +297,7 @@ class HttpClient {
         block,
         email,
         areas,
+        assignAllAreas,
       });
     },
     async deleteUser(id) {

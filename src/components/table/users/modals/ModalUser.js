@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Checkbox,
   DialogContent,
   DialogTitle,
   FormControl,
@@ -10,6 +9,8 @@ import {
   ModalDialog,
   ModalOverflow,
   Stack,
+  Switch,
+  Typography,
 } from "@mui/joy";
 import React, { useCallback, useEffect, useState } from "react";
 import PasswordInput from "../../../inputs/PasswordInput";
@@ -22,6 +23,7 @@ const initialState = {
   email: "",
   password: "",
   roles: [],
+  assignAllAreas: false,
 };
 const initialAreas = [
   {
@@ -79,6 +81,10 @@ const ModalUser = ({ open, onClose, onConfirm, editMode, initialData }) => {
       prev.splice(index, 1);
       return [...prev];
     });
+  }, []);
+
+  const handleToggleAssingAllAreas = useCallback(() => {
+    setData((prev) => ({ ...prev, assignAllAreas: !prev?.assignAllAreas }));
   }, []);
 
   const handleConfirm = async (e) => {
@@ -155,29 +161,46 @@ const ModalUser = ({ open, onClose, onConfirm, editMode, initialData }) => {
                     </Box>
                   </Stack>
                   <FormControl>
-                    <Checkbox
-                      sx={{ mt: 2 }}
-                      label="Acesso para administrador"
-                      checked={data?.roles?.includes("admin")}
-                      onChange={(event) => handleChangeRole("admin")}
-                    />
+                    <Stack
+                      mt={2}
+                      direction={"row"}
+                      alignItems={"center"}
+                      gap={2}
+                    >
+                      <Switch
+                        checked={data?.roles?.includes("admin")}
+                        onChange={(event) => handleChangeRole("admin")}
+                      />
+                      <Typography>Acesso para administrador</Typography>
+                    </Stack>
                   </FormControl>
                   <FormControl>
-                    <Checkbox
-                      sx={{ mt: 1 }}
-                      label="Acesso para gestor"
-                      checked={data?.roles?.includes("gestor")}
-                      onChange={(event) => handleChangeRole("gestor")}
-                    />
+                    <Stack
+                      mt={1}
+                      mb={2}
+                      direction={"row"}
+                      alignItems={"center"}
+                      gap={2}
+                    >
+                      <Switch
+                        checked={data?.roles?.includes("gestor")}
+                        onChange={(event) => handleChangeRole("gestor")}
+                      />
+                      <Typography>Acesso para gestor</Typography>
+                    </Stack>
                   </FormControl>
                 </Stack>
                 {data?.roles?.includes("gestor") && (
-                  <GestorControl
-                    areas={areas}
-                    onChangeArea={handleChangeArea}
-                    onRemoveArea={handleRemoveArea}
-                    onAddLine={handleAddArea}
-                  />
+                  <>
+                    <GestorControl
+                      areas={areas}
+                      assignAllAreas={Boolean(data?.assignAllAreas)}
+                      onChangeAreaAssignAllAreas={handleToggleAssingAllAreas}
+                      onChangeArea={handleChangeArea}
+                      onRemoveArea={handleRemoveArea}
+                      onAddLine={handleAddArea}
+                    />
+                  </>
                 )}
                 <Stack
                   mt={4}

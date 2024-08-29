@@ -24,7 +24,12 @@ router.post("/login", async (req, res) => {
   if (user) {
     // Generate Acess Token...
     const acessToken = jwt.sign(
-      { userId: user._id.toString(), roles: user.roles || [], areas: user.areas },
+      {
+        userId: user._id.toString(),
+        roles: user.roles || [],
+        areas: user.areas,
+        assignAllAreas: user?.assignAllAreas,
+      },
       SECRET,
       {
         expiresIn: "7d",
@@ -79,9 +84,18 @@ router.post("/change-password", async (req, res) => {
   );
   if (user) {
     // Generate Acess Token...
-    const acessToken = jwt.sign({ userId: username, roles: user.roles || [] }, SECRET, {
-      expiresIn: "7d",
-    });
+    const acessToken = jwt.sign(
+      {
+        userId: username,
+        roles: user.roles || [],
+        areas: user?.areas,
+        assignAllAreas: user?.assignAllAreas,
+      },
+      SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
     // Save Access Token to Cookie
     res.cookie("portaloc_access_token", acessToken, {
