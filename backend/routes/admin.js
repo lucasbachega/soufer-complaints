@@ -44,19 +44,14 @@ const occurrenceStatus = {
  * Login por usuário e senha
  */
 router.get("/test", async (req, res) => {
-  return res
-    .status(200)
-    .send(`Olá <b>${req.userId}</b>! Você está autenticado`);
+  return res.status(200).send(`Olá <b>${req.userId}</b>! Você está autenticado`);
 });
 
 /**
  * UNIDADES
  */
 router.get("/unidades", async (req, res) => {
-  const r = await Database.collection("unidades")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("unidades").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/unidades", async (req, res) => {
@@ -114,10 +109,7 @@ router.delete("/unidades/:id", async (req, res) => {
  * SETOR
  */
 router.get("/setor", async (req, res) => {
-  const r = await Database.collection("setor")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("setor").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/setor", async (req, res) => {
@@ -175,10 +167,7 @@ router.delete("/setor/:id", async (req, res) => {
  * PRODUTOS
  */
 router.get("/produtos", async (req, res) => {
-  const r = await Database.collection("produtos")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("produtos").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/produtos", async (req, res) => {
@@ -236,10 +225,7 @@ router.delete("/produtos/:id", async (req, res) => {
  * CATEGORIAS
  */
 router.get("/categorias", async (req, res) => {
-  const r = await Database.collection("categorias")
-    .find()
-    .sort({ text: 1 })
-    .toArray();
+  const r = await Database.collection("categorias").find().sort({ text: 1 }).toArray();
   return res.send(r);
 });
 router.post("/categorias", async (req, res) => {
@@ -311,8 +297,7 @@ router.get("/users", async (req, res) => {
   return res.send(r);
 });
 router.post("/users", async (req, res) => {
-  const { username, firstname, password, email, roles, areas, assignAllAreas } =
-    req.body;
+  const { username, firstname, password, email, roles, areas, assignAllAreas } = req.body;
   const user = {
     username,
     firstname,
@@ -347,16 +332,7 @@ router.post("/users", async (req, res) => {
 });
 router.put("/users/:id", async (req, res) => {
   const { id } = req.params;
-  const {
-    username,
-    firstname,
-    password,
-    email,
-    roles,
-    block,
-    areas,
-    assignAllAreas,
-  } = req.body;
+  const { username, firstname, password, email, roles, block, areas, assignAllAreas } = req.body;
   const _user = await Database.collection("users").findOne({
     _id: new ObjectId(id),
   });
@@ -376,10 +352,7 @@ router.put("/users/:id", async (req, res) => {
   if ("email" in req.body) edits.email = email;
   if ("roles" in req.body) edits.roles = roles;
   if ("block" in req.body) edits.block = !!block;
-  if (
-    (roles?.includes("gestor") || _user?.roles?.includes("gestor")) &&
-    areas?.length
-  ) {
+  if ((roles?.includes("gestor") || _user?.roles?.includes("gestor")) && areas?.length) {
     edits.areas = [];
     // Verif. as áreas do gestor
     for (let i = 0; i < areas.length; i++) {
@@ -423,8 +396,7 @@ router.delete("/users/:id", async (req, res) => {
 
 // Listar ocorrências com base em filtros selecionados
 router.get("/complaints", async (req, res) => {
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
-    req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
 
   const filters = {};
   if (status) filters.status = status;
@@ -479,7 +451,11 @@ router.get("/complaints", async (req, res) => {
 // Atualizar dados de uma ocorrência...
 router.put("/complaints/:id", async (req, res) => {
   const { id } = req.params;
+  const { userId } = req;
   const { status, causa, correcao, deleteAdminAnexos } = req.body;
+  const _loggedUser = await Database.collection("users").findOne({
+    _id: new ObjectId(userId),
+  });
   const ocorrencia = await Database.collection("ocorrencias").findOne({
     _id: new ObjectId(id),
   });
@@ -500,13 +476,16 @@ router.put("/complaints/:id", async (req, res) => {
   if ("motivoRej" in req.body) {
     editFields.motivoRej = motivoRej;
   }
+  if (editFields.causa || editFields.correcao) {
+    editFields.answerBy = {
+      _id: _loggedUser._id,
+      firstname: _loggedUser.firstname,
+      timestamp: new Date(),
+    };
+  }
 
   const updateAnexos = {};
-  if (
-    deleteAdminAnexos &&
-    Array.isArray(deleteAdminAnexos) &&
-    deleteAdminAnexos.length
-  ) {
+  if (deleteAdminAnexos && Array.isArray(deleteAdminAnexos) && deleteAdminAnexos.length) {
     updateAnexos.$pull = {
       admin_anexos: {
         filename: { $in: deleteAdminAnexos },
@@ -514,20 +493,14 @@ router.put("/complaints/:id", async (req, res) => {
     };
     // Remover arquivo do file storage
     for (const filename of deleteAdminAnexos) {
-      const file = ocorrencia?.admin_anexos?.find(
-        (anexo) => anexo.filename === filename
-      );
+      const file = ocorrencia?.admin_anexos?.find((anexo) => anexo.filename === filename);
       if (file) {
         const { path: localpath, mimetype } = file;
         const urlFile = path.join(__dirname, "../../", localpath);
         try {
           fs.rmSync(urlFile);
         } catch (error) {
-          console.error(
-            "Ocorreu uma falha interna ao remover anexos da ocorrência :: ",
-            id,
-            error
-          );
+          console.error("Ocorreu uma falha interna ao remover anexos da ocorrência :: ", id, error);
         }
       }
     }
@@ -551,15 +524,12 @@ router.put("/complaints/:id", async (req, res) => {
       }</b> foi atualizada: <br /><br />
         <ul>
          <li>Status: <b>${occurrenceStatus[ocorrencia?.status]?.text}</b></li>
-         <li>Análise de causa: <b>${
-           editFields.causa || ocorrencia.causa || ""
-         }</b></li>
-           <li>Correção: <b>${
-             editFields.correcao || ocorrencia.correcao || ""
-           }</b></li>
+         <li>Análise de causa: <b>${editFields.causa || ocorrencia.causa || ""}</b></li>
+           <li>Correção: <b>${editFields.correcao || ocorrencia.correcao || ""}</b></li>
         </ul>
      </b> <br />
-      Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br /><br />
+      Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br />
+      <i>Agora você pode avaliar as repostas sobre a causa e correção da sua ocorrência!</i> <br /><br />
       Atenciosamente, <br />
       Equipe Soufer
       `,
@@ -572,61 +542,57 @@ router.put("/complaints/:id", async (req, res) => {
 /**
  * Upload de anexos
  */
-router.post(
-  "/complaints/:id/uploadFiles",
-  multerMid.array("files", 10),
-  async (req, res) => {
-    const { id } = req.params;
-    const files = req.files;
-    const { type } = req.body;
-    if (!id) {
-      throw new OcorrenciaNotFound();
-    }
-    if (!["causa", "correcao"].includes(type)) {
-      throw new TipoAnexoNotFound(type);
-    }
+router.post("/complaints/:id/uploadFiles", multerMid.array("files", 10), async (req, res) => {
+  const { id } = req.params;
+  const files = req.files;
+  const { type } = req.body;
+  if (!id) {
+    throw new OcorrenciaNotFound();
+  }
+  if (!["causa", "correcao"].includes(type)) {
+    throw new TipoAnexoNotFound(type);
+  }
 
-    // Verificar da ocorrência
-    const ocorrencia = await Database.collection("ocorrencias").findOne({
-      _id: new ObjectId(id),
-    });
-    if (!ocorrencia) {
-      throw new OcorrenciaNotFound();
-    }
+  // Verificar da ocorrência
+  const ocorrencia = await Database.collection("ocorrencias").findOne({
+    _id: new ObjectId(id),
+  });
+  if (!ocorrencia) {
+    throw new OcorrenciaNotFound();
+  }
 
-    const anexos = [];
-    for (let i = 0; i < files.length; i++) {
-      const { originalname, mimetype, filename, path, size } = files[i];
-      anexos.push({
-        type,
-        originalname,
-        mimetype,
-        filename,
-        path,
-        size,
-        upload_at: new Date(),
-      });
-    }
-
-    // Save to database
-    await Database.collection("ocorrencias").updateOne(
-      { _id: ocorrencia._id },
-      {
-        $push: {
-          admin_anexos: {
-            $each: anexos,
-            $position: 0,
-          },
-        },
-      }
-    );
-
-    return res.status(201).send({
-      ok: true,
-      anexos,
+  const anexos = [];
+  for (let i = 0; i < files.length; i++) {
+    const { originalname, mimetype, filename, path, size } = files[i];
+    anexos.push({
+      type,
+      originalname,
+      mimetype,
+      filename,
+      path,
+      size,
+      upload_at: new Date(),
     });
   }
-);
+
+  // Save to database
+  await Database.collection("ocorrencias").updateOne(
+    { _id: ocorrencia._id },
+    {
+      $push: {
+        admin_anexos: {
+          $each: anexos,
+          $position: 0,
+        },
+      },
+    }
+  );
+
+  return res.status(201).send({
+    ok: true,
+    anexos,
+  });
+});
 
 // Exportar dados de ocorrências para Excel
 router.get("/complaints/export/excel", async (req, res) => {
@@ -687,6 +653,9 @@ router.get("/complaints/export/excel", async (req, res) => {
     { header: "Correção", key: "correcao", width: 20 },
     { header: "Status", key: "status", width: 15 },
     { header: "Respondido por", key: "answerBy", width: 20 },
+    { header: "Respondido em", key: "answerDate", width: 20 },
+    { header: "Avaliação Causa", key: "avaliacaoCausa", width: 15 },
+    { header: "Avaliação Correção", key: "avaliacaoCorrecao", width: 15 },
   ];
 
   // Set an auto filter from the cell in row 3 and column 1
@@ -718,6 +687,8 @@ router.get("/complaints/export/excel", async (req, res) => {
       correcao,
       status,
       answerBy,
+      ratingCausa,
+      ratingCorrecao,
     } = resultado[i];
     // Add data in worksheet
     worksheet.addRow({
@@ -734,6 +705,10 @@ router.get("/complaints/export/excel", async (req, res) => {
       correcao,
       status,
       answerBy: answerBy?.firstname,
+      answerDate: answerBy?.timestamp,
+      avaliacaoCausa: ratingCausa?.number && `${ratingCausa.number}/${ratingCausa.scale || 5}`,
+      avaliacaoCorrecao:
+        ratingCorrecao?.number && `${ratingCorrecao.number}/${ratingCorrecao.scale || 5}`,
     });
   }
   // Making first line in excel bold

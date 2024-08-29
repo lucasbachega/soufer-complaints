@@ -71,7 +71,7 @@ const RatingResponse = ({
               fontWeight={"400"}
               level="body-xs"
             >
-              O cliente ainda não avaliou a resposta
+              O representante ainda não avaliou a resposta
             </Typography>
           ) : (
             <>
@@ -83,7 +83,7 @@ const RatingResponse = ({
               >
                 {avaliou
                   ? !isMy
-                    ? "Avaliação do cliente"
+                    ? "Avaliação do representante"
                     : "Sua avaliação"
                   : "O que achou da resposta?"}
               </Typography>

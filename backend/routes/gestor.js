@@ -151,11 +151,7 @@ router.put("/complaints/:id", async (req, res) => {
   }
 
   const updateAnexos = {};
-  if (
-    deleteAdminAnexos &&
-    Array.isArray(deleteAdminAnexos) &&
-    deleteAdminAnexos.length
-  ) {
+  if (deleteAdminAnexos && Array.isArray(deleteAdminAnexos) && deleteAdminAnexos.length) {
     updateAnexos.$pull = {
       admin_anexos: {
         filename: { $in: deleteAdminAnexos },
@@ -163,20 +159,14 @@ router.put("/complaints/:id", async (req, res) => {
     };
     // Remover arquivo do file storage
     for (const filename of deleteAdminAnexos) {
-      const file = ocorrencia?.admin_anexos?.find(
-        (anexo) => anexo.filename === filename
-      );
+      const file = ocorrencia?.admin_anexos?.find((anexo) => anexo.filename === filename);
       if (file) {
         const { path: localpath, mimetype } = file;
         const urlFile = path.join(__dirname, "../../", localpath);
         try {
           fs.rmSync(urlFile);
         } catch (error) {
-          console.error(
-            "Ocorreu uma falha interna ao remover anexos da ocorrência :: ",
-            id,
-            error
-          );
+          console.error("Ocorreu uma falha interna ao remover anexos da ocorrência :: ", id, error);
         }
       }
     }
@@ -200,15 +190,12 @@ router.put("/complaints/:id", async (req, res) => {
         }</b> foi atualizada: <br /><br />
           <ul>
            <li>Status: <b>${occurrenceStatus[ocorrencia?.status]?.text}</b></li>
-           <li>Análise de causa: <b>${
-             editFields.causa || ocorrencia.causa || ""
-           }</b></li>
-             <li>Correção: <b>${
-               editFields.correcao || ocorrencia.correcao || ""
-             }</b></li>
+           <li>Análise de causa: <b>${editFields.causa || ocorrencia.causa || ""}</b></li>
+             <li>Correção: <b>${editFields.correcao || ocorrencia.correcao || ""}</b></li>
           </ul>
        </b> <br />
-        Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br /><br />
+        Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br />
+        <i>Agora você pode avaliar as repostas sobre a causa e correção da sua ocorrência!</i> <br /><br />
         Atenciosamente, <br />
         Equipe Soufer
         `,
@@ -221,61 +208,57 @@ router.put("/complaints/:id", async (req, res) => {
 /**
  * Upload de anexos
  */
-router.post(
-  "/complaints/:id/uploadFiles",
-  multerMid.array("files", 10),
-  async (req, res) => {
-    const { id } = req.params;
-    const files = req.files;
-    const { type } = req.body;
-    if (!id) {
-      throw new OcorrenciaNotFound();
-    }
-    if (!["causa", "correcao"].includes(type)) {
-      throw new TipoAnexoNotFound(type);
-    }
+router.post("/complaints/:id/uploadFiles", multerMid.array("files", 10), async (req, res) => {
+  const { id } = req.params;
+  const files = req.files;
+  const { type } = req.body;
+  if (!id) {
+    throw new OcorrenciaNotFound();
+  }
+  if (!["causa", "correcao"].includes(type)) {
+    throw new TipoAnexoNotFound(type);
+  }
 
-    // Verificar da ocorrência
-    const ocorrencia = await Database.collection("ocorrencias").findOne({
-      _id: new ObjectId(id),
-    });
-    if (!ocorrencia) {
-      throw new OcorrenciaNotFound();
-    }
+  // Verificar da ocorrência
+  const ocorrencia = await Database.collection("ocorrencias").findOne({
+    _id: new ObjectId(id),
+  });
+  if (!ocorrencia) {
+    throw new OcorrenciaNotFound();
+  }
 
-    const anexos = [];
-    for (let i = 0; i < files.length; i++) {
-      const { originalname, mimetype, filename, path, size } = files[i];
-      anexos.push({
-        type,
-        originalname,
-        mimetype,
-        filename,
-        path,
-        size,
-        upload_at: new Date(),
-      });
-    }
-
-    // Save to database
-    await Database.collection("ocorrencias").updateOne(
-      { _id: ocorrencia._id },
-      {
-        $push: {
-          admin_anexos: {
-            $each: anexos,
-            $position: 0,
-          },
-        },
-      }
-    );
-
-    return res.status(201).send({
-      ok: true,
-      anexos,
+  const anexos = [];
+  for (let i = 0; i < files.length; i++) {
+    const { originalname, mimetype, filename, path, size } = files[i];
+    anexos.push({
+      type,
+      originalname,
+      mimetype,
+      filename,
+      path,
+      size,
+      upload_at: new Date(),
     });
   }
-);
+
+  // Save to database
+  await Database.collection("ocorrencias").updateOne(
+    { _id: ocorrencia._id },
+    {
+      $push: {
+        admin_anexos: {
+          $each: anexos,
+          $position: 0,
+        },
+      },
+    }
+  );
+
+  return res.status(201).send({
+    ok: true,
+    anexos,
+  });
+});
 
 // Exportar dados de ocorrências para Excel
 router.get("/complaints/export/excel", async (req, res) => {
@@ -351,6 +334,9 @@ router.get("/complaints/export/excel", async (req, res) => {
     { header: "Correção", key: "correcao", width: 20 },
     { header: "Status", key: "status", width: 15 },
     { header: "Respondido por", key: "answerBy", width: 20 },
+    { header: "Respondido em", key: "answerDate", width: 20 },
+    { header: "Avaliação Causa", key: "avaliacaoCausa", width: 15 },
+    { header: "Avaliação Correção", key: "avaliacaoCorrecao", width: 15 },
   ];
 
   // Set an auto filter from the cell in row 3 and column 1
@@ -382,6 +368,8 @@ router.get("/complaints/export/excel", async (req, res) => {
       correcao,
       status,
       answerBy,
+      ratingCausa,
+      ratingCorrecao,
     } = resultado[i];
     // Add data in worksheet
     worksheet.addRow({
@@ -398,6 +386,10 @@ router.get("/complaints/export/excel", async (req, res) => {
       correcao,
       status,
       answerBy: answerBy?.firstname,
+      answerDate: answerBy?.timestamp,
+      avaliacaoCausa: ratingCausa?.number && `${ratingCausa.number}/${ratingCausa.scale || 5}`,
+      avaliacaoCorrecao:
+        ratingCorrecao?.number && `${ratingCorrecao.number}/${ratingCorrecao.scale || 5}`,
     });
   }
   // Making first line in excel bold
