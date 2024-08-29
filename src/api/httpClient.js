@@ -162,6 +162,22 @@ class HttpClient {
       motivo,
     });
   }
+  static async avaliarOcorrenciaCausa({ occurrenceId, rating }) {
+    return this.put(`/complaints/${occurrenceId}/rating`, {
+      ratingCausa: {
+        number: rating,
+        scale: 5,
+      },
+    });
+  }
+  static async avaliarOcorrenciaCorrecao({ occurrenceId, rating }) {
+    return this.put(`/complaints/${occurrenceId}/rating`, {
+      ratingCorrecao: {
+        number: rating,
+        scale: 5,
+      },
+    });
+  }
 
   static async listMyOccurrences({
     period,

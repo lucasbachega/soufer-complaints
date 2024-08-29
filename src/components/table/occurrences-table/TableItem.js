@@ -16,11 +16,16 @@ const DefaultCell = memo(({ children, textProps, cellProps }) => {
   );
 });
 
-const TableItem = ({ row = {}, onClick }) => {
-  console.log("render: ", row.id);
-
+const TableItem = ({ row = {}, onClick, isSelected }) => {
   return (
-    <tr key={row.id} onClick={() => onClick(row)} style={{ cursor: "pointer" }}>
+    <tr
+      key={row.id}
+      onClick={() => onClick(row)}
+      style={{
+        cursor: "pointer",
+        backgroundColor: isSelected ? "#DDE7EE" : undefined,
+      }}
+    >
       <DefaultCell textProps={{ ml: "6px" }}>
         {formatDate(row.created_at)}
       </DefaultCell>
@@ -51,7 +56,11 @@ const TableItem = ({ row = {}, onClick }) => {
 
       <DefaultCell>
         {Boolean(row.anexos?.length) && (
-          <Chip variant="outlined" size="sm" startDecorator={<AttachFileOutlined />}>
+          <Chip
+            variant="outlined"
+            size="sm"
+            startDecorator={<AttachFileOutlined />}
+          >
             {row.anexos?.length}
           </Chip>
         )}

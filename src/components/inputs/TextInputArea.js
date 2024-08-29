@@ -5,6 +5,7 @@ import {
   FormHelperText,
   FormLabel,
   Textarea,
+  Typography,
 } from "@mui/joy";
 import React from "react";
 
@@ -28,6 +29,8 @@ const TextArea = ({
   readOnly,
   labelRightContent,
   sx,
+  labelSize,
+  labelWeight
 }) => {
   return (
     <FormControl required={required} error={error}>
@@ -35,7 +38,14 @@ const TextArea = ({
         <FormLabel
           sx={{ width: "100%", display: "flex", alignItems: "center" }}
         >
-          {label} <Box flex={1} />
+          <Typography
+            component={"span"}
+            fontSize={labelSize}
+            fontWeight={labelWeight}
+          >
+            {label}
+          </Typography>{" "}
+          <Box flex={1} />
           {labelRightContent}
         </FormLabel>
       )}

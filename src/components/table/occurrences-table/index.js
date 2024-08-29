@@ -74,13 +74,25 @@ export default function OccurrencesTable({
     (row) => {
       if (viewMode === "cards") {
         return (
-          <OccurrenceListCard key={row.id} row={row} onClick={handleClickRow} />
+          <OccurrenceListCard
+            key={row.id}
+            row={row}
+            onClick={handleClickRow}
+            isSelected={row?.id === modalView?.id}
+          />
         );
       } else {
-        return <TableItem key={row.id} row={row} onClick={handleClickRow} />;
+        return (
+          <TableItem
+            key={row.id}
+            row={row}
+            onClick={handleClickRow}
+            isSelected={row?.id === modalView?.id}
+          />
+        );
       }
     },
-    [viewMode]
+    [viewMode, modalView?.id]
   );
 
   const handleRequestSort = React.useCallback(
@@ -216,14 +228,16 @@ export default function OccurrencesTable({
           </>
         )}
       </Box>
-      <ModalOccurrenceView
-        data={modalView}
-        open={Boolean(modalView)}
-        onClose={() => setModalView(null)}
-        onRefresh={getData}
-        readOnly={readOnly}
-        role={role}
-      />
+      {Boolean(modalView) && (
+        <ModalOccurrenceView
+          data={modalView}
+          open={Boolean(modalView)}
+          onClose={() => setModalView(null)}
+          onRefresh={getData}
+          readOnly={readOnly}
+          role={role}
+        />
+      )}
     </React.Fragment>
   );
 }

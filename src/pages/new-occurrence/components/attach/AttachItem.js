@@ -6,7 +6,11 @@ import Zoom from "react-medium-image-zoom";
 function AttachItem({ preview, filename, onRemove = () => {}, id }) {
   return (
     <ImageListItem
-      sx={{ position: "relative", borderRadius: 4, overflow: "hidden" }}
+      sx={{
+        position: "relative",
+        borderRadius: 4,
+        overflow: "hidden",
+      }}
       title={filename}
     >
       {onRemove && (

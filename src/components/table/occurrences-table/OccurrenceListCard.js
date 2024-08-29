@@ -8,7 +8,7 @@ import React, { memo } from "react";
 import { formatDate } from "../../../utils/date_functions";
 import { occurrenceStatus } from "../../../utils/occurrences";
 
-const OccurrenceListCard = ({ row = {}, onClick = () => {} }) => {
+const OccurrenceListCard = ({ row = {}, onClick = () => {}, isSelected }) => {
   const status = row.status;
 
   return (
@@ -27,6 +27,8 @@ const OccurrenceListCard = ({ row = {}, onClick = () => {} }) => {
         cursor: "pointer",
         bgcolor: "#FFF",
         borderLeftWidth: 3,
+        outline: (t) =>
+          isSelected ? `2px solid ${t.palette.primary[500]}` : "none",
         borderLeftColor: (t) =>
           status === "open" ? t.palette.divider : t.palette.success[500],
         ":hover": {
@@ -38,7 +40,7 @@ const OccurrenceListCard = ({ row = {}, onClick = () => {} }) => {
       }}
     >
       <Box flex={1}>
-        <Typography mb={1} level="title-lg" fontWeight={'lg'}>
+        <Typography mb={1} level="title-lg" fontWeight={"lg"}>
           {row.categoria?.text}
         </Typography>
         <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>

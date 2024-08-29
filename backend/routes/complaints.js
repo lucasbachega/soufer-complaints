@@ -136,7 +136,15 @@ router.get("/categorias", async (req, res) => {
  * Registrar uma ocorrência
  */
 router.post("/register", async (req, res) => {
-  const { unidade_id, setor_id, produto_id, categoria_id, cliente, ordem_venda, motivo } = req.body;
+  const {
+    unidade_id,
+    setor_id,
+    produto_id,
+    categoria_id,
+    cliente,
+    ordem_venda,
+    motivo,
+  } = req.body;
 
   if (!unidade_id) throw new RequiredFieldError("Unidade");
   if (!cliente) throw new RequiredFieldError("Cliente");
@@ -219,7 +227,9 @@ router.post("/register", async (req, res) => {
   const body = `A Ocorrência foi registrada com as seguintes informações: <br />
       Motivo: <h3>${motivo}</h3> <br />
       <ul>
-        <li>Registrada por: <b>${_user.firstname || ""} | ${_user.email}</b></li>
+        <li>Registrada por: <b>${_user.firstname || ""} | ${
+    _user.email
+  }</b></li>
         <li>Unidade: <b>${_unidade.text || ""}</b></li>
         <li>Cliente: <b>${cliente || ""}</b></li>
         <li>Ordem de venda: <b>${ordem_venda || ""}</b></li>
@@ -277,7 +287,8 @@ router.post("/register", async (req, res) => {
 router.get("/ocorrencias", async (req, res) => {
   // Usuário autenticado
   const user_id = req.userId;
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
+    req.query;
 
   const filters = {};
   if (status) filters.status = status;
@@ -372,6 +383,46 @@ router.post("/upload", multerMid.array("files", 5), async (req, res) => {
   return res.status(201).send({
     ok: true,
     anexos,
+  });
+});
+
+router.put("/:id/rating", async (req, res) => {
+  const userId = req.userId;
+  const ocorrenciaId = req.params.id;
+  const { ratingCausa, ratingCorrecao } = req.body;
+
+  if (!ocorrenciaId) {
+    throw new OcorrenciaNotFound();
+  }
+
+  let changes = {};
+  if ("ratingCausa" in req.body) {
+    changes.ratingCausa = ratingCausa;
+  }
+  if ("ratingCorrecao" in req.body) {
+    changes.ratingCorrecao = ratingCorrecao;
+  }
+
+  // Verificar da ocorrência
+  const ocorrencia = await Database.collection("ocorrencias").findOne({
+    _id: new ObjectId(ocorrenciaId),
+    "user._id": new ObjectId(userId),
+  });
+  if (!ocorrencia) {
+    throw new OcorrenciaNotFound();
+  }
+
+  // Save to database
+  await Database.collection("ocorrencias").updateOne(
+    { _id: ocorrencia._id },
+    {
+      $set: changes,
+    }
+  );
+
+  return res.status(201).send({
+    ok: true,
+    data: { ...ocorrencia, ratingCausa, ratingCorrecao },
   });
 });
 

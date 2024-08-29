@@ -1,4 +1,5 @@
 import { CssVarsProvider } from "@mui/joy/styles";
+import "@smastrom/react-rating/style.css";
 import React, { useEffect, useState } from "react";
 import "react-medium-image-zoom/dist/styles.css";
 import { useDispatch } from "react-redux";
@@ -10,6 +11,19 @@ import SnackbarBase from "./components/snackbar/SnackbarBase";
 import Routes from "./routes";
 import { login } from "./store/reducers/userInfoSlice";
 import { theme } from "./theme";
+
+import { createTheme } from "@mui/material/styles";
+
+const customTheme = createTheme({
+  palette: {
+    primary: {
+      main: "#1976d2",
+    },
+  },
+  typography: {
+    fontFamily: "Roboto, Arial, sans-serif",
+  },
+});
 
 function App() {
   const dispatch = useDispatch();
@@ -23,7 +37,7 @@ function App() {
         dispatch(login(res?.user));
       }
       document.getElementById("load_application").innerHTML = "";
-      setLoading(false)
+      setLoading(false);
     })();
   }, []);
 

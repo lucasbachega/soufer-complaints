@@ -41,43 +41,37 @@ const ModalOccurrenceView = ({
 }) => {
   const dispatch = useDispatch();
 
+  const filterAndFormatFiles = (type) => {
+    if (!data) return [];
+    const files = data?.admin_anexos?.filter((item) => item?.type === type);
+    return files?.length
+      ? formatFiles(
+          files.map((item) => ({ ...item, uploaded: true })),
+          data?.id
+        )
+      : [];
+  };
+
   const [loading, setLoading] = useState(false);
   const [changed, setChanged] = useState(false);
-  const [copyData, setCopyData] = useState(null);
-  const [causaFiles, setCausaFiles] = useState([]);
-  const [correcaoFiles, setCorrecaoFiles] = useState([]);
+  const [copyData, setCopyData] = useState({ ...(data || {}) });
+  const [causaFiles, setCausaFiles] = useState(filterAndFormatFiles("causa"));
+  const [correcaoFiles, setCorrecaoFiles] = useState(
+    filterAndFormatFiles("correcao")
+  );
   const [toDeleteFiles, setToDeleteFiles] = useState([]);
 
   const isOk = useRef(false);
 
   useEffect(() => {
-    if (data) {
-      setCopyData({ ...data });
-
-      const filterAndFormatFiles = (type) => {
-        const files = data?.admin_anexos?.filter((item) => item?.type === type);
-        return files?.length
-          ? formatFiles(
-              files.map((item) => ({ ...item, uploaded: true })),
-              data?.id
-            )
-          : [];
-      };
-
-      setCausaFiles(filterAndFormatFiles("causa"));
-      setCorrecaoFiles(filterAndFormatFiles("correcao"));
-      setTimeout(() => {
-        isOk.current = true;
-      }, 500);
-    } else {
-      setCausaFiles([]);
-      setCorrecaoFiles([]);
-      setToDeleteFiles([]);
-      setChanged(false);
-      setLoading(false);
+    const timeoutIsOk = setTimeout(() => {
+      isOk.current = true;
+    }, 500);
+    return () => {
+      clearTimeout(timeoutIsOk);
       isOk.current = false;
-    }
-  }, [data]);
+    };
+  }, []);
 
   useEffect(() => {
     if (isOk.current) {
@@ -90,6 +84,8 @@ const ModalOccurrenceView = ({
       DiscartModal.show(() => onClose());
       return;
     }
+    isOk.current = false;
+    setChanged(false);
     onClose();
   };
 
@@ -97,10 +93,22 @@ const ModalOccurrenceView = ({
     setToDeleteFiles((prev) => [...prev, filename]);
   }, []);
 
-  const handleChangeValue = useCallback(
-    (field, value) => setCopyData((prev) => ({ ...prev, [field]: value })),
-    []
-  );
+  const handleChangeValue = useCallback((field, value) => {
+    setCopyData((prev) => ({ ...prev, [field]: value }));
+    setChanged(true);
+  }, []);
+
+  //rating
+  const handleChangeRating = useCallback((type, newRating) => {
+    let changes = {};
+    if (type === "causa") {
+      changes.ratingCausa = newRating;
+    } else if (type === "correcao") {
+      changes.ratingCorrecao = newRating;
+    }
+    setCopyData((prev) => ({ ...prev, ...changes }));
+    onRefresh();
+  }, []);
 
   const handleSave = async () => {
     setLoading(true);
@@ -147,6 +155,7 @@ const ModalOccurrenceView = ({
     <Drawer
       anchor="right"
       open={open}
+      onClose={(e, reason) => reason === "backdropClick" && handleClose()}
       slotProps={{
         backdrop: { sx: { backdropFilter: "blur(0px)" } },
         content: {
@@ -186,7 +195,7 @@ const ModalOccurrenceView = ({
         />
       </Stack>
       <DialogContent sx={{ position: "relative", p: 0, pt: 5, pr: 3, m: 0 }}>
-        <Stack direction={"column"} gap={2}>
+        <Stack direction={"column"} gap={3}>
           {copyData?.status === "rejected" && (
             <FormControl>
               <TextInputArea
@@ -218,6 +227,11 @@ const ModalOccurrenceView = ({
             onToDeleteFilesChange={handleToDeleteFilesChange}
             files={causaFiles}
             onFilesChange={setCausaFiles}
+            showRating={data?.status === "completed"}
+            rating={data?.ratingCausa}
+            occurrenceId={data?.id}
+            type="causa"
+            onChangeRating={handleChangeRating}
           />
           <AppendableField
             readOnly={readOnly}
@@ -234,6 +248,11 @@ const ModalOccurrenceView = ({
             onToDeleteFilesChange={handleToDeleteFilesChange}
             files={correcaoFiles}
             onFilesChange={setCorrecaoFiles}
+            showRating={data?.status === "completed"}
+            rating={data?.ratingCorrecao}
+            occurrenceId={data?.id}
+            type="correcao"
+            onChangeRating={handleChangeRating}
           />
         </Stack>
 
@@ -277,7 +296,7 @@ const ModalOccurrenceView = ({
               Salvar
             </Button>
             <Button onClick={handleClose} size="sm" variant="plain">
-              Cancelar
+              Fechar
             </Button>
             <Box flex={1} />
             <Typography level="body-xs" fontWeight={"sm"} color="neutral">

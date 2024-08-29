@@ -2,12 +2,13 @@ import { AttachmentOutlined } from "@mui/icons-material";
 import { Box, Button, FormControl, Stack, Typography } from "@mui/joy";
 import { ImageList } from "@mui/material";
 import { nanoid } from "@reduxjs/toolkit";
-import { useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import AttachItem from "../../../../pages/new-occurrence/components/attach/AttachItem";
 import { formatMoment } from "../../../../utils/date_functions";
 import { getBlob } from "../../../../utils/images";
 import TextInputArea from "../../../inputs/TextInputArea";
+import RatingResponse from "./RatingResponse";
 
 function AppendableField({
   inputProps,
@@ -19,6 +20,11 @@ function AppendableField({
   files = [],
   readOnly,
   answerBy,
+  showRating,
+  rating,
+  occurrenceId,
+  type,
+  onChangeRating = () => {},
 }) {
   const handleDropFiles = async (acceptedFiles) => {
     let prepared = [];
@@ -61,6 +67,13 @@ function AppendableField({
     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
   }, []);
 
+  const handleChangeRating = useCallback(
+    (value) => {
+      onChangeRating(type, value);
+    },
+    [type]
+  );
+
   const thumbs = files.map((file) => (
     <AttachItem
       id={file.filename}
@@ -82,7 +95,11 @@ function AppendableField({
         }}
         value={value}
         {...inputProps}
-        sx={{ py: 1 }}
+        sx={{
+          py: 1,
+        }}
+        labelSize="17px"
+        labelWeight='lg'
         readOnly={readOnly}
         labelRightContent={
           answerBy && (
@@ -101,7 +118,7 @@ function AppendableField({
           <Box width={"100%"}>
             {Boolean(thumbs?.length) && (
               <Box>
-                <ImageList sx={{ p: 1 }} variant="masonry" cols={3} gap={8}>
+                <ImageList sx={{ p: 1 }} variant="masonry" cols={6} gap={8}>
                   {thumbs}
                 </ImageList>
               </Box>
@@ -120,6 +137,15 @@ function AppendableField({
                 </div>
               </Stack>
             )}
+            {showRating && (
+              <RatingResponse
+                rating={rating}
+                occurrenceId={occurrenceId}
+                type={type}
+                onChangeRating={handleChangeRating}
+                isMy={readOnly}
+              />
+            )}
           </Box>
         }
       />
@@ -127,4 +153,4 @@ function AppendableField({
   );
 }
 
-export default AppendableField;
+export default memo(AppendableField);
