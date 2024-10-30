@@ -133,18 +133,10 @@ router.get("/categorias", async (req, res) => {
 });
 
 /**
- * Registrar uma ocorrência
+ * Registrar uma ocorrência do tipo RECLAMAÇÃO
  */
 router.post("/register", async (req, res) => {
-  const {
-    unidade_id,
-    setor_id,
-    produto_id,
-    categoria_id,
-    cliente,
-    ordem_venda,
-    motivo,
-  } = req.body;
+  const { unidade_id, setor_id, produto_id, categoria_id, cliente, ordem_venda, motivo } = req.body;
 
   if (!unidade_id) throw new RequiredFieldError("Unidade");
   if (!cliente) throw new RequiredFieldError("Cliente");
@@ -190,6 +182,7 @@ router.post("/register", async (req, res) => {
 
   // dados da ocorrência
   const ocorrencia = {
+    type: "complaint",
     created_at: new Date(),
     user: {
       _id: _user._id,
@@ -227,9 +220,7 @@ router.post("/register", async (req, res) => {
   const body = `A Ocorrência foi registrada com as seguintes informações: <br />
       Motivo: <h3>${motivo}</h3> <br />
       <ul>
-        <li>Registrada por: <b>${_user.firstname || ""} | ${
-    _user.email
-  }</b></li>
+        <li>Registrada por: <b>${_user.firstname || ""} | ${_user.email}</b></li>
         <li>Unidade: <b>${_unidade.text || ""}</b></li>
         <li>Cliente: <b>${cliente || ""}</b></li>
         <li>Ordem de venda: <b>${ordem_venda || ""}</b></li>
@@ -283,12 +274,130 @@ router.post("/register", async (req, res) => {
   });
 });
 
+/**
+ * Registrar uma ocorrência do tipo FALHA DE SEGURANÇA
+ */
+router.post("/register/insecurity", async (req, res) => {
+  const { unidade_id, setor_id, problem, solutionObs, detection, area, local } = req.body;
+
+  if (!unidade_id) throw new RequiredFieldError("Unidade");
+  if (!setor_id) throw new RequiredFieldError("Setor");
+  if (!problem) throw new RequiredFieldError("Descrição do problema");
+
+  // Usuário autenticado
+  const user_id = req.userId;
+
+  // Buscar dados relacionados
+  // Usuário
+  const _user = await Database.collection("users").findOne({
+    _id: new ObjectId(user_id),
+  });
+  if (!_user) throw new UserNotFound();
+  // Unidade
+  const _unidade = await Database.collection("unidades").findOne({
+    _id: new ObjectId(unidade_id),
+    active: true,
+  });
+  if (!_unidade) throw new UnidadeNotFound();
+  // setor
+  const _setor = await Database.collection("setor").findOne({
+    _id: new ObjectId(setor_id),
+    active: true,
+  });
+  if (!_setor) throw new SetorNotFound();
+
+  // dados da ocorrência
+  const ocorrencia = {
+    type: "insecurity",
+    created_at: new Date(),
+    user: {
+      _id: _user._id,
+      text: _user.firstname,
+    },
+    unidade: {
+      _id: _unidade._id,
+      text: _unidade.text,
+    },
+    setor: {
+      _id: _setor._id,
+      text: _setor.text,
+    },
+    problem,
+    solutionObs,
+    detection: ["cipa", "internal"].includes(detection) ? detection : null,
+    area,
+    local,
+    tasks: [],
+    status: "open", // em aberto
+    anexos: [],
+  };
+
+  // Salvar no banco de dados
+  const r = await Database.collection("ocorrencias").insertOne(ocorrencia);
+
+  // Enviar e-mail para os responsáveis
+  const body = `Uma nova observação de prática insegura foi registrada com as seguintes informações: <br />
+      Problema: <h3>${problem}</h3> <br />
+      <ul>
+        <li>Registrada por: <b>${_user.firstname || ""} | ${_user.email}</b></li>
+        <li>Unidade: <b>${_unidade.text || ""}</b></li>
+        <li>Setor: <b>${_setor.text || ""}</b></li>
+        <li>Detecção: <b>${ocorrencia.detection || ""}</b></li>
+        <li>Área: <b>${ocorrencia.area || ""}</b></li>
+        <li>Local: <b>${ocorrencia.local || ""}</b></li>
+        <li>Sugestão de solução: <b>${ocorrencia.solutionObs || ""}</b></li>
+      </ul>
+   </b> <br />
+    Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br /><br />
+    Atenciosamente, <br />
+    Equipe Soufer`;
+
+  const users = await Database.collection("users").find({
+    roles: "gestor",
+    areas: {
+      $elemMatch: {
+        unidade_id: ocorrencia.unidade._id,
+        setor_id: ocorrencia.setor._id,
+      },
+    },
+  });
+  for (let i = 0; i < users.length; i++) {
+    const { firstname, email } = users[i];
+    EmailSender.sendEmail({
+      to: email,
+      subject: `Nova Ocorrência (Unidade/setor: ${ocorrencia.unidade.text}/${ocorrencia.setor.text})`,
+      html: `Olá ${firstname}! Uma nova ocorrência requer sua atenção: <br /><br />
+        ${body}
+      `,
+    });
+  }
+
+  // Notificação e-mail padrão
+  EmailSender.sendEmail({
+    to: "ocorrencias@gruposoufer.com.br",
+    cc: _user.email,
+    subject: "Nova Ocorrência",
+    html: `Olá Equipe Comercial! <br /><br />
+   ${body}
+    `,
+  });
+
+  return res.status(201).send({
+    ok: true,
+    ocorrencia: {
+      _id: r.insertedId,
+      ...ocorrencia,
+      causa: undefined,
+      correcao: undefined,
+    },
+  });
+});
+
 //Listar ocorrencias pessoais (logado)
 router.get("/ocorrencias", async (req, res) => {
   // Usuário autenticado
   const user_id = req.userId;
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } =
-    req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id, type } = req.query;
 
   const filters = {};
   if (status) filters.status = status;
@@ -296,6 +405,7 @@ router.get("/ocorrencias", async (req, res) => {
   if (unidade_id) filters["unidade._id"] = new ObjectId(unidade_id);
   if (categoria_id) filters["categoria._id"] = new ObjectId(categoria_id);
   if (setor_id) filters["setor._id"] = new ObjectId(setor_id);
+  if (type) filters["type"] = type;
 
   const today = new Date();
 

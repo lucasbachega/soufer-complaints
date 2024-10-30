@@ -396,7 +396,7 @@ router.delete("/users/:id", async (req, res) => {
 
 // Listar ocorrências com base em filtros selecionados
 router.get("/complaints", async (req, res) => {
-  const { period, status, produto_id, unidade_id, categoria_id, setor_id } = req.query;
+  const { period, status, produto_id, unidade_id, categoria_id, setor_id, type } = req.query;
 
   const filters = {};
   if (status) filters.status = status;
@@ -404,6 +404,7 @@ router.get("/complaints", async (req, res) => {
   if (unidade_id) filters["unidade._id"] = new ObjectId(unidade_id);
   if (categoria_id) filters["categoria._id"] = new ObjectId(categoria_id);
   if (setor_id) filters["setor._id"] = new ObjectId(setor_id);
+  if (type) filters.type = type;
 
   const today = new Date();
 
@@ -596,10 +597,11 @@ router.post("/complaints/:id/uploadFiles", multerMid.array("files", 10), async (
 
 // Exportar dados de ocorrências para Excel
 router.get("/complaints/export/excel", async (req, res) => {
-  const { period } = req.query;
+  const { period, type } = req.query;
 
   const filters = {};
   const today = new Date();
+  if (type) filters.type = type;
 
   switch (period) {
     case "all":

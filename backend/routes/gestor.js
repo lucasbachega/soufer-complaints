@@ -38,12 +38,13 @@ const multerMid = require("../utils/multer-mid");
 // Listar ocorrências com base em filtros selecionados
 router.get("/complaints", async (req, res) => {
   const { areas } = req;
-  const { period, status, produto_id, categoria_id } = req.query;
+  const { period, status, produto_id, categoria_id, type } = req.query;
 
   const filters = {};
   if (status) filters.status = status;
   if (produto_id) filters["produto._id"] = new ObjectId(produto_id);
   if (categoria_id) filters["categoria._id"] = new ObjectId(categoria_id);
+  if (type) filters["type"] = type;
 
   const today = new Date();
 
@@ -262,7 +263,7 @@ router.post("/complaints/:id/uploadFiles", multerMid.array("files", 10), async (
 
 // Exportar dados de ocorrências para Excel
 router.get("/complaints/export/excel", async (req, res) => {
-  const { period } = req.query;
+  const { period, type } = req.query;
   const { areas } = req;
 
   const filters = {};
@@ -292,6 +293,8 @@ router.get("/complaints/export/excel", async (req, res) => {
     default:
       break;
   }
+
+  if (type) filters.type = type;
 
   // Listar Ocorrências do banco de dados
 
