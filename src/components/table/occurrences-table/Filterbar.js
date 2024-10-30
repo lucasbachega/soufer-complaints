@@ -29,7 +29,7 @@ const ToggleListMode = ({ value, onChange = () => {} }) => {
   );
 };
 
-const Filterbar = ({ filters = {}, onChange, viewMode, setViewMode }) => {
+const Filterbar = ({ filters = {}, onChange, viewMode, setViewMode, type }) => {
   const renderFilters = () => (
     <React.Fragment>
       <FormControl size="sm">
@@ -48,10 +48,12 @@ const Filterbar = ({ filters = {}, onChange, viewMode, setViewMode }) => {
           <Option value="all">Todo o período</Option>
         </Select>
       </FormControl>
-      <CategoryFilter
-        value={filters?.category || null}
-        onChange={(v) => onChange("category", v)}
-      />
+      {type === "complaint" && (
+        <CategoryFilter
+          value={filters?.category || null}
+          onChange={(v) => onChange("category", v)}
+        />
+      )}
       <StatusFilter
         value={filters?.status || null}
         onChange={(v) => onChange("status", v)}

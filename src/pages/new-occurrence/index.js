@@ -96,6 +96,7 @@ export default (props) => {
   const handleCreate = async () => {
     setError(null);
     setLoading(true);
+
     const res = await HttpClient.registrarOcorrencia({
       type,
       setor: data.sector,
@@ -116,7 +117,7 @@ export default (props) => {
     });
     if (res.ok) {
       if (files?.length) {
-        const uploadRes = await HttpClient.uploadArquivos({
+        await HttpClient.uploadArquivos({
           files,
           occurrenceId: res?.ocorrencia?._id,
         });
@@ -187,7 +188,7 @@ export default (props) => {
         onClose={() => setCompleted(false)}
         onFinish={() => {
           setCompleted(false);
-          navigate(-1);
+          navigate("/home");
         }}
       />
       <ErrorModal
