@@ -15,6 +15,7 @@ const TextArea = ({
   label,
   placeholder,
   size,
+  defaultValue,
   variant,
   helperText,
   startDecorator,
@@ -30,7 +31,7 @@ const TextArea = ({
   labelRightContent,
   sx,
   labelSize,
-  labelWeight
+  labelWeight,
 }) => {
   return (
     <FormControl required={required} error={error}>
@@ -54,6 +55,7 @@ const TextArea = ({
         autoFocus={autoFocus}
         placeholder={placeholder}
         value={value}
+        defaultValue={defaultValue}
         onChange={(event) => onChange(event.target.value)}
         minRows={minRows}
         maxRows={4}

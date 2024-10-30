@@ -1,117 +1,62 @@
-import { AccessTime, CheckCircleOutlineOutlined } from "@mui/icons-material";
 import {
-    Box,
-    ListItemDecorator,
-    Stack,
-    Tab,
-    tabClasses,
-    TabList,
-    Tabs,
+  AccessTime,
+  CheckCircleOutlineOutlined,
+  Refresh,
+  TaskAltOutlined,
+} from "@mui/icons-material";
+import {
+  Box,
+  IconButton,
+  ListItemDecorator,
+  Stack,
+  Tab,
+  tabClasses,
+  TabList,
+  Tabs,
+  Typography,
 } from "@mui/joy";
-import { nanoid } from "@reduxjs/toolkit";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { HttpClient } from "../../../api/httpClient";
+import LoadingScreen from "../../../components/loading/LoadingScreen";
+import ModalTaskView from "../../../components/modals/task-view/ModalTaskView";
 import InsecurityActionItem from "../../../components/table/occurrences-table/components/InsecurityActionItem";
 
 const PendingSection = () => {
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
+
   const [status, setStatus] = useState("pending");
 
-  const [data, setData] = useState([
-    {
-      id: nanoid(),
-      title:
-        "Realizar construção para material v4, ativar item Lorem imspusm dsas kque sdsa consegue teste titulo unisversal grande.",
-      createdAt: new Date().toISOString(),
-      fromDate: new Date().toISOString(),
-      toDate: new Date().toISOString(),
-      assignBy: {
-        name: "Lucas Bachega",
-        email: "lucas.cbachega@gmail.com",
-      },
-      files: [],
-    },
-    {
-      id: nanoid(),
-      title:
-        "Realizar construção para material v4, ativar item Lorem imspusm dsas kque sdsa consegue teste titulo unisversal grande.",
-      createdAt: new Date().toISOString(),
-      fromDate: new Date().toISOString(),
-      toDate: new Date().toISOString(),
-      assignBy: {
-        name: "Lucas Bachega",
-        email: "lucas.cbachega@gmail.com",
-      },
-      files: [],
-    },
-    {
-      id: nanoid(),
-      title:
-        "Realizar construção para material v4, ativar item Lorem imspusm dsas kque sdsa consegue teste titulo unisversal grande.",
-      createdAt: new Date().toISOString(),
-      fromDate: new Date().toISOString(),
-      toDate: new Date().toISOString(),
-      assignBy: {
-        name: "Lucas Bachega",
-        email: "lucas.cbachega@gmail.com",
-      },
-      files: [],
-    },
-    {
-      id: nanoid(),
-      title:
-        "Realizar construção para material v4, ativar item Lorem imspusm dsas kque sdsa consegue teste titulo unisversal grande.",
-      createdAt: new Date().toISOString(),
-      fromDate: new Date().toISOString(),
-      toDate: new Date().toISOString(),
-      assignBy: {
-        name: "Lucas Bachega",
-        email: "lucas.cbachega@gmail.com",
-      },
-      files: [],
-    },
-    {
-      id: nanoid(),
-      title:
-        "Realizar construção para material v4, ativar item Lorem imspusm dsas kque sdsa consegue teste titulo unisversal grande.",
-      createdAt: new Date().toISOString(),
-      fromDate: new Date().toISOString(),
-      toDate: new Date().toISOString(),
-      assignBy: {
-        name: "Lucas Bachega",
-        email: "lucas.cbachega@gmail.com",
-      },
-      files: [],
-    },
-    {
-      id: nanoid(),
-      title:
-        "Realizar construção para material v4, ativar item Lorem imspusm dsas kque sdsa consegue teste titulo unisversal grande.",
-      createdAt: new Date().toISOString(),
-      fromDate: new Date().toISOString(),
-      toDate: new Date().toISOString(),
-      assignBy: {
-        name: "Lucas Bachega",
-        email: "lucas.cbachega@gmail.com",
-      },
-      files: [],
-    },
-    {
-      id: nanoid(),
-      title:
-        "Realizar construção para material v4, ativar item Lorem imspusm dsas kque sdsa consegue teste titulo unisversal grande.",
-      createdAt: new Date().toISOString(),
-      fromDate: new Date().toISOString(),
-      toDate: new Date().toISOString(),
-      assignBy: {
-        name: "Lucas Bachega",
-        email: "lucas.cbachega@gmail.com",
-      },
-      files: [],
-    },
-  ]);
+  const [currentTask, setCurrentTask] = useState(null);
+
+  const getData = useCallback(async () => {
+    setError(null);
+    setLoading(true);
+    const res = await HttpClient.listMyTasks({ status });
+    if (res.ok) {
+      setData(res?.data || []);
+    } else {
+      setError("Não foi possível carregar os dados");
+    }
+    setLoading(false);
+  }, [status]);
+
+  useEffect(() => {
+    getData();
+  }, [status]);
+
+  const closeViewer = () => {
+    setCurrentTask(null);
+  };
+
+  const handleClickTask = useCallback((data) => {
+    setCurrentTask(data);
+  }, []);
 
   return (
     <Box mt={-2} flex={1} flexBasis={0} overflow={"auto"}>
-      <Stack direction={"row"} p={2}>
+      <Stack direction={"row"} p={2} gap={1}>
         <Tabs
           aria-label="tabs"
           value={status}
@@ -138,7 +83,7 @@ const PendingSection = () => {
               </ListItemDecorator>
               Pendentes
             </Tab>
-            <Tab value={"completed"} disableIndicator>
+            <Tab value={"finished"} disableIndicator>
               <ListItemDecorator>
                 <CheckCircleOutlineOutlined />
               </ListItemDecorator>
@@ -146,23 +91,66 @@ const PendingSection = () => {
             </Tab>
           </TabList>
         </Tabs>
+        <IconButton onClick={getData} disabled={loading}>
+          <Refresh />
+        </IconButton>
       </Stack>
 
-      <Box
-        p={3}
-        pt={0}
-        pb={"100px"}
-        sx={{
-          display: "grid",
-          gridGap: "10px",
-          gridTemplateColumns: "repeat(auto-fill, minmax(340px,1fr))",
-          gridAutoRows: "auto",
-        }}
-      >
-        {data?.map((item) => (
-          <InsecurityActionItem key={item?.id} data={item} />
-        ))}
-      </Box>
+      {loading ? (
+        <LoadingScreen />
+      ) : data?.length ? (
+        <>
+          <Box
+            p={3}
+            pt={0}
+            pb={"100px"}
+            sx={{
+              display: "grid",
+              gridGap: "10px",
+              gridTemplateColumns: "repeat(auto-fill, minmax(340px,1fr))",
+              gridAutoRows: "auto",
+            }}
+          >
+            {data?.map((item) => (
+              <InsecurityActionItem
+                key={item?._id}
+                data={item}
+                onClick={handleClickTask}
+                selected={item?._id === currentTask?._id}
+              />
+            ))}
+          </Box>
+
+          {Boolean(currentTask) && (
+            <ModalTaskView
+              onClose={closeViewer}
+              open={Boolean(currentTask)}
+              data={currentTask}
+              onRefresh={getData}
+            />
+          )}
+        </>
+      ) : (
+        <Box
+          height={300}
+          display={"flex"}
+          flexDirection={"column"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          p={3}
+        >
+          <TaskAltOutlined color="primary" sx={{ fontSize: "3rem" }} />
+          <Typography
+            gutterBottom
+            textAlign={"center"}
+            maxWidth={300}
+            mt={2}
+            level="h4"
+          >
+            Nenhuma tarefa encontrada
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 };

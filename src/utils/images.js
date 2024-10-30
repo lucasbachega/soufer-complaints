@@ -16,3 +16,7 @@ export const getBlob = (file) => {
 export const getFileUrl = (occurrenceId, filename) => {
   return `${process.env.REACT_APP_API_URL}/complaints/${occurrenceId}/file/${filename}`;
 };
+
+export const getTaskFileUrl = (taskId, filename) => {
+  return `${process.env.REACT_APP_API_URL}/tasks/${taskId}/file/${filename}`;
+};

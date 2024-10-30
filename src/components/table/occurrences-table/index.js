@@ -7,6 +7,7 @@ import * as React from "react";
 import { Typography } from "@mui/joy";
 import { useMediaQuery, useTheme } from "@mui/material";
 import LoadingScreen from "../../loading/LoadingScreen";
+import ModalInsecurityView from "../../modals/insecurity-view/ModalInsecurityView";
 import ModalOccurrenceView from "../../modals/occurrence-view/ModalOccurrenceView";
 import Filterbar from "./Filterbar";
 import OccurrenceListCard from "./OccurrenceListCard";
@@ -237,8 +238,18 @@ export default function OccurrencesTable({
           </>
         )}
       </Box>
-      {Boolean(modalView) && (
+      {Boolean(modalView) && type === "complaint" && (
         <ModalOccurrenceView
+          data={modalView}
+          open={Boolean(modalView)}
+          onClose={() => setModalView(null)}
+          onRefresh={getData}
+          readOnly={readOnly}
+          role={role}
+        />
+      )}
+      {Boolean(modalView) && type === "insecurity" && (
+        <ModalInsecurityView
           data={modalView}
           open={Boolean(modalView)}
           onClose={() => setModalView(null)}

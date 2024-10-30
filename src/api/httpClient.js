@@ -208,7 +208,7 @@ class HttpClient {
     produto,
     setor,
     status,
-    type
+    type,
   }) {
     return HttpClient.get("/complaints/ocorrencias", {
       params: {
@@ -218,9 +218,38 @@ class HttpClient {
         setor_id: setor,
         period,
         status,
-        type
+        type,
       },
     });
+  }
+
+  static async listMyTasks({ status }) {
+    return HttpClient.get("/tasks", {
+      params: {
+        status,
+      },
+    });
+  }
+  static async detailTask({ id }) {
+    return HttpClient.get(`/tasks/${id}`);
+  }
+
+  static async updateTask({ id, status }) {
+    return HttpClient.put(`/tasks/${id}`, {
+      status,
+    });
+  }
+
+  //Upload de arquivos (tasks)
+  static async uploadArquivosTask({ files = [], taskId }) {
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append("files", file.blob, file.filename);
+    }
+    if (taskId) {
+      formData.append("taskId", taskId);
+    }
+    return this.post("/tasks/upload", formData);
   }
 
   //Upload de arquivos (ocorrencia)
@@ -265,7 +294,7 @@ class HttpClient {
       produto,
       setor,
       status,
-      type
+      type,
     } = {}) {
       return HttpClient.get("/admin/complaints", {
         params: {
@@ -275,7 +304,7 @@ class HttpClient {
           setor_id: setor,
           period,
           status,
-          type
+          type,
         },
       });
     },
@@ -537,6 +566,19 @@ class HttpClient {
         deleteAdminAnexos,
         motivoRej,
       });
+    },
+    async updateInsecurity(id, { tasks, status, motivoRej } = {}) {
+      return HttpClient.put(`/gestor/insecurity/${id}`, {
+        tasks,
+        status,
+        motivoRej,
+      });
+    },
+    async getUsers() {
+      return HttpClient.get(`/gestor/users/`);
+    },
+    async getTasks(id) {
+      return HttpClient.get(`/gestor/insecurity/${id}/tasks`);
     },
 
     async exportarExcel({ period }) {

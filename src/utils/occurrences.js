@@ -21,3 +21,16 @@ export const occurrenceStatus = {
     color: "danger",
   },
 };
+
+export const taskStatus = {
+  pending: {
+    icon: <AutorenewRounded />,
+    text: "Pendente",
+    color: "neutral",
+  },
+  finished: {
+    icon: <CheckCircle />,
+    text: "Concluída",
+    color: "success",
+  },
+};

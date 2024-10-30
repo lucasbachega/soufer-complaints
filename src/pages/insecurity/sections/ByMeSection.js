@@ -9,6 +9,7 @@ const ByMeSection = () => {
 
   return (
     <OccurrencesTable
+      role="personal"
       type="insecurity"
       filters={filters}
       loading={loading}

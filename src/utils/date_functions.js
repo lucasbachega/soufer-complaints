@@ -1,51 +1,51 @@
-import { format, isThisYear, isToday, isYesterday } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { format, isThisYear, isToday, isYesterday } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export const daysWeek = [
-  'Domingo',
-  'Segunda-feira',
-  'Terça-feira',
-  'Quarta-feira',
-  'Quinta-feira',
-  'Sexta-feira',
-  'Sábado',
+  "Domingo",
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado",
 ];
 export const daysWeekInitials = [
-  'dom',
-  'seg',
-  'ter',
-  'qua',
-  'qui',
-  'sex',
-  'sab',
+  "dom",
+  "seg",
+  "ter",
+  "qua",
+  "qui",
+  "sex",
+  "sab",
 ];
 export const monthsNameInitials = [
-  'jan',
-  'fev',
-  'mar',
-  'abr',
-  'mai',
-  'jun',
-  'jul',
-  'ago',
-  'set',
-  'out',
-  'nov',
-  'dez',
+  "jan",
+  "fev",
+  "mar",
+  "abr",
+  "mai",
+  "jun",
+  "jul",
+  "ago",
+  "set",
+  "out",
+  "nov",
+  "dez",
 ];
 export const monthsName = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro',
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
 ];
 
 export function isDateInCurrentYear(dateParameter) {
@@ -72,27 +72,27 @@ export function formatDate(d) {
     ? "d 'de' MMM."
     : "d 'de' MMM. 'de' yyyy";
   return (
-    format(date, formatString, {locale: ptBR}) +
-    (isToday(date) ? ' (hoje)' : '')
+    format(date, formatString, { locale: ptBR }) +
+    (isToday(date) ? " (hoje)" : "")
   );
 }
 
 function padTo2Digits(num) {
-  return num.toString().padStart(2, '0');
+  return num.toString().padStart(2, "0");
 }
 
 export function formatMoment(date) {
   let newDate = new Date(date);
   return (
     `${newDate.getDate()} de ${monthsNameInitials[newDate.getMonth()]}. ${
-      !isDateInCurrentYear(newDate) ? ` de ${newDate.getFullYear()}` : ''
+      !isDateInCurrentYear(newDate) ? ` de ${newDate.getFullYear()}` : ""
     }` +
-    ' às ' +
+    " às " +
     [padTo2Digits(newDate.getHours()), padTo2Digits(newDate.getMinutes())].join(
-      ':',
+      ":"
     ) +
-    `${isToday(newDate) ? ' (hoje)' : ''} ${
-      isYesterday(newDate) ? ' (ontem)' : ''
+    `${isToday(newDate) ? " (hoje)" : ""} ${
+      isYesterday(newDate) ? " (ontem)" : ""
     } `
   );
 }
@@ -112,8 +112,22 @@ export function formatLongDate(date, isFull = true) {
   } de ${newDate.getFullYear()}.`;
 }
 
-export function checkDate(date = '') {
+export function checkDate(date = "") {
   if (!Boolean(date)) return false;
   let copyDate = new Date(date);
   return copyDate instanceof Date && !isNaN(copyDate);
 }
+
+export const formatDateToInput = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+export const parseDate = (dateString) => {
+  // O valor do input (dateString) está no formato "YYYY-MM-DD"
+  const [year, month, day] = dateString.split("-");
+  return new Date(Date.UTC(year, month - 1, day, 3, 0, 0, 0)); // Usa UTC para evitar problemas de fuso horário
+};

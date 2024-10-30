@@ -1,3 +1,5 @@
+import { formatDateToInput } from "./date_functions";
+
 export const occurrenceInitialState = {
   type: "",
   unit: "",
@@ -23,4 +25,16 @@ export const insecurityRequiredFields = [
   "local",
   "detection",
   "problem",
+];
+
+export const insecurityTasks = [
+  {
+    _id: "",
+    remove: false,
+    description: "",
+    userId: "",
+    startDate: formatDateToInput(new Date()),
+    endDate: formatDateToInput(new Date()),
+    status: "", //pending,finished
+  },
 ];
