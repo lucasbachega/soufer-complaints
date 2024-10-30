@@ -6,6 +6,9 @@ const { EmailSender } = require("../utils/email-sender");
 const path = require("path");
 const fs = require("fs");
 
+// multer middleware (file upload)
+const multerMid = require("../utils/multer-mid");
+
 const router = express.Router();
 
 // Listar tarefas
