@@ -38,6 +38,7 @@ const Sidebar = () => {
       bgcolor={"#FFF"}
       boxShadow={"sm"}
       position={"relative"}
+      zIndex={1000}
     >
       <Box display={"flex"} alignItems={"center"} gap={1} px={1} pt={1} pb={0}>
         <Button
@@ -45,7 +46,7 @@ const Sidebar = () => {
           variant="plain"
           onClick={() => navigate("/")}
           startDecorator={<ArrowBack />}
-          sx={{px: 1}}
+          sx={{ px: 1 }}
         >
           Página inicial
         </Button>

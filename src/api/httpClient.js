@@ -142,6 +142,8 @@ class HttpClient {
    * Registrar uma nova ocorrência
    */
   static async registrarOcorrencia({
+    type = "complaint",
+
     unidade,
     setor,
     produto,
@@ -150,17 +152,37 @@ class HttpClient {
     representante,
     ordem_venda,
     motivo,
+
+    //insecurity
+    detection,
+    area,
+    local,
+    problem,
+    solutionObs,
   }) {
-    return this.post("/complaints/register", {
-      unidade_id: unidade,
-      setor_id: setor,
-      produto_id: produto,
-      categoria_id: categoria,
-      cliente,
-      representante,
-      ordem_venda,
-      motivo,
-    });
+    if (type === "complaint") {
+      return this.post("/complaints/register", {
+        unidade_id: unidade,
+        setor_id: setor,
+        produto_id: produto,
+        categoria_id: categoria,
+        cliente,
+        representante,
+        ordem_venda,
+        motivo,
+      });
+    }
+    if (type === "insecurity") {
+      return this.post("/complaints/register/insecurity", {
+        unidade_id: unidade,
+        setor_id: setor,
+        detection,
+        area,
+        local,
+        problem,
+        solutionObs,
+      });
+    }
   }
   static async avaliarOcorrenciaCausa({ occurrenceId, rating }) {
     return this.put(`/complaints/${occurrenceId}/rating`, {
@@ -186,8 +208,9 @@ class HttpClient {
     produto,
     setor,
     status,
+    type
   }) {
-    return this.get("/complaints/ocorrencias", {
+    return HttpClient.get("/complaints/ocorrencias", {
       params: {
         unidade_id: unidade,
         categoria_id: categoria,
@@ -195,6 +218,7 @@ class HttpClient {
         setor_id: setor,
         period,
         status,
+        type
       },
     });
   }
@@ -241,6 +265,7 @@ class HttpClient {
       produto,
       setor,
       status,
+      type
     } = {}) {
       return HttpClient.get("/admin/complaints", {
         params: {
@@ -250,6 +275,7 @@ class HttpClient {
           setor_id: setor,
           period,
           status,
+          type
         },
       });
     },
@@ -482,6 +508,7 @@ class HttpClient {
       produto,
       setor,
       status,
+      type,
     } = {}) {
       return HttpClient.get("/gestor/complaints", {
         params: {
@@ -491,6 +518,7 @@ class HttpClient {
           setor_id: setor,
           period,
           status,
+          type,
         },
       });
     },

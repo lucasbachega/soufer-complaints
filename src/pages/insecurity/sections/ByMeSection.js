@@ -1,33 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { HttpClient } from "../../../api/httpClient";
+import React from "react";
 import OccurrencesTable from "../../../components/table/occurrences-table";
+import useOccurrences from "../../../hooks/useOccurrences";
 
 const ByMeSection = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const [filters, setFilters] = useState({
-    period: "all",
-    category: "",
-    status: "",
+  const { data, filters, getData, loading, onChangeFilters } = useOccurrences({
+    type: "insecurity",
   });
-
-  const getOccurrences = useCallback(async () => {
-    setLoading(true);
-    const res = await HttpClient.listMyOccurrences(filters);
-    if (res?.ok) {
-      setData(res.data?.map((item) => ({ ...item, id: item?._id })));
-    }
-    setLoading(false);
-  }, [filters]);
-
-  const handleChangeFilters = useCallback((filter, value) => {
-    setFilters((prev) => ({ ...prev, [filter]: value }));
-  }, []);
-
-  useEffect(() => {
-    getOccurrences();
-  }, [filters]);
 
   return (
     <OccurrencesTable
@@ -35,8 +13,8 @@ const ByMeSection = () => {
       filters={filters}
       loading={loading}
       readOnly
-      getData={getOccurrences}
-      onChangeFilters={handleChangeFilters}
+      getData={getData}
+      onChangeFilters={onChangeFilters}
       data={data}
       sx={{ p: 2, pb: 2 }}
     />
