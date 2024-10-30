@@ -126,7 +126,7 @@ router.post("/upload", multerMid.array("files", 5), async (req, res) => {
   }
   const task = await Database.collection("tasks").findOne({
     "user._id": new ObjectId(userId.toString()),
-    _id: new ObjectId(id),
+    _id: new ObjectId(taskId),
   });
   if (!task) {
     throw new TaskNotFound();
