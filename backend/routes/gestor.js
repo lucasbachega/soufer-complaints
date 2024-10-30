@@ -102,7 +102,7 @@ router.get("/complaints", async (req, res) => {
   );
 });
 
-// Atualizar dados de uma ocorrência...
+// Atualizar dados de uma ocorrência... (Reclamação)
 router.put("/complaints/:id", async (req, res) => {
   const { id } = req.params;
   const { areas, userId } = req;
@@ -117,14 +117,15 @@ router.put("/complaints/:id", async (req, res) => {
         "unidade._id": new ObjectId(unidade_id),
         "setor._id": new ObjectId(setor_id),
       })),
+      type: "complaint",
     });
   } else {
     ocorrencia = await Database.collection("ocorrencias").findOne({
       _id: new ObjectId(id),
     });
   }
-
   if (!ocorrencia) throw new OcorrenciaNotFound();
+
   const _user = await Database.collection("users").findOne({
     _id: ocorrencia?.user?._id,
   });
@@ -204,6 +205,210 @@ router.put("/complaints/:id", async (req, res) => {
   }
 
   return res.status(200).send({ ok: true });
+});
+
+// Atualizar dados de uma ocorrência... (Insegurança)
+router.put("/insecurity/:id", async (req, res) => {
+  const { id } = req.params;
+  const { areas, userId } = req;
+  const { status, motivoRej, tasks } = req.body;
+
+  let ocorrencia;
+
+  if (areas && areas?.length) {
+    ocorrencia = await Database.collection("ocorrencias").findOne({
+      _id: new ObjectId(id),
+      $or: areas.map(({ unidade_id, setor_id }) => ({
+        "unidade._id": new ObjectId(unidade_id),
+        "setor._id": new ObjectId(setor_id),
+      })),
+      type: "insecurity",
+    });
+  } else {
+    ocorrencia = await Database.collection("ocorrencias").findOne({
+      _id: new ObjectId(id),
+      type: "insecurity",
+    });
+  }
+
+  if (!ocorrencia) throw new OcorrenciaNotFound();
+  const _user = await Database.collection("users").findOne({
+    _id: ocorrencia?.user?._id,
+  });
+  const _loggedUser = await Database.collection("users").findOne({
+    _id: new ObjectId(userId),
+  });
+  const editFields = {
+    answerBy: {
+      _id: _loggedUser._id,
+      firstname: _loggedUser.firstname,
+      timestamp: new Date(),
+    },
+  };
+  if (status) {
+    editFields.status = status;
+  }
+
+  // atualizar no banco
+  await Database.collection("ocorrencias").updateOne(
+    { _id: ocorrencia._id },
+    {
+      $set: editFields,
+    }
+  );
+
+  // Plano de ações
+  if (tasks?.length) {
+    for (const task of tasks) {
+      const { _id, remove, description, userId, startDate, endDate, status } = task;
+      const _user = await Database.collection("users").findOne({
+        _id: new ObjectId(userId),
+      });
+      if (!_id) {
+        // Registrar uma nova tarefa para o usuário
+        await Database.collection("tasks").insertOne({
+          complaintId: ocorrencia._id,
+          user: {
+            _id: _user._id,
+            firstname: _user.firstname,
+            email: _user.email,
+          },
+          createdBy: {
+            _id: _loggedUser._id,
+            firstname: _loggedUser.firstname,
+            email: _loggedUser.email,
+          },
+          description,
+          startDate: startDate && new Date(startDate),
+          endDate: endDate && new Date(endDate),
+          status: status || "pending",
+          createdAt: new Date(),
+          anexos: [],
+        });
+
+        EmailSender.sendEmail({
+          to: _user.email,
+          subject: "Você possui uma nova tarefa",
+          html: `Olá ${(_user?.firstname || "").split(" ")[0]}! <br /><br />
+            Você possui uma nova tarefa para a ocorrência <b>${ocorrencia?.motivo}</b> <br /><br />
+              <ul>
+                <li>Tarefa/Ação: <b>${description}</b></li>
+                <li>Criada por: <b>${_loggedUser.firstname}</b></li>
+                <li>Início: <b>${
+                  startDate ? new Date(startDate).toLocaleString("pt-BR") : "--"
+                }</b></li>
+                <li>Fim do prazo: <b>${
+                  endDate ? new Date(endDate).toLocaleString("pt-BR") : "--"
+                }</b></li>
+                <li>Status: <b>Pendente</b></li>
+              </ul>
+           </b> <br />
+            Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br />
+            Atenciosamente, <br />
+            Equipe Soufer
+            `,
+        });
+      } else {
+        if (remove)
+          await Database.collection("tasks").deleteOne({
+            complaintId: ocorrencia._id,
+            _id: new ObjectId(_id.toString()),
+          });
+        else;
+        await Database.collection("tasks").updateOne(
+          {
+            complaintId: ocorrencia._id,
+            _id: new ObjectId(_id.toString()),
+          },
+          {
+            $set: {
+              user: {
+                _id: _user._id,
+                firstname: _user.firstname,
+                email: _user.email,
+              },
+              description,
+              startDate: startDate && new Date(startDate),
+              endDate: endDate && new Date(endDate),
+              status: status,
+            },
+          }
+        );
+      }
+    }
+  }
+
+  if (_user) {
+    EmailSender.sendEmail({
+      to: _user.email,
+      subject: "Sua ocorrência foi atualizada",
+      html: `Olá ${(_user?.firstname || "").split(" ")[0]}! <br /><br />
+        Sua ocorrência registrada com o motivo <b>${
+          ocorrencia?.motivo
+        }</b> foi atualizada: <br /><br />
+         
+       </b> <br />
+        Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br />
+        Atenciosamente, <br />
+        Equipe Soufer
+        `,
+    });
+  }
+  return res.status(200).send({ ok: true });
+});
+
+// Listar tarefas relacionadas a uma ocorrência
+router.get("/insecurity/:id/tasks", async (req, res) => {
+  const { id } = req.params;
+  const { areas, userId } = req;
+  let ocorrencia;
+  if (areas && areas?.length) {
+    ocorrencia = await Database.collection("ocorrencias").findOne({
+      _id: new ObjectId(id),
+      $or: areas.map(({ unidade_id, setor_id }) => ({
+        "unidade._id": new ObjectId(unidade_id),
+        "setor._id": new ObjectId(setor_id),
+      })),
+      type: "insecurity",
+    });
+  } else {
+    ocorrencia = await Database.collection("ocorrencias").findOne({
+      _id: new ObjectId(id),
+      type: "insecurity",
+    });
+  }
+  if (!ocorrencia) throw new OcorrenciaNotFound();
+  const tasks = await Database.collection("tasks")
+    .find(
+      {
+        complaintId: ocorrencia._id,
+      },
+      {
+        projection: {
+          complaintId: 0,
+        },
+      }
+    )
+    .toArray();
+  return res.send(tasks);
+});
+
+// Listar usuários
+router.get("/users", async (req, res) => {
+  const users = await Database.collection("users")
+    .find(
+      {},
+      {
+        projection: {
+          _id: 1,
+          firstname: 1,
+          email: 1,
+        },
+      }
+    )
+    .sort({ firstname: 1 })
+    .toArray();
+  return res.status(200).send(users);
 });
 
 /**

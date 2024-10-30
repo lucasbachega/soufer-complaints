@@ -78,6 +78,14 @@ class TipoAnexoNotFound extends Error {
   }
 }
 
+class TaskNotFound extends Error {
+  constructor() {
+    super(`Tarefa não encontrada`);
+    this.name = "TaskNotFound";
+    this.status = 400;
+  }
+}
+
 module.exports = {
   InvalidUserAccess,
   UnidadeNotFound,
@@ -89,4 +97,5 @@ module.exports = {
   AnexoNotFound,
   UserNotFound,
   TipoAnexoNotFound,
+  TaskNotFound
 };

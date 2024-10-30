@@ -327,7 +327,6 @@ router.post("/register/insecurity", async (req, res) => {
     detection: ["cipa", "internal"].includes(detection) ? detection : null,
     area,
     local,
-    tasks: [],
     status: "open", // em aberto
     anexos: [],
   };

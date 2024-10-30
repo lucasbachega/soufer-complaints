@@ -62,6 +62,7 @@ function startServer() {
   app.use("/api/admin", middlewares.auth({ restrictAcess: true, role: "admin" }), routes.admin);
   app.use("/api/gestor", middlewares.auth({ restrictAcess: true, role: "gestor" }), routes.gestor);
   app.use("/api/complaints", middlewares.auth({}), routes.complaints);
+  app.use("/api/tasks", middlewares.auth({}), routes.tasks);
   app.use("/api/auth", routes.auth);
 
   // serve frontend app
