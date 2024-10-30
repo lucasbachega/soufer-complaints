@@ -642,6 +642,7 @@ router.get("/complaints/export/excel", async (req, res) => {
   // Column for data in excel. key must match data key
   worksheet.columns = [
     { header: "Criada em", key: "created_at", width: 15 },
+    { header: "Tipo", key: "type", width: 15 },
     { header: "Unidade", key: "unidade", width: 15 },
     //   { header: "ID", key: "report_id", width: 6 },
     { header: "Cliente", key: "cliente", width: 35 },
@@ -658,6 +659,9 @@ router.get("/complaints/export/excel", async (req, res) => {
     { header: "Respondido em", key: "answerDate", width: 20 },
     { header: "Avaliação Causa", key: "avaliacaoCausa", width: 15 },
     { header: "Avaliação Correção", key: "avaliacaoCorrecao", width: 15 },
+    { header: "Problema", key: "problem", width: 35 },
+    { header: "Sugestão de solução", key: "solutionObs", width: 30 },
+    { header: "Detecção", key: "detection", width: 15 },
   ];
 
   // Set an auto filter from the cell in row 3 and column 1
@@ -676,6 +680,7 @@ router.get("/complaints/export/excel", async (req, res) => {
   for (let i = 0; i < resultado.length; i++) {
     const {
       created_at,
+      type,
       unidade,
       cliente,
       user,
@@ -691,10 +696,14 @@ router.get("/complaints/export/excel", async (req, res) => {
       answerBy,
       ratingCausa,
       ratingCorrecao,
+      problem,
+      solutionObs,
+      detection,
     } = resultado[i];
     // Add data in worksheet
     worksheet.addRow({
       created_at,
+      type,
       unidade: unidade.text,
       cliente,
       representante: user?.text || representante,
@@ -711,6 +720,9 @@ router.get("/complaints/export/excel", async (req, res) => {
       avaliacaoCausa: ratingCausa?.number && `${ratingCausa.number}/${ratingCausa.scale || 5}`,
       avaliacaoCorrecao:
         ratingCorrecao?.number && `${ratingCorrecao.number}/${ratingCorrecao.scale || 5}`,
+      problem,
+      solutionObs,
+      detection,
     });
   }
   // Making first line in excel bold

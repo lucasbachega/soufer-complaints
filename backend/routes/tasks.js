@@ -52,6 +52,8 @@ router.put("/:id", async (req, res) => {
   const { userId } = req;
   const { id } = req.params;
   const { status, deleteAnexos } = req.body;
+  const editFields = {};
+
   const task = await Database.collection("tasks").findOne({
     "user._id": new ObjectId(userId.toString()),
     _id: new ObjectId(id),
@@ -80,14 +82,14 @@ router.put("/:id", async (req, res) => {
     }
   }
 
+  if (status) editFields.status = status;
+
   await Database.collection("tasks").updateOne(
     {
       _id: task._id,
     },
     {
-      $set: {
-        status,
-      },
+      $set: editFields,
       ...updateAnexos,
     }
   );
