@@ -50,6 +50,7 @@ export default function OccurrencesTable({
   sx,
   readOnly,
   role = "admin",
+  type = "insecurity",
 }) {
   const theme = useTheme();
 
@@ -79,6 +80,7 @@ export default function OccurrencesTable({
             row={row}
             onClick={handleClickRow}
             isSelected={row?.id === modalView?.id}
+            type={type}
           />
         );
       } else {
@@ -88,11 +90,12 @@ export default function OccurrencesTable({
             row={row}
             onClick={handleClickRow}
             isSelected={row?.id === modalView?.id}
+            type={type}
           />
         );
       }
     },
-    [viewMode, modalView?.id]
+    [viewMode, modalView?.id, type]
   );
 
   const handleRequestSort = React.useCallback(
@@ -111,6 +114,7 @@ export default function OccurrencesTable({
         filters={filters}
         viewMode={viewMode}
         setViewMode={setViewMode}
+        type={type}
       />
       <Box
         flex={1}
@@ -152,7 +156,9 @@ export default function OccurrencesTable({
                       level="title-lg"
                       color="neutral"
                     >
-                      Nenhuma ocorrência encontrada
+                      Nenhuma{" "}
+                      {type === "complaint" ? "reclamação" : "prática insegura"}{" "}
+                      encontrada
                     </Typography>
                   </Box>
                 )}
@@ -196,6 +202,7 @@ export default function OccurrencesTable({
                   }}
                 >
                   <TableHeader
+                    type={type}
                     onRequestSort={handleRequestSort}
                     order={order}
                     orderBy={orderBy}
@@ -220,7 +227,9 @@ export default function OccurrencesTable({
                     level="title-lg"
                     color="neutral"
                   >
-                    Nenhuma ocorrência encontrada
+                    Nenhuma{" "}
+                    {type === "complaint" ? "reclamação" : "prática insegura"}{" "}
+                    encontrada
                   </Typography>
                 </Box>
               )}

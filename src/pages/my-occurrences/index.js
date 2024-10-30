@@ -40,6 +40,7 @@ export default () => {
       <Appbar onClose={onClose} onRefresh={getOccurrences} loading={loading} />
       <Box my={1} />
       <OccurrencesTable
+        type="complaint"
         filters={filters}
         loading={loading}
         readOnly

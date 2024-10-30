@@ -1,13 +1,13 @@
 import { ExitToAppOutlined } from "@mui/icons-material";
 import {
-    Avatar,
-    Box,
-    Button,
-    Dropdown,
-    IconButton,
-    Menu,
-    MenuButton,
-    Typography,
+  Avatar,
+  Box,
+  Button,
+  Dropdown,
+  IconButton,
+  Menu,
+  MenuButton,
+  Typography,
 } from "@mui/joy";
 import React, { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,16 +43,15 @@ const UserIndicator = ({ disableExit, disableUsername, sx }) => {
       alignItems={"center"}
       gap={1.5}
       border={1}
-      boxShadow={"sm"}
       borderColor={"divider"}
       bgcolor={"#FFF"}
       sx={sx}
     >
-      <Avatar sx={{ width: 30, height: 30 }} variant="solid">
+      <Avatar sx={{ width: 25, height: 25 }} variant="solid">
         {data?.firstname ? data?.firstname[0] : ""}
       </Avatar>
       <Box>
-        <Typography level="title-md">{data?.firstname}</Typography>
+        <Typography level="title-sm">{data?.firstname}</Typography>
         {!disableUsername && (
           <Typography color="neutral" mt={-0.5} level="body-xs">
             {data?.username}

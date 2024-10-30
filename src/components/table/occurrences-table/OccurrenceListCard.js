@@ -2,13 +2,19 @@ import {
   AttachFileOutlined,
   BusinessCenterOutlined,
   InventoryOutlined,
+  LocationOn,
 } from "@mui/icons-material";
-import { Box, Chip, Stack, Typography } from "@mui/joy";
+import { Box, Chip, Stack, Tooltip, Typography } from "@mui/joy";
 import React, { memo } from "react";
 import { formatDate } from "../../../utils/date_functions";
 import { occurrenceStatus } from "../../../utils/occurrences";
 
-const OccurrenceListCard = ({ row = {}, onClick = () => {}, isSelected }) => {
+const OccurrenceListCard = ({
+  row = {},
+  onClick = () => {},
+  isSelected,
+  type,
+}) => {
   const status = row.status;
 
   return (
@@ -20,7 +26,7 @@ const OccurrenceListCard = ({ row = {}, onClick = () => {}, isSelected }) => {
       display={"flex"}
       alignItems={"flex-start"}
       position={"relative"}
-      height={140}
+      minHeight={145}
       component={"div"}
       onClick={() => onClick(row)}
       sx={{
@@ -39,30 +45,78 @@ const OccurrenceListCard = ({ row = {}, onClick = () => {}, isSelected }) => {
         },
       }}
     >
-      <Box flex={1}>
-        <Typography mb={1} level="title-lg" fontWeight={"lg"}>
-          {row.categoria?.text}
-        </Typography>
-        <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
-          <InventoryOutlined fontSize="small" color="action" />
-          <Typography level="title-sm" fontWeight={"500"}>
-            {row.produto?.text}
+      <Box flexBasis={0} flex={1} overflow={"hidden"}>
+        <Tooltip
+          title={
+            type === "insecurity"
+              ? "Problema Texto"
+              : row.categoria?.text
+          }
+        >
+          <Typography mb={1} level="title-lg" fontWeight={"lg"} noWrap>
+            {type === "insecurity"
+              ? "Problema Texto"
+              : row.categoria?.text}
           </Typography>
-        </Stack>
-        <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
-          <BusinessCenterOutlined fontSize="small" color="action" />
-          <Typography level="title-sm" fontWeight={"500"}>
-            {row.setor?.text}
-          </Typography>
-        </Stack>
-        <Typography mt={1} level="title-sm" fontWeight={"400"}>
-          <Typography component={"span"} color="neutral" level="inherit">
-            Ordem de venda:{" "}
-          </Typography>
-          <Typography component={"span"} level="inherit" fontWeight={"500"}>
-            {row.ordem_venda || "--"}
-          </Typography>
-        </Typography>
+        </Tooltip>
+        {type === "insecurity" && (
+          <>
+            <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
+              <LocationOn fontSize="small" color="action" />
+              <Typography level="title-sm" fontWeight={"500"}>
+                {row.local || "--"}
+              </Typography>
+            </Stack>
+            <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
+              <BusinessCenterOutlined fontSize="small" color="action" />
+              <Typography level="title-sm" fontWeight={"500"}>
+                {row.setor?.text}
+              </Typography>
+            </Stack>
+            <Typography mt={1} level="title-sm" fontWeight={"400"}>
+              <Typography component={"span"} color="neutral" level="inherit">
+                Detecção:{" "}
+              </Typography>
+              <Typography
+                noWrap
+                component={"span"}
+                level="inherit"
+                fontWeight={"500"}
+              >
+                {row.detection || "Interno"}
+              </Typography>
+            </Typography>
+          </>
+        )}
+        {type === "complaint" && (
+          <>
+            <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
+              <InventoryOutlined fontSize="small" color="action" />
+              <Typography level="title-sm" fontWeight={"500"}>
+                {row.produto?.text}
+              </Typography>
+            </Stack>
+            <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
+              <BusinessCenterOutlined fontSize="small" color="action" />
+              <Typography level="title-sm" fontWeight={"500"}>
+                {row.setor?.text}
+              </Typography>
+            </Stack>
+            <Typography mt={1} level="title-sm" fontWeight={"400"}>
+              <Typography component={"span"} color="neutral" level="inherit">
+                Cliente:{" "}
+              </Typography>
+              <Typography
+                noWrap
+                component={"span"}
+                level="inherit"
+                fontWeight={"500"}
+              >
+                {row.cliente || "--"}
+              </Typography>
+            </Typography>
+          </>
+        )}
       </Box>
       <Box display={"flex"} flexDirection={"column"} alignItems={"flex-end"}>
         <Typography mb={1} level="body-sm" color="neutral">

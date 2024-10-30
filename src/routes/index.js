@@ -10,6 +10,7 @@ import AuthWrapper from "../pages/auth/AuthWrapper";
 import Login from "../pages/auth/Login";
 import Gestor from "../pages/gestor";
 import Home from "../pages/home";
+import Insecurity from "../pages/insecurity";
 import MyOccurrences from "../pages/my-occurrences";
 import NewOccurrence from "../pages/new-occurrence";
 import ProtectedRoutes from "./ProtectedRoutes";
@@ -32,6 +33,14 @@ export default function () {
         element={
           <ProtectedRoutes>
             <MyOccurrences />
+          </ProtectedRoutes>
+        }
+      />
+      <Route
+        path="/insecurity"
+        element={
+          <ProtectedRoutes>
+            <Insecurity />
           </ProtectedRoutes>
         }
       />

@@ -1,7 +1,7 @@
 import {
   Add,
   ArrowBack,
-  AssignmentOutlined,
+  CampaignOutlined,
   RefreshOutlined,
 } from "@mui/icons-material";
 import {
@@ -22,13 +22,14 @@ const Appbar = ({ onClose = () => {}, loading, onRefresh = () => {} }) => {
   return (
     <Box
       zIndex={100}
-      boxShadow={"sm"}
+      borderBottom={1}
       px={{ xs: 1, md: 2 }}
       py={1}
       bgcolor={"#FFF"}
       display={"flex"}
       alignItems={"center"}
       gap={1}
+      borderColor={"divider"}
     >
       <IconButton size="md" onClick={onClose}>
         <ArrowBack />
@@ -39,17 +40,17 @@ const Appbar = ({ onClose = () => {}, loading, onRefresh = () => {} }) => {
         variant="soft"
         size="md"
       >
-        <AssignmentOutlined />
+        <CampaignOutlined />
       </Avatar>
       <Typography sx={{ fontSize: { xs: "15px", md: "20px" } }} level={"h3"}>
-        Minhas ocorrências
+        Minhas reclamações
       </Typography>
       <Box flex={1} />
       <UserIndicator
         disableExit
         disableUsername
         sx={{
-          height: 40,
+          height: 35,
           pr: 2,
           boxShadow: "none",
           display: { xs: "none", md: "flex" },
@@ -69,7 +70,7 @@ const Appbar = ({ onClose = () => {}, loading, onRefresh = () => {} }) => {
           <RefreshOutlined />
         </IconButton>
       </Tooltip>
-      <Tooltip title="Nova ocorrência">
+      <Tooltip title="Nova reclamação">
         <IconButton
           sx={{ display: { xs: "flex", md: "none" } }}
           onClick={() => navigate("/new-occurrence")}
@@ -78,12 +79,12 @@ const Appbar = ({ onClose = () => {}, loading, onRefresh = () => {} }) => {
         </IconButton>
       </Tooltip>
       <Button
-        startDecorator={<Add />}
-        onClick={() => navigate("/new-occurrence")}
+        startDecorator={<CampaignOutlined />}
+        onClick={() => navigate("/new-occurrence?step=2&type=complaint")}
         size="md"
         sx={{ px: 2, ml: 1, display: { xs: "none", md: "flex" } }}
       >
-        Nova ocorrência
+        Nova reclamação
       </Button>
     </Box>
   );

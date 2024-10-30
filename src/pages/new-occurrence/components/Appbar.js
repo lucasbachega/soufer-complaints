@@ -1,22 +1,26 @@
-import { AssignmentOutlined, Close } from "@mui/icons-material";
+import { ArrowBack, AssignmentOutlined, Close } from "@mui/icons-material";
 import { Avatar, Box, Button, Divider, IconButton, Typography } from "@mui/joy";
 import React, { memo } from "react";
+import { useNavigate } from "react-router-dom";
 import UserIndicator from "../../home/components/UserIndicator";
 
-const Appbar = ({ onCancel = () => {}, isOk, onCreate, loading }) => {
+const Appbar = ({ onCancel = () => {}, isOk, onCreate, loading, type }) => {
+  const navigate = useNavigate();
+
   return (
     <Box
       zIndex={100}
-      boxShadow={"sm"}
       px={{ xs: 1, md: 2 }}
       py={1}
       bgcolor={"#FFF"}
       display={"flex"}
       alignItems={"center"}
+      borderBottom={1}
+      sx={{ borderBottomColor: "divider" }}
       gap={1}
     >
-      <IconButton size="md" onClick={onCancel}>
-        <Close />
+      <IconButton size="md" onClick={() => navigate(-1)}>
+        {type ? <ArrowBack /> : <Close />}
       </IconButton>
       <Avatar
         sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}

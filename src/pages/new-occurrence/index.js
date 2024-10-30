@@ -1,23 +1,32 @@
 import { Box, Container, LinearProgress } from "@mui/joy";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { HttpClient } from "../../api/httpClient";
 import DiscartModal from "../../components/modals/DiscartModal";
 import { fetchCategories } from "../../store/reducers/occurrenceCategoriesSlice";
 import { fetchProducts } from "../../store/reducers/productsSlice";
 import { fetchSectors } from "../../store/reducers/sectorsSlice";
 import { fetchUnits } from "../../store/reducers/unitsSlice";
-import { occurrenceInitialState } from "../../utils/state_models";
+import {
+  insecurityRequiredFields,
+  occurrenceInitialState,
+} from "../../utils/state_models";
 import Appbar from "./components/Appbar";
+import AttachBox from "./components/attach/AttachBox";
 import CompletedModal from "./components/CompletedModal";
 import ErrorModal from "./components/ErrorModal";
 import OccurrenceForm from "./components/OccurrenceForm";
-import AttachBox from "./components/attach/AttachBox";
+import SelectType from "./components/SelectType";
 
 export default (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [params, setParams] = useSearchParams();
+
+  const step = params?.get("step") || "1";
+  const type = params?.get("type") || "";
 
   useEffect(() => {
     dispatch(fetchUnits());
@@ -33,13 +42,24 @@ export default (props) => {
   const [data, setData] = useState(occurrenceInitialState);
   const [files, setFiles] = useState([]);
 
+  const handleChangeType = useCallback(
+    (value) => {
+      params.set("type", value);
+      params.set("step", "2");
+      setData(occurrenceInitialState);
+      setChanged(false);
+      setParams(params);
+    },
+    [params]
+  );
+
   const onCancel = useCallback(() => {
     if (changed) {
-      DiscartModal.show(() => navigate(-1));
+      DiscartModal.show(() => navigate(type ? -2 : -1));
       return;
     }
-    navigate(-1);
-  }, [changed]);
+    navigate(type ? -2 : -1);
+  }, [changed, type]);
 
   const handleChangeValue = useCallback((prop, value) => {
     setData((prev) => ({ ...prev, [prop]: value }));
@@ -47,8 +67,19 @@ export default (props) => {
   }, []);
 
   const isOk = useMemo(() => {
-    return Object.values(data)?.every(Boolean);
-  }, [data]);
+    if (type === "insecurity") {
+      let requiredData = {};
+      insecurityRequiredFields.forEach((field) => {
+        requiredData[field] = data[field];
+      });
+      return Object.values(requiredData)?.every(Boolean);
+    }
+    if (type === "complaint") {
+      return Object.values(data)?.every(Boolean);
+    }
+
+    return false;
+  }, [data, type]);
 
   const handleAddFiles = useCallback((newFiles = []) => {
     setFiles((prev) => {
@@ -66,13 +97,22 @@ export default (props) => {
     setError(null);
     setLoading(true);
     const res = await HttpClient.registrarOcorrencia({
+      type,
+      setor: data.sector,
+      unidade: data.unit,
+      //
       categoria: data.category,
       cliente: data.customer,
       motivo: data.reason,
       ordem_venda: data.salesOrder,
       produto: data.product,
-      setor: data.sector,
-      unidade: data.unit,
+
+      //
+      problem: data.problem || "",
+      solutionObs: data.solutionObs || "",
+      detection: data.detection || "",
+      area: data.area || "",
+      local: data.local || "",
     });
     if (res.ok) {
       if (files?.length) {
@@ -96,6 +136,7 @@ export default (props) => {
         isOk={isOk}
         loading={loading}
         onCreate={handleCreate}
+        type={type}
       />
       {loading && (
         <div>
@@ -120,16 +161,24 @@ export default (props) => {
             gap: { xs: 2, md: 4 },
           }}
         >
-          <OccurrenceForm
-            data={data}
-            loading={loading}
-            onChangeValue={handleChangeValue}
-          />
-          <AttachBox
-            files={files}
-            addFiles={handleAddFiles}
-            onRemoveFile={handleRemoveFile}
-          />
+          {step === "1" && (
+            <SelectType type={type} onChange={handleChangeType} />
+          )}
+          {step === "2" && Boolean(type) && (
+            <>
+              <OccurrenceForm
+                type={type}
+                data={data}
+                loading={loading}
+                onChangeValue={handleChangeValue}
+              />
+              <AttachBox
+                files={files}
+                addFiles={handleAddFiles}
+                onRemoveFile={handleRemoveFile}
+              />
+            </>
+          )}
         </Container>
       </Box>
       <DiscartModal />

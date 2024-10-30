@@ -25,15 +25,25 @@ const ActionCard = ({ title, Icon, description, disabled, onClick, isNew }) => {
           variant="soft"
           color="success"
           size="md"
-          sx={{ position: "absolute", top: -5, right: -5, fontWeight: "xl", boxShadow: "sm" }}
+          sx={{
+            position: "absolute",
+            top: -2,
+            right: -2,
+            fontWeight: "xl",
+            boxShadow: "sm",
+          }}
         >
           Novidade
         </Chip>
       )}
-      <Icon sx={{ fontSize: "4rem" }} />
+      <Icon color="primary" sx={{ fontSize: "2rem" }} />
       <CardContent>
-        <Typography level="h3">{title}</Typography>
-        <Typography>{description}</Typography>
+        <Typography level="h3" fontSize={"1.3rem"}>
+          {title}
+        </Typography>
+        <Typography color="neutral" level="body-md">
+          {description}
+        </Typography>
       </CardContent>
     </Card>
   );

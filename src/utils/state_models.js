@@ -1,4 +1,5 @@
 export const occurrenceInitialState = {
+  type: "",
   unit: "",
   customer: "",
   salesOrder: "",
@@ -6,4 +7,20 @@ export const occurrenceInitialState = {
   product: "",
   category: "",
   reason: "",
+
+  //insecurity
+  problem: "",
+  solutionObs: "",
+  detection: "",
+  area: "",
+  local: "",
 };
+
+export const insecurityRequiredFields = [
+  "unit",
+  "area",
+  "sector",
+  "local",
+  "detection",
+  "problem",
+];

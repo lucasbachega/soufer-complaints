@@ -1,10 +1,11 @@
 import {
-  AddCircleOutlineOutlined,
-  AssignmentOutlined,
+  Add,
+  CampaignOutlined,
   Checklist,
+  ReportGmailerrorredOutlined,
   SettingsOutlined,
 } from "@mui/icons-material";
-import { Box, Container, Divider, Link, Typography } from "@mui/joy";
+import { Box, Container, Link, Typography } from "@mui/joy";
 import Capa from "../../assets/background/soufer-capa.jpeg";
 import Logo from "../../assets/logo/soufer-logo.png";
 import ActionCard from "./components/ActionCard";
@@ -12,7 +13,10 @@ import ActionCard from "./components/ActionCard";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import pkge from "../../../package.json";
-import { selectUserIsAdmin, selectUserIsGestor } from "../../store/reducers/userInfoSlice";
+import {
+  selectUserIsAdmin,
+  selectUserIsGestor,
+} from "../../store/reducers/userInfoSlice";
 import UserIndicator from "./components/UserIndicator";
 
 export default () => {
@@ -23,7 +27,7 @@ export default () => {
 
   return (
     <Box flex={1} flexBasis={0} display={"flex"} alignItems={"flex-start"}>
-      <Box flex={1} display={"flex"} flexDirection={"column"} height={"100%"}>
+      <Box flex={1.5} display={"flex"} flexDirection={"column"} height={"100%"}>
         <Box
           flex={1}
           flexBasis={0}
@@ -32,6 +36,7 @@ export default () => {
           position={"relative"}
           display={"flex"}
           flexDirection={"column"}
+          boxShadow={"xl"}
         >
           <Box position={"absolute"} top={15} right={30}>
             <UserIndicator />
@@ -39,7 +44,7 @@ export default () => {
           <Container
             sx={{
               flex: 1,
-              p: 4,
+              p: 3,
               paddingTop: "100px",
               display: "flex",
               flexDirection: "column",
@@ -47,43 +52,54 @@ export default () => {
             }}
             maxWidth="md"
           >
-            <img src={Logo} width={"140px"} />
-            <Typography mt={2} level="h1" fontWeight={"500"}>
+            <img src={Logo} width={"130px"} />
+            <Typography mt={2} level="h2" fontWeight={"600"}>
               Portal de ocorrências
             </Typography>
-            <Divider sx={{ my: 2 }} />
-            <Typography maxWidth={"sm"} color="neutral" textAlign={"center"} level="body-lg">
-              Seja bem-vindo ao portal de ocorrências da Soufer. Informe suas reclamações ou
-              consulte o painel de administrador.
+            <Typography
+              maxWidth={"sm"}
+              color="neutral"
+              textAlign={"center"}
+              level="title-md"
+            >
+              Seja bem-vindo ao portal de ocorrências da Soufer.
             </Typography>
             <Box
               width={"100%"}
-              mt={5}
+              mt={3}
               display={"flex"}
               justifyContent={"center"}
               alignItems={"flex-start"}
-              gap={3}
+              gap={2}
               flexWrap={"wrap"}
             >
               <ActionCard
-                Icon={AssignmentOutlined}
-                title={"Minhas ocorrências"}
-                description={"Acompanhe suas reclamações enviadas"}
+                Icon={CampaignOutlined}
+                title={"Reclamações"}
+                description={"Veja e acompanhe suas reclamações enviadas"}
                 onClick={() => navigate("/my-occurrences")}
               />
               <ActionCard
-                Icon={AddCircleOutlineOutlined}
+                Icon={Add}
                 title={"Nova ocorrência"}
-                description={"Preencha o formulário de reclamação"}
+                description={
+                  "Envie uma nova reclamação ou prática insegura para análise"
+                }
                 onClick={() => navigate("/new-occurrence")}
+              />
+              <ActionCard
+                Icon={ReportGmailerrorredOutlined}
+                title={"Práticas inseguras"}
+                description={"Acompanhe suas observações de práticas inseguras"}
+                onClick={() => navigate("/insecurity")}
+                isNew
               />
               {isGestor && (
                 <ActionCard
-                  isNew
                   disabled={!isAdmin}
                   Icon={Checklist}
                   title={"Gestor"}
-                  description={"Gerencie as ocorrências, explique as causas e correções."}
+                  description={"Analise e gerencie ocorrências enviadas"}
                   onClick={() => navigate("/gestor")}
                 />
               )}
@@ -92,17 +108,35 @@ export default () => {
                   disabled={!isAdmin}
                   Icon={SettingsOutlined}
                   title={"Administrador"}
-                  description={"Configure usuários e acompanhe as ocorrências"}
+                  description={
+                    "Configure usuários, setores, áreas e muito mais."
+                  }
                   onClick={() => navigate("/admin")}
                 />
               )}
             </Box>
           </Container>
-          <Box mt={"auto"} p={2} display={"flex"} flexDirection={"column"} alignItems={"center"}>
-            <Typography fontWeight={"sm"} color="neutral" level="body-xs" textAlign={"center"}>
+          <Box
+            mt={"auto"}
+            p={2}
+            display={"flex"}
+            flexDirection={"column"}
+            alignItems={"center"}
+          >
+            <Typography
+              fontWeight={"sm"}
+              color="neutral"
+              level="body-xs"
+              textAlign={"center"}
+            >
               Versão: {pkge.version}
             </Typography>
-            <Typography fontWeight={"sm"} color="neutral" level="body-xs" textAlign={"center"}>
+            <Typography
+              fontWeight={"sm"}
+              color="neutral"
+              level="body-xs"
+              textAlign={"center"}
+            >
               Desenvolvido com 🤍 por{" "}
               <Link
                 fontWeight={"sm"}
@@ -127,6 +161,7 @@ export default () => {
           backgroundPosition: "center",
           width: "100%",
           height: "100vh", // ou a altura desejada
+          backgroundAttachment: "fixed",
         }}
       />
     </Box>
