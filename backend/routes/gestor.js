@@ -248,6 +248,9 @@ router.put("/insecurity/:id", async (req, res) => {
   if (status) {
     editFields.status = status;
   }
+  if ("motivoRej" in req.body) {
+    editFields.motivoRej = motivoRej;
+  }
 
   // atualizar no banco
   await Database.collection("ocorrencias").updateOne(
