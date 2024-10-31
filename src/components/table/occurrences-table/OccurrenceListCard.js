@@ -49,13 +49,13 @@ const OccurrenceListCard = ({
         <Tooltip
           title={
             type === "insecurity"
-              ? "Problema Texto"
+              ? row.problem
               : row.categoria?.text
           }
         >
           <Typography mb={1} level="title-lg" fontWeight={"lg"} noWrap>
             {type === "insecurity"
-              ? "Problema Texto"
+              ? row.problem
               : row.categoria?.text}
           </Typography>
         </Tooltip>
