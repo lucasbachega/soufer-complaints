@@ -1,5 +1,16 @@
 import { formatDateToInput } from "./date_functions";
 
+export const complaintInitialState = {
+  type: "",
+  unit: "",
+  customer: "",
+  salesOrder: "",
+  sector: "",
+  product: "",
+  category: "",
+  reason: "",
+};
+
 export const occurrenceInitialState = {
   type: "",
   unit: "",

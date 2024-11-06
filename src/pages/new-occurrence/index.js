@@ -75,7 +75,15 @@ export default (props) => {
       return Object.values(requiredData)?.every(Boolean);
     }
     if (type === "complaint") {
-      return Object.values(data)?.every(Boolean);
+      return [
+        data?.unit,
+        data?.customer,
+        data?.salesOrder,
+        data?.sector,
+        data?.product,
+        data?.category,
+        data?.reason,
+      ]?.every(Boolean);
     }
 
     return false;
