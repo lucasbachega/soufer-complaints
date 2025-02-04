@@ -309,7 +309,7 @@ router.post("/users", async (req, res) => {
     block: false,
     assignAllAreas,
   };
-  if (roles?.includes("gestor") && areas?.length) {
+  if (roles?.includes("gestor") && areas?.length && !assignAllAreas) {
     // Verif. as áreas do gestor
     for (let i = 0; i < areas.length; i++) {
       const { unidade_id, setor_id } = areas[i];
@@ -355,8 +355,9 @@ router.put("/users/:id", async (req, res) => {
   if ((roles?.includes("gestor") || _user?.roles?.includes("gestor")) && areas?.length) {
     edits.areas = [];
     // Verif. as áreas do gestor
-    for (let i = 0; i < areas.length; i++) {
-      const { unidade_id, setor_id } = areas[i];
+    const filteredAreas = areas.filter((area) => area.unidade_id && area.setor_id);
+    for (let i = 0; i < filteredAreas.length; i++) {
+      const { unidade_id, setor_id } = filteredAreas[i];
       const _setor = await Database.collection("setor").findOne({
         _id: new ObjectId(setor_id),
       });
