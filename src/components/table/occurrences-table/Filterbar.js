@@ -1,4 +1,4 @@
-import { DateRange } from "@mui/icons-material";
+import { DateRange, GridView, TableRowsOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -12,10 +12,12 @@ import React from "react";
 import CategoryFilter from "./filters/CategoryFilter";
 import StatusFilter from "./filters/StatusFilter";
 
-const ToggleListMode = ({ value, onChange = () => {} }) => {
+export const ToggleListMode = ({ value, onChange = () => {} }) => {
   return (
     <ToggleButtonGroup
       value={value}
+      size="sm"
+      color="primary"
       onChange={(e, v) => {
         if (v !== null) {
           onChange(v);
@@ -23,8 +25,12 @@ const ToggleListMode = ({ value, onChange = () => {} }) => {
       }}
       exclusive
     >
-      <Button value="table">Tabela</Button>
-      <Button value="cards">Cards</Button>
+      <Button startDecorator={<TableRowsOutlined />} value="table">
+        Tabela
+      </Button>
+      <Button startDecorator={<GridView />} value="cards">
+        Cards
+      </Button>
     </ToggleButtonGroup>
   );
 };

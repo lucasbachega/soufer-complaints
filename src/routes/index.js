@@ -13,6 +13,7 @@ import Home from "../pages/home";
 import Insecurity from "../pages/insecurity";
 import MyOccurrences from "../pages/my-occurrences";
 import NewOccurrence from "../pages/new-occurrence";
+import Transport from "../pages/transport";
 import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
 
@@ -60,6 +61,15 @@ export default function () {
           </ProtectedRoutes>
         }
       />
+      <Route
+        path="/transport"
+        element={
+          <ProtectedRoutes>
+            <Transport />
+          </ProtectedRoutes>
+        }
+      />
+
       <Route
         path="/admin"
         element={

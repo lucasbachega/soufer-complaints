@@ -16,6 +16,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import PasswordInput from "../../../inputs/PasswordInput";
 import TextInput from "../../../inputs/TextInput";
 import GestorControl from "./components/GestorControl";
+import TransportRolesToggle from "./components/TransportRolesToggle";
 
 const initialState = {
   firstname: "",
@@ -36,6 +37,9 @@ const ModalUser = ({ open, onClose, onConfirm, editMode, initialData }) => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(initialData || initialState);
   const [areas, setAreas] = useState(initialData?.areas || initialAreas || []);
+  const [transportRoles, setTransportRoles] = useState(
+    initialData?.transportRoles || []
+  );
 
   useEffect(() => {
     if (!open) {
@@ -89,7 +93,7 @@ const ModalUser = ({ open, onClose, onConfirm, editMode, initialData }) => {
 
   const handleConfirm = async (e) => {
     e.preventDefault();
-    let formatedData = { ...data, areas };
+    let formatedData = { ...data, areas, transportRoles };
     if (editMode) {
       delete formatedData.password;
     }
@@ -202,6 +206,12 @@ const ModalUser = ({ open, onClose, onConfirm, editMode, initialData }) => {
                     />
                   </>
                 )}
+
+                <TransportRolesToggle
+                  value={transportRoles}
+                  onChange={setTransportRoles}
+                />
+
                 <Stack
                   mt={4}
                   direction={"row"}

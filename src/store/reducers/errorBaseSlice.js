@@ -26,6 +26,7 @@ export const errorBaseSlice = createSlice({
         if (payload.error) state.error = payload.error;
         if (payload.content) state.content = payload.content;
         if (payload.config) state.config = payload.config;
+        if (payload.error) state.error = payload.error;
       }
     },
     closeError: (state) => {

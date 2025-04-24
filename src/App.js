@@ -12,18 +12,6 @@ import Routes from "./routes";
 import { login } from "./store/reducers/userInfoSlice";
 import { theme } from "./theme";
 
-import { createTheme } from "@mui/material/styles";
-
-const customTheme = createTheme({
-  palette: {
-    primary: {
-      main: "#1976d2",
-    },
-  },
-  typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
-  },
-});
 
 function App() {
   const dispatch = useDispatch();

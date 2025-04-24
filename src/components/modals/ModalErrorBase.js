@@ -1,5 +1,6 @@
 import { WarningOutlined } from "@mui/icons-material";
 import {
+  Box,
   Button,
   DialogActions,
   DialogContent,
@@ -18,18 +19,36 @@ function ModalErrorBase(props) {
   const open = useSelector((state) => state.errorBase.open);
 
   const errorBase = useSelector((state) => state.errorBase);
-  const { title, message } = errorBase;
+  const { title, message, error } = errorBase;
 
   return (
-    <Modal open={open} onClose={() => dispatch(closeError())}>
+    <Modal
+      open={open}
+      onClose={() => dispatch(closeError())}
+      sx={{ zIndex: (t) => t.zIndex.modal + 1000 }}
+    >
       <ModalDialog minWidth={400} variant="outlined" role="alertdialog">
         <ModalClose />
         <DialogTitle>
           <WarningOutlined sx={{ mr: 1 }} />
-          {title}
+          {title || "Algo deu errado"}
         </DialogTitle>
         <Divider />
-        <DialogContent>{message}</DialogContent>
+        <DialogContent>
+          <Box
+            component={"div"}
+            fontSize={".95rem"}
+            fontWeight={"md"}
+            sx={{ wordBreak: "break-word" }}
+            dangerouslySetInnerHTML={{
+              __html:
+                error?.response?.data?.message?.toString() ||
+                error?.response?.data?.toString() ||
+                message ||
+                "",
+            }}
+          />
+        </DialogContent>
         <DialogActions>
           <Button
             variant="outlined"

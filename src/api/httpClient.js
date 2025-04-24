@@ -343,6 +343,7 @@ class HttpClient {
       roles,
       areas,
       assignAllAreas,
+      transportRoles,
     }) {
       return HttpClient.post("/admin/users", {
         firstname,
@@ -352,6 +353,7 @@ class HttpClient {
         roles,
         areas,
         assignAllAreas,
+        transportRoles,
       });
     },
     async listarUsers() {
@@ -587,6 +589,39 @@ class HttpClient {
         params: {
           period,
         },
+      });
+    },
+  };
+
+  static transports = {
+    async list({ role }) {
+      return HttpClient.get("/transports", {
+        params: {
+          role,
+        },
+      });
+    },
+    async stats() {
+      return HttpClient.get("/transports/stats");
+    },
+    async request({ points = [], notes, time, people, shift }) {
+      return HttpClient.post("/transports/request", {
+        points,
+        notes,
+        time,
+        people,
+        shift,
+      });
+    },
+    async approve(id) {
+      return HttpClient.post(`/transports/${id}/approve`);
+    },
+    async confirm(id) {
+      return HttpClient.post(`/transports/${id}/confirm`);
+    },
+    async reject(id, reason = "") {
+      return HttpClient.post(`/transports/${id}/reject`, {
+        reason,
       });
     },
   };

@@ -2,6 +2,7 @@ import {
   Add,
   CampaignOutlined,
   Checklist,
+  DirectionsBusOutlined,
   ReportGmailerrorredOutlined,
   SettingsOutlined,
 } from "@mui/icons-material";
@@ -54,7 +55,7 @@ export default () => {
           >
             <img src={Logo} width={"130px"} />
             <Typography mt={2} level="h2" fontWeight={"600"}>
-              Portal de ocorrências
+              Portal de serviços
             </Typography>
             <Typography
               maxWidth={"sm"}
@@ -62,7 +63,7 @@ export default () => {
               textAlign={"center"}
               level="title-md"
             >
-              Seja bem-vindo ao portal de ocorrências da Soufer.
+              Seja bem-vindo ao portal de serviços da Soufer.
             </Typography>
             <Box
               width={"100%"}
@@ -70,7 +71,7 @@ export default () => {
               display={"flex"}
               justifyContent={"center"}
               alignItems={"flex-start"}
-              gap={2}
+              gap={1.5}
               flexWrap={"wrap"}
             >
               <ActionCard
@@ -92,7 +93,6 @@ export default () => {
                 title={"Práticas inseguras"}
                 description={"Acompanhe suas observações de práticas inseguras"}
                 onClick={() => navigate("/insecurity")}
-                isNew
               />
               {isGestor && (
                 <ActionCard
@@ -114,6 +114,13 @@ export default () => {
                   onClick={() => navigate("/admin")}
                 />
               )}
+              <ActionCard
+                Icon={DirectionsBusOutlined}
+                title={"Transporte coletivo"}
+                description={"Solicite e gerencie serviços de transporte."}
+                onClick={() => navigate("/transport")}
+                isNew
+              />
             </Box>
           </Container>
           <Box
