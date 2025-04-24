@@ -17,20 +17,20 @@ const TransportRolesToggle = ({ value = [], onChange = () => {} }) => {
         }}
       >
         <Button
-          value="request"
-          startDecorator={value.includes("request") && <Check />}
+          value="personal"
+          startDecorator={value.includes("personal") && <Check />}
         >
           Solicitante
         </Button>
         <Button
-          value="approve"
-          startDecorator={value.includes("approve") && <Check />}
+          value="approver"
+          startDecorator={value.includes("approver") && <Check />}
         >
           Aprovador
         </Button>
         <Button
-          value="confirm"
-          startDecorator={value.includes("confirm") && <Check />}
+          value="carrier"
+          startDecorator={value.includes("carrier") && <Check />}
         >
           Transportadora
         </Button>

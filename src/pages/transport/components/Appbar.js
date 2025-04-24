@@ -21,7 +21,9 @@ import {
   Typography,
 } from "@mui/joy";
 import React, { memo } from "react";
+import { useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
+import { selectUserTransportRoles } from "../../../store/reducers/userInfoSlice";
 import UserIndicator from "../../home/components/UserIndicator";
 
 const TabNumber = ({ children }) => {
@@ -51,6 +53,8 @@ const Appbar = ({
   openNew = () => {},
   stats = {},
 }) => {
+  const transportRoles = useSelector(selectUserTransportRoles);
+
   const [params, setParams] = useSearchParams();
 
   const tab = params.get("tab") || "personal";
@@ -151,33 +155,39 @@ const Appbar = ({
             "&::-webkit-scrollbar": { display: "none" },
           }}
         >
-          <Tab
-            sx={{ flex: "none", scrollSnapAlign: "start" }}
-            value={"personal"}
-          >
-            <ListItemDecorator>
-              <Person />
-            </ListItemDecorator>
-            Minhas solicitações <TabNumber>{stats?.personal}</TabNumber>
-          </Tab>
-          <Tab
-            sx={{ flex: "none", scrollSnapAlign: "start" }}
-            value={"approver"}
-          >
-            <ListItemDecorator>
-              <Rule />
-            </ListItemDecorator>
-            Para aprovar <TabNumber>{stats?.approver}</TabNumber>
-          </Tab>
-          <Tab
-            sx={{ flex: "none", scrollSnapAlign: "start" }}
-            value={"carrier"}
-          >
-            <ListItemDecorator>
-              <EmojiTransportation />
-            </ListItemDecorator>
-            Transportadora <TabNumber>{stats?.carrier}</TabNumber>
-          </Tab>
+          {transportRoles?.includes("personal") && (
+            <Tab
+              sx={{ flex: "none", scrollSnapAlign: "start" }}
+              value={"personal"}
+            >
+              <ListItemDecorator>
+                <Person />
+              </ListItemDecorator>
+              Minhas solicitações <TabNumber>{stats?.personal}</TabNumber>
+            </Tab>
+          )}
+          {transportRoles?.includes("approver") && (
+            <Tab
+              sx={{ flex: "none", scrollSnapAlign: "start" }}
+              value={"approver"}
+            >
+              <ListItemDecorator>
+                <Rule />
+              </ListItemDecorator>
+              Para aprovar <TabNumber>{stats?.approver}</TabNumber>
+            </Tab>
+          )}
+          {transportRoles?.includes("carrier") && (
+            <Tab
+              sx={{ flex: "none", scrollSnapAlign: "start" }}
+              value={"carrier"}
+            >
+              <ListItemDecorator>
+                <EmojiTransportation />
+              </ListItemDecorator>
+              Transportadora <TabNumber>{stats?.carrier}</TabNumber>
+            </Tab>
+          )}
         </TabList>
       </Tabs>
     </Box>

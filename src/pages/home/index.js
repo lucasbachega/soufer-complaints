@@ -17,6 +17,7 @@ import pkge from "../../../package.json";
 import {
   selectUserIsAdmin,
   selectUserIsGestor,
+  selectUserTransportRoles,
 } from "../../store/reducers/userInfoSlice";
 import UserIndicator from "./components/UserIndicator";
 
@@ -25,6 +26,7 @@ export default () => {
 
   const isAdmin = useSelector(selectUserIsAdmin);
   const isGestor = useSelector(selectUserIsGestor);
+  const transportRoles = useSelector(selectUserTransportRoles);
 
   return (
     <Box flex={1} flexBasis={0} display={"flex"} alignItems={"flex-start"}>
@@ -114,13 +116,15 @@ export default () => {
                   onClick={() => navigate("/admin")}
                 />
               )}
-              <ActionCard
-                Icon={DirectionsBusOutlined}
-                title={"Transporte coletivo"}
-                description={"Solicite e gerencie serviços de transporte."}
-                onClick={() => navigate("/transport")}
-                isNew
-              />
+              {Boolean(transportRoles?.length) && (
+                <ActionCard
+                  Icon={DirectionsBusOutlined}
+                  title={"Transporte coletivo"}
+                  description={"Solicite e gerencie serviços de transporte."}
+                  onClick={() => navigate("/transport")}
+                  isNew
+                />
+              )}
             </Box>
           </Container>
           <Box

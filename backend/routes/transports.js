@@ -32,10 +32,20 @@ router.post("/request", async (req, res) => {
   const user_id = req.userId;
   const body = req.body;
 
+  const _user = await Database.collection("users").findOne({
+    _id: new ObjectId(user_id),
+  });
+
+  if (!_user) {
+    return res.status(404).send({ message: "Usuário não encontrado." });
+  }
+
   try {
     const transport = {
       user: {
         _id: new ObjectId(user_id),
+        name: _user.firstname,
+        email: _user.email,
       },
       points: body.points,
       time: body.time,

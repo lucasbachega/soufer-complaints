@@ -365,6 +365,7 @@ router.put("/users/:id", async (req, res) => {
     block,
     areas,
     assignAllAreas,
+    transportRoles
   } = req.body;
   const _user = await Database.collection("users").findOne({
     _id: new ObjectId(id),
@@ -373,6 +374,7 @@ router.put("/users/:id", async (req, res) => {
   const edits = {};
   if ("username" in req.body) edits.username = username;
   if ("assignAllAreas" in req.body) edits.assignAllAreas = assignAllAreas;
+  if ("transportRoles" in req.body) edits.transportRoles = transportRoles;
   if ("firstname" in req.body) {
     edits.firstname = firstname;
     updateTexts({

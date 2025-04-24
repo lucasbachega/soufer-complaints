@@ -361,7 +361,16 @@ class HttpClient {
     },
     async updateUser(
       id,
-      { firstname, username, roles, block, email, areas, assignAllAreas }
+      {
+        firstname,
+        username,
+        roles,
+        block,
+        email,
+        areas,
+        assignAllAreas,
+        transportRoles,
+      }
     ) {
       return HttpClient.put(`/admin/users/${id}`, {
         firstname,
@@ -371,6 +380,7 @@ class HttpClient {
         email,
         areas,
         assignAllAreas,
+        transportRoles,
       });
     },
     async deleteUser(id) {
