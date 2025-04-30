@@ -2,7 +2,21 @@ const express = require("express");
 const Database = require("../db");
 const { ObjectId } = require("mongodb");
 const {} = require("./errors");
+const { EmailSender } = require("../utils/email-sender");
 const router = express.Router();
+const { format, isToday, isYesterday, isThisYear, parseISO } = require("date-fns");
+const { ptBR } = require("date-fns/locale");
+
+function formatMoment(dateInput) {
+  const date = typeof dateInput === "string" ? parseISO(dateInput) : new Date(dateInput);
+
+  const dayMonth = format(date, "d 'de' MMM", { locale: ptBR });
+  const year = isThisYear(date) ? "" : ` de ${format(date, "yyyy")}`;
+  const time = format(date, "HH:mm");
+  const label = isToday(date) ? " (hoje)" : isYesterday(date) ? " (ontem)" : "";
+
+  return `${dayMonth}${year} às ${time}${label}`;
+}
 
 //Listar transportes
 router.get("/", async (req, res) => {
@@ -59,6 +73,34 @@ router.post("/request", async (req, res) => {
 
     const result = await Database.collection("transports").insertOne(transport);
 
+    // Disparar e-mail para os aprovadores
+    const approvers = await Database.collection("users")
+      .find({
+        transportRoles: "approver",
+      })
+      .toArray();
+    for (const approver of approvers) {
+      EmailSender.sendEmail({
+        to: approver.email,
+        subject: "Nova solicitação de transporte",
+        html: `Olá ${(approver?.firstname || "").split(" ")[0]}! <br /><br />
+          Você tem uma nova solicitação de transporte para aprovar. Confira os detalhes: <br /><br />
+
+          <ul>
+            <li><b>Rotas</b>: ${transport.points.join(",")}</li>
+            <li><b>Partida</b>: ${formatMoment(new Date(transport.time))}</li>
+            <li><b>Retorno</b>: ${formatMoment(new Date(transport.timeReturn))}</li>
+            <li><b>Notas</b>: ${transport.notes}</li>
+          </ul>
+           
+         </b> <br />
+          Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br/transport?tab=approver <br />
+          Atenciosamente, <br />
+          Equipe Soufer
+          `,
+      });
+    }
+
     return res.status(201).send({ _id: result.insertedId, ...transport });
   } catch (err) {
     console.error(err);
@@ -93,6 +135,11 @@ router.get("/stats", async (req, res) => {
 // Aprovar transporte (approver)
 router.post("/:id/approve", async (req, res) => {
   const { id } = req.params;
+  const { userId } = req;
+
+  const _approver = await Database.collection("users").findOne({
+    _id: new ObjectId(userId),
+  });
 
   try {
     const result = await Database.collection("transports").updateOne(
@@ -103,6 +150,60 @@ router.post("/:id/approve", async (req, res) => {
     if (result.modifiedCount === 0) {
       return res.status(400).send({ message: "Não foi possível aprovar" });
     }
+
+    const transport = await Database.collection("transports").findOne({
+      _id: new ObjectId(id),
+    });
+
+    // Disparar e-mail para as transportadoras
+    const carriers = await Database.collection("users")
+      .find({
+        transportRoles: "carrier",
+      })
+      .toArray();
+    for (const carrier of carriers) {
+      EmailSender.sendEmail({
+        to: carrier.email,
+        subject: "Nova solicitação de transporte",
+        html: `Olá ${(carrier?.firstname || "").split(" ")[0]}! <br /><br />
+         Você tem uma nova solicitação de transporte para aprovar. Confira os detalhes: <br /><br />
+
+         <ul>
+           <li><b>Rotas</b>: ${transport.points.join(",")}</li>
+           <li><b>Partida</b>: ${formatMoment(new Date(transport.time))}</li>
+           <li><b>Retorno</b>: ${formatMoment(new Date(transport.timeReturn))}</li>
+           <li><b>Notas</b>: ${transport.notes}</li>
+         </ul>
+          
+        </b> <br />
+         Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br/transport?tab=carrier <br />
+         Atenciosamente, <br />
+         Equipe Soufer
+         `,
+      });
+    }
+
+    // Dispara e-mail para o solicitante
+    EmailSender.sendEmail({
+      to: transport.user?.email,
+      subject: "Sua solicitação está aguardando a confirmação da transportadora",
+      html: `Sua solicitação de transporte foi aprovada por ${
+        _approver?.name
+      } e está aguardando a confirmação da transportadora. Confira os detalhes: <br /><br />
+
+       <ul>
+         <li><b>Rotas</b>: ${transport.points.join(",")}</li>
+         <li><b>Partida</b>: ${formatMoment(new Date(transport.time))}</li>
+         <li><b>Retorno</b>: ${formatMoment(new Date(transport.timeReturn))}</li>
+         <li><b>Notas</b>: ${transport.notes}</li>
+       </ul>
+        
+      </b> <br />
+       Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br/transport?tab=personal <br />
+       Atenciosamente, <br />
+       Equipe Soufer
+       `,
+    });
 
     return res.send({ ok: true });
   } catch (err) {
@@ -125,6 +226,36 @@ router.post("/:id/confirm", async (req, res) => {
       return res.status(400).send({ message: "Não foi possível confirmar" });
     }
 
+    const transport = await Database.collection("transports").findOne({
+      _id: new ObjectId(id),
+    });
+
+    // Disparar e-mail para os aprovadores
+    const approvers = await Database.collection("users")
+      .find({
+        transportRoles: "approver",
+      })
+      .toArray();
+    for (const user of [...approvers, transport.user]) {
+      EmailSender.sendEmail({
+        to: user.email,
+        subject: "Solicitação de transporte aprovada",
+        html: `Olá ${(user?.firstname || "").split(" ")[0]}! <br /><br />
+        A solicitação de transporte foi aprovada. Confira os detalhes: <br /><br />
+         <ul>
+           <li><b>Rotas</b>: ${transport.points.join(",")}</li>
+           <li><b>Partida</b>: ${formatMoment(new Date(transport.time))}</li>
+           <li><b>Retorno</b>: ${formatMoment(new Date(transport.timeReturn))}</li>
+           <li><b>Notas</b>: ${transport.notes}</li>
+         </ul>
+        </b> <br />
+         Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br <br />
+         Atenciosamente, <br />
+         Equipe Soufer
+         `,
+      });
+    }
+    
     return res.send({ ok: true });
   } catch (err) {
     console.error(err);
@@ -164,17 +295,38 @@ router.post("/:id/reject", async (req, res) => {
     );
 
     if (result.modifiedCount === 0) {
-      return res
-        .status(404)
-        .send({ message: "Transporte não encontrado ou já atualizado." });
+      return res.status(404).send({ message: "Transporte não encontrado ou já atualizado." });
     }
+
+    const transport = await Database.collection("transports").findOne({
+      _id: new ObjectId(id),
+    });
+
+    // Dispara e-mail para o solicitante
+    EmailSender.sendEmail({
+      to: transport.user?.email,
+      subject: `Sua solicitação foi rejeitada`,
+      html: `Sua solicitação foi rejeitada por ${_user?.name}.  Confira os detalhes: <br /><br />
+
+        <b>Motivo de rejeição</b>:<i>${reason}</i>  <br />
+       <ul>
+         <li><b>Rotas</b>: ${transport.points.join(",")}</li>
+         <li><b>Partida</b>: ${formatMoment(new Date(transport.time))}</li>
+         <li><b>Retorno</b>: ${formatMoment(new Date(transport.timeReturn))}</li>
+         <li><b>Notas</b>: ${transport.notes}</li>
+       </ul>
+        
+      </b> <br />
+       Acesse o portal para mais informações: https://ocorrencias.gruposoufer.com.br/transport?tab=personal <br />
+       Atenciosamente, <br />
+       Equipe Soufer
+       `,
+    });
 
     return res.send({ ok: true });
   } catch (err) {
     console.error("Erro ao rejeitar transporte:", err);
-    return res
-      .status(500)
-      .send({ message: "Erro interno ao rejeitar transporte." });
+    return res.status(500).send({ message: "Erro interno ao rejeitar transporte." });
   }
 });
 
