@@ -32,6 +32,7 @@ const ModalNewTransport = ({
   const [points, setPoints] = useState([""]);
   const [notes, setNotes] = useState("");
   const [time, setTime] = useState("");
+  const [timeReturn, setTimeReturn] = useState("");
   const [people, setPeople] = useState(1);
   const [shift, setShift] = useState("");
 
@@ -61,6 +62,7 @@ const ModalNewTransport = ({
         people,
         shift,
         time,
+        timeReturn
       });
       refreshTable();
       dispatch(
@@ -102,10 +104,18 @@ const ModalNewTransport = ({
               <Stack width={{ xs: "100%", md: 300 }} spacing={2}>
                 <WaypointsInput data={points} onChange={setPoints} />
                 <FormControl required>
-                  <FormLabel>Dia e Horário</FormLabel>
+                  <FormLabel>Dia e Horário (ida)</FormLabel>
                   <Input
                     fullWidth
                     onChange={(e) => setTime(e.target.value)}
+                    type="datetime-local"
+                  />
+                </FormControl>
+                <FormControl required>
+                  <FormLabel>Dia e Horário (volta)</FormLabel>
+                  <Input
+                    fullWidth
+                    onChange={(e) => setTimeReturn(e.target.value)}
                     type="datetime-local"
                   />
                 </FormControl>

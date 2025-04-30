@@ -31,7 +31,14 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     roles: ["personal", "approver", "carrier"],
-    label: "Dia/Horário",
+    label: "Dia/Horário (Ida)",
+  },
+  {
+    id: "timeReturn",
+    numeric: false,
+    disablePadding: false,
+    roles: ["personal", "approver", "carrier"],
+    label: "Dia/Horário (Volta)",
   },
   {
     id: "people",

@@ -201,15 +201,7 @@ class HttpClient {
     });
   }
 
-  static async listMyOccurrences({
-    period,
-    unidade,
-    categoria,
-    produto,
-    setor,
-    status,
-    type,
-  }) {
+  static async listMyOccurrences({ period, unidade, categoria, produto, setor, status, type }) {
     return HttpClient.get("/complaints/ocorrencias", {
       params: {
         unidade_id: unidade,
@@ -278,24 +270,13 @@ class HttpClient {
       if (type) {
         formData.append("type", type);
       }
-      return HttpClient.post(
-        `/admin/complaints/${occurrenceId}/uploadFiles`,
-        formData
-      );
+      return HttpClient.post(`/admin/complaints/${occurrenceId}/uploadFiles`, formData);
     },
 
     /**
      * Listar ocorrências p/ admin de acordo com filtros
      */
-    async listarOcorrencias({
-      period,
-      unidade,
-      categoria,
-      produto,
-      setor,
-      status,
-      type,
-    } = {}) {
+    async listarOcorrencias({ period, unidade, categoria, produto, setor, status, type } = {}) {
       return HttpClient.get("/admin/complaints", {
         params: {
           unidade_id: unidade,
@@ -312,10 +293,7 @@ class HttpClient {
      * Atualizar uma ocorrência
      * (alterar status e dados de análise)
      */
-    async updateOcorrencia(
-      id,
-      { causa, correcao, status, deleteAdminAnexos, motivoRej } = {}
-    ) {
+    async updateOcorrencia(id, { causa, correcao, status, deleteAdminAnexos, motivoRej } = {}) {
       return HttpClient.put(`/admin/complaints/${id}`, {
         causa,
         correcao,
@@ -361,16 +339,7 @@ class HttpClient {
     },
     async updateUser(
       id,
-      {
-        firstname,
-        username,
-        roles,
-        block,
-        email,
-        areas,
-        assignAllAreas,
-        transportRoles,
-      }
+      { firstname, username, roles, block, email, areas, assignAllAreas, transportRoles }
     ) {
       return HttpClient.put(`/admin/users/${id}`, {
         firstname,
@@ -533,24 +502,13 @@ class HttpClient {
       if (type) {
         formData.append("type", type);
       }
-      return HttpClient.post(
-        `/gestor/complaints/${occurrenceId}/uploadFiles`,
-        formData
-      );
+      return HttpClient.post(`/gestor/complaints/${occurrenceId}/uploadFiles`, formData);
     },
 
     /**
      * Listar ocorrências p/ gestor de acordo com filtros
      */
-    async listarOcorrencias({
-      period,
-      unidade,
-      categoria,
-      produto,
-      setor,
-      status,
-      type,
-    } = {}) {
+    async listarOcorrencias({ period, unidade, categoria, produto, setor, status, type } = {}) {
       return HttpClient.get("/gestor/complaints", {
         params: {
           unidade_id: unidade,
@@ -567,10 +525,7 @@ class HttpClient {
      * Atualizar uma ocorrência
      * (alterar status e dados de análise)
      */
-    async updateOcorrencia(
-      id,
-      { causa, correcao, status, deleteAdminAnexos, motivoRej } = {}
-    ) {
+    async updateOcorrencia(id, { causa, correcao, status, deleteAdminAnexos, motivoRej } = {}) {
       return HttpClient.put(`/gestor/complaints/${id}`, {
         causa,
         correcao,
@@ -614,11 +569,12 @@ class HttpClient {
     async stats() {
       return HttpClient.get("/transports/stats");
     },
-    async request({ points = [], notes, time, people, shift }) {
+    async request({ points = [], notes, time, timeReturn, people, shift }) {
       return HttpClient.post("/transports/request", {
         points,
         notes,
         time,
+        timeReturn,
         people,
         shift,
       });
@@ -638,3 +594,4 @@ class HttpClient {
 }
 
 export { HttpClient };
+

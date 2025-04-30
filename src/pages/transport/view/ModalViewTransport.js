@@ -1,14 +1,14 @@
 import { DirectionsBusOutlined, PeopleAltOutlined } from "@mui/icons-material";
 import {
-    Alert,
-    Box,
-    Chip,
-    DialogContent,
-    Divider,
-    Drawer,
-    ModalClose,
-    Stack,
-    Typography,
+  Alert,
+  Box,
+  Chip,
+  DialogContent,
+  Divider,
+  Drawer,
+  ModalClose,
+  Stack,
+  Typography,
 } from "@mui/joy";
 import React, { memo, useMemo } from "react";
 import DetailItem from "../../../components/modals/occurrence-view/components/DetailItem";
@@ -148,8 +148,13 @@ const ModalViewTransport = ({
           <Stack mt={2} gap={1}>
             <DetailItem
               width={120}
-              label={"Horário"}
+              label={"Ida"}
               value={formatMoment(data?.time)}
+            />
+            <DetailItem
+              width={120}
+              label={"Volta"}
+              value={data?.timeReturn && formatMoment(data?.timeReturn) }
             />
             <DetailItem
               width={120}

@@ -1,7 +1,8 @@
 import {
-    AccessTime,
-    PeopleAltOutlined,
-    PersonOutlineOutlined
+  KeyboardReturn,
+  PeopleAltOutlined,
+  PersonOutlineOutlined,
+  Start,
 } from "@mui/icons-material";
 import { Box, Chip, Stack, Tooltip, Typography } from "@mui/joy";
 import React, { memo } from "react";
@@ -27,12 +28,9 @@ const CardItem = ({ row = {}, onClick = () => {}, isSelected, role }) => {
         cursor: "pointer",
         bgcolor: "#FFF",
         borderLeftWidth: 3,
-        outline: (t) =>
-          isSelected ? `2px solid ${t.palette.primary[500]}` : "none",
+        outline: (t) => (isSelected ? `2px solid ${t.palette.primary[500]}` : "none"),
         borderLeftColor: (t) =>
-          status === "open"
-            ? t.palette.divider
-            : t.palette[transportStatus[status]?.color][400],
+          status === "open" ? t.palette.divider : t.palette[transportStatus[status]?.color][400],
         ":hover": {
           boxShadow: "sm",
         },
@@ -48,9 +46,15 @@ const CardItem = ({ row = {}, onClick = () => {}, isSelected, role }) => {
           </Typography>
         </Tooltip>
         <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
-          <AccessTime fontSize="small" color="action" />
+          <Start fontSize="small" color="action" />
           <Typography level="title-sm" fontWeight={"500"}>
             {formatMoment(row?.time)}
+          </Typography>
+        </Stack>
+        <Stack my={0.5} gap={1} alignItems={"center"} direction={"row"}>
+          <KeyboardReturn fontSize="small" color="action" />
+          <Typography level="title-sm" fontWeight={"500"}>
+            {row?.timeReturn ? formatMoment(row?.timeReturn) : "--"}
           </Typography>
         </Stack>
         {role !== "personal" && (
@@ -65,12 +69,7 @@ const CardItem = ({ row = {}, onClick = () => {}, isSelected, role }) => {
           <Typography component={"span"} color="neutral" level="inherit">
             Turno:{" "}
           </Typography>
-          <Typography
-            noWrap
-            component={"span"}
-            level="inherit"
-            fontWeight={"500"}
-          >
+          <Typography noWrap component={"span"} level="inherit" fontWeight={"500"}>
             {row.shift || "--"}
           </Typography>
         </Typography>
@@ -88,12 +87,7 @@ const CardItem = ({ row = {}, onClick = () => {}, isSelected, role }) => {
         <Typography mb={1} level="body-sm" color="neutral">
           {formatDate(row.created_at)}
         </Typography>
-        <Chip
-          sx={{ mt: 1 }}
-          variant="outlined"
-          size="md"
-          startDecorator={<PeopleAltOutlined />}
-        >
+        <Chip sx={{ mt: 1 }} variant="outlined" size="md" startDecorator={<PeopleAltOutlined />}>
           {row.people}
         </Chip>
       </Box>

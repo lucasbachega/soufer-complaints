@@ -49,6 +49,7 @@ router.post("/request", async (req, res) => {
       },
       points: body.points,
       time: body.time,
+      timeReturn: body.timeReturn,
       people: body.people,
       shift: body.shift,
       notes: body.notes,

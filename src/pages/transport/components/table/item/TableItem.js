@@ -38,6 +38,7 @@ const TableItem = ({ row = {}, onClick, isSelected, role }) => {
       {role !== "personal" && <DefaultCell>{row?.username}</DefaultCell>}
       <DefaultCell>{row?.to}</DefaultCell>
       <DefaultCell>{formatMoment(row.time)}</DefaultCell>
+      <DefaultCell>{row.timeReturn ? formatMoment(row.timeReturn) : '--'}</DefaultCell>
       <td>
         <Chip
           variant="soft"
